@@ -34,10 +34,6 @@ async def sqrt(ctx, a: int):
 @bot.command()
 async def mod(ctx, a: int, b: int):
 	await ctx.send(">> " + str(a%b))
-	
-	
-	
-	
 @bot.command()
 async def help(ctx):
 	embed = discord.Embed(title="Commands for OpenProcess", description="", color=0x0090FF)
