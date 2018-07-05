@@ -1,4 +1,5 @@
 import discord
+import platform
 import math
 from discord.ext import commands
 bot = commands.Bot(command_prefix='<<?')
@@ -10,7 +11,7 @@ async def on_ready():
 	print('>> login as')
 	print(bot.user.name)
 	print(bot.user.id)
-	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, python_version()))
+	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 	return await client.change_presence(game=discord.Game(name=game))
 	
 @bot.command()
