@@ -5,7 +5,7 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix='<<?')
 client = discord.Client()
 bot.remove_command("help")
-game = 'Processor'
+gameplay = 'Processor'
 @bot.event
 async def on_ready():
 	print('>> OpenProcess by gongpha')
@@ -13,7 +13,7 @@ async def on_ready():
 	print(bot.user.name)
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
-	return await client.change_presence(game=discord.Game(name=game))
+	await client.change_status(game=discord.Game(name=gameplay)) 
 	
 @bot.command()
 async def test(ctx):
