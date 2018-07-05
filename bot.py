@@ -13,7 +13,7 @@ async def on_ready():
 	print(bot.user.name)
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
-	await client.change_status(game=discord.Game(name=gameplay)) 
+	#await client.change_status(game=discord.Game(name=gameplay)) 
 	
 @bot.command()
 async def test(ctx):
