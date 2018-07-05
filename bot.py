@@ -2,7 +2,7 @@ import discord
 import math
 from discord.ext import commands
 bot = commands.Bot(command_prefix='<<?')
-
+bot.remove_command("help")
 game = 'Processor'
 @bot.event
 async def on_ready():
