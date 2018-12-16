@@ -4,7 +4,7 @@ import platform
 import math
 from discord.ext import commands
 
-cl_s = os.environ.get('CL_SECRET',None)
+
 
 bot = commands.Bot(command_prefix='<<?')
 client = discord.Client()
@@ -53,4 +53,4 @@ async def help(ctx):
 	embed.add_field(name="<<?help", value="Display help message", inline=False)
 	await ctx.send(embed=embed)
 
-bot.run(cl_s)
+bot.run('zcR5kPcRQqIVI8-FY2teXEc5qZSFkHMr')
