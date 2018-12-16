@@ -1,7 +1,11 @@
 import discord
+import os
 import platform
 import math
 from discord.ext import commands
+
+cl_s = os.environ.get('CL_SECRET',None)
+
 bot = commands.Bot(command_prefix='<<?')
 client = discord.Client()
 bot.remove_command("help")
@@ -48,4 +52,5 @@ async def help(ctx):
 	embed.add_field(name="<<?test", value="Gives a status of bot", inline=False)
 	embed.add_field(name="<<?help", value="Display help message", inline=False)
 	await ctx.send(embed=embed)
-bot.run('NDU3OTA4NzA3ODE3NDIyODYw.Dhp6wg.tgMLnRYz-43-1Z5x5X-AKHKPXUs')
+
+bot.run(cl_s)
