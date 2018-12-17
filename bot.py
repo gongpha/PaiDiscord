@@ -76,10 +76,8 @@ async def on_ready():
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 
-	activitygame = discord.Game("Processor")
-	await client.change_presence(status=discord.Status.online, activity=activitygame)
-	
-	
+	activitygame = discord.Game(name="Processor")
+	await client.change_presence(activity=activitygame)
 	
 @bot.command()
 async def say(ctx):
