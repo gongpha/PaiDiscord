@@ -71,7 +71,7 @@ async def on_ready():
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 	
-	await client.change_presence(game=discord.Game(name=gameplay))
+	await client.change_presence(activity=discord.Activity(name=gameplay))
 	client.loop.create_task(status_task())
 	
 @bot.command()
