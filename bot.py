@@ -76,11 +76,10 @@ async def on_ready():
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 
-	activity = discord.Game(name="Processor")
-	await client.change_presence(status=discord.Status.idle, activity=activity)
+	activitygame = discord.Game("Processor")
+	await client.change_presence(status=discord.Status.online, activity=activitygame)
 	
-	# await client.change_presence(activity=discord.Activity(name=gameplay))
-	client.loop.create_task(status_task())
+	
 	
 @bot.command()
 async def say(ctx):
@@ -110,5 +109,5 @@ async def sqrt(ctx, a: int):
 async def mod(ctx, a: int, b: int):
 	await ctx.send(">> `" + str(a%b) + "`")
 
-
+client.loop.create_task(status_task())
 bot.run(token)
