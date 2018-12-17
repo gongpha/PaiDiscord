@@ -3,6 +3,7 @@ import os
 import platform
 import math
 import asyncio
+import datetime
 from discord.ext import commands
 
 import random
@@ -39,6 +40,7 @@ ncfu_S = ["ch", "ck", "rd", "ge", "ld", "le", "ng", "sh", "th", "gh",
 
 def ncfu_genMonsGeneral() :
 	result = random.choice([random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_C),random.choice(ncfu_C)])+ random.choice([random.choice(ncfu_v),random.choice(ncfu_V)]) + random.choice([random.choice(ncfu_s),random.choice(ncfu_s),random.choice(ncfu_S),random.choice(ncfu_s),"",random.choice(ncfu_vS)]) + random.choice([random.choice([random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_C),random.choice(ncfu_C)])+ random.choice([random.choice(ncfu_v),random.choice(ncfu_V)]) + random.choice([random.choice(ncfu_s),random.choice(ncfu_s),random.choice(ncfu_S),random.choice(ncfu_s),"",random.choice(ncfu_vS),""])]) + random.choice([random.choice([random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_C),random.choice(ncfu_C)])+ random.choice([random.choice(ncfu_v),random.choice(ncfu_V)]) + random.choice([random.choice(ncfu_s),random.choice(ncfu_s),random.choice(ncfu_S),random.choice(ncfu_s),"",random.choice(ncfu_vS),""])]) + random.choice(["proc","ator","","","","","","","","","",""])
+	print("Generated : :+result)
 	return result;
 
 #print(ncfu_genMonsGeneral())
@@ -48,20 +50,23 @@ openprocch = os.environ.get('OPENPROC_CH',None)
 
 bot = commands.Bot(command_prefix='<<?')
 client = discord.Client()
-bot.remove_command("help")
-gameplay = 'Processor'
+# bot.remove_command("help")
 
 async def status_task():
 	await client.wait_until_ready()
 	counter = 0
+	lastdd = datetime.datetime.now()
 	channel = discord.Object(id=openprocch)
+	print("Starting Proc Status Task...")
 	while not client.is_closed:
 		await client.send_message(channel, "***ONE HOUR ONE NAME*** (mons)")
 		for i in range(10) :
 			await client.send_message(channel,"`" + ncfu_genMonsGeneral() + "`")
 		counter += 10
-		await client.send_message(channel, counter + " names generated")
-		await asyncio.sleep(3600) 
+		await client.send_message(channel, counter + " names generated. Since last deploy ("+ lastdd+")")
+		print("names" + counter)
+		await asyncio.sleep(3600)
+	print("!!! WARNING : COUNTER MAYBE RESET")
 
 @bot.event
 async def on_ready():
@@ -70,8 +75,11 @@ async def on_ready():
 	print(bot.user.name)
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
+
+	activity = discord.Game(name="Processor")
+	await client.change_presence(status=discord.Status.idle, activity=activity)
 	
-	await client.change_presence(activity=discord.Activity(name=gameplay))
+	# await client.change_presence(activity=discord.Activity(name=gameplay))
 	client.loop.create_task(status_task())
 	
 @bot.command()
@@ -101,17 +109,6 @@ async def sqrt(ctx, a: int):
 @bot.command()
 async def mod(ctx, a: int, b: int):
 	await ctx.send(">> `" + str(a%b) + "`")
-@bot.command()
-async def help(ctx):
-	embed = discord.Embed(title="Commands for OpenProcess", description="", color=0x0090FF)
-	embed.add_field(name="<<?add A B", value="Gives the addition of **A** and **B**", inline=False) 
-	embed.add_field(name="<<?sub A B", value="Gives the subtraction of **A** and **B**", inline=False) 
-	embed.add_field(name="<<?mul A B", value="Gives the multiplication of **A** and **B**", inline=False)
-	embed.add_field(name="<<?div A B", value="Gives the division of **A** and **B**", inline=False)
-	embed.add_field(name="<<?sqrt A", value="Gives the squareRoot of **A**", inline=False)
-	embed.add_field(name="<<?mod A B", value="Gives the modulation of **A** and **B**", inline=False)
-	embed.add_field(name="<<?test", value="Gives a status of bot", inline=False)
-	embed.add_field(name="<<?help", value="Display help message", inline=False)
-	await ctx.send(embed=embed)
+
 
 bot.run(token)
