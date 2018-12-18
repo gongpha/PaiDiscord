@@ -46,7 +46,7 @@ def ncfu_genMonsGeneral() :
 #print(ncfu_genMonsGeneral())
 
 token = os.environ.get('BOT_TOKEN',None)
-openprocch = os.environ.get('OPENPROC_CH',None)
+openprocch = int(os.environ.get('OPENPROC_CH',None))
 #token = "NDU3OTA4NzA3ODE3NDIyODYw.Dvf7Lw.vlaheg5ndAFcBDi4v4CwvRJBAA0"
 #openprocch = 524035018352230410
 
