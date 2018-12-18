@@ -47,24 +47,50 @@ def ncfu_genMonsGeneral() :
 
 token = os.environ.get('BOT_TOKEN',None)
 openprocch = os.environ.get('OPENPROC_CH',None)
+#token = "NDU3OTA4NzA3ODE3NDIyODYw.Dvf7Lw.vlaheg5ndAFcBDi4v4CwvRJBAA0"
+#openprocch = 524035018352230410
 
 bot = commands.Bot(command_prefix='<<?')
 client = discord.Client()
 # bot.remove_command("help")
 
 async def status_task():
-	await client.wait_until_ready()
+	print("Starting Task...")
+	await bot.wait_until_ready()
+	activitygame = discord.Game(name="Processor")
+	await bot.change_presence(activity=activitygame)
 	counter = 0
 	lastdd = datetime.datetime.now()
-	channel = discord.Object(id=openprocch)
+	channel = bot.get_channel(openprocch)
 	print("Starting Proc Status Task...")
-	while not client.is_closed:
-		await client.send_message(channel, "***ONE HOUR ONE NAME*** (mons)")
-		for i in range(10) :
-			await client.send_message(channel,"`" + ncfu_genMonsGeneral() + "`")
+	while not bot.is_closed():
+		#await channel.send( "***ONE HOUR ONE NAME*** (mons)")
+		#for i in range(10) :
+		#	await channel.send("`" + ncfu_genMonsGeneral() + "`")
+			
+			
+			
 		counter += 10
-		await client.send_message(channel, counter + " names generated. Since last deploy ("+ lastdd+")")
-		print("names" + counter)
+		
+		embed=discord.Embed(title="ONE HOUR TEN NAMES `mons`", description="Generate 10 names from `ncfunamegenmons`", color=0xff0080)
+		embed.add_field(name="1", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.add_field(name="2", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.add_field(name="3", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.add_field(name="4", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.add_field(name="5", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.add_field(name="6", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.add_field(name="7", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.add_field(name="8", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.add_field(name="9", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.add_field(name="10", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
+		embed.set_footer(text=str(counter) + " names generated. Since last deploy ("+ str(lastdd)+")")
+		await channel.send("",embed=embed)
+		
+		
+		
+		
+		#await channel.send(str(counter) + " names generated. Since last deploy ("+ str(lastdd)+")")
+		print("names : " + str(counter))
 		await asyncio.sleep(3600)
 	print("!!! WARNING : COUNTER MAYBE RESET")
 
@@ -75,9 +101,6 @@ async def on_ready():
 	print(bot.user.name)
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
-
-	activitygame = discord.Game(name="Processor")
-	await client.change_presence(activity=activitygame)
 	
 @bot.command()
 async def say(ctx):
@@ -107,5 +130,5 @@ async def sqrt(ctx, a: int):
 async def mod(ctx, a: int, b: int):
 	await ctx.send(">> `" + str(a%b) + "`")
 
-client.loop.create_task(status_task())
+bot.loop.create_task(status_task())
 bot.run(token)
