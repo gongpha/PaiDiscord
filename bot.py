@@ -47,8 +47,7 @@ def ncfu_genMonsGeneral() :
 
 token = os.environ.get('BOT_TOKEN',None)
 openprocch = int(os.environ.get('OPENPROC_CH',None))
-#token = "NDU3OTA4NzA3ODE3NDIyODYw.Dvf7Lw.vlaheg5ndAFcBDi4v4CwvRJBAA0"
-#openprocch = 524035018352230410
+
 
 bot = commands.Bot(command_prefix='<<?')
 client = discord.Client()
@@ -104,30 +103,35 @@ async def on_ready():
 	
 @bot.command()
 async def say(ctx):
-	await ctx.send("I'm still here")
+	"""Just say 'I'm still here.'"""
+	await ctx.send("I'm still here.")
 @bot.command()
 async def ncfunamegenmons(ctx):
+	"""Use NCFU to generate MONS name (UNSTABLE)"""
 	await ctx.send(">> `"+ ncfu_genMonsGeneral() + "`")
 @bot.command()
-async def test(ctx):
-	await ctx.send("I'm still here")
-@bot.command()
 async def add(ctx, a: int, b: int):
+	"""Add 2 Numbers"""
 	await ctx.send(">> `" + str(a+b) + "`")
 @bot.command()
 async def sub(ctx, a: int, b: int):
+	"""Subtract 2 Numbers"""
 	await ctx.send(">> `" + str(a-b) + "`")
 @bot.command()
 async def mul(ctx, a: int, b: int):
+	"""Multiply 2 Numbers"""
 	await ctx.send(">> `" + str(a*b) + "`")
 @bot.command()
 async def div(ctx, a: int, b: int):
+	"""Divide 2 Numbers"""
 	await ctx.send(">> `" + str(a/b) + "`")
 @bot.command()
 async def sqrt(ctx, a: int):
+	"""SquareRoot of Number"""
 	await ctx.send(">> `" + str(math.sqrt(a)) + "`")
 @bot.command()
 async def mod(ctx, a: int, b: int):
+	"""Modulo 2 Numbers"""
 	await ctx.send(">> `" + str(a%b) + "`")
 
 bot.loop.create_task(status_task())
