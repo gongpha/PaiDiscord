@@ -1,5 +1,7 @@
 import shlex
 import re
+from enum import Enum
+import random
 
 def parse_nested(text, left=r'[\[]', right=r'[\]]', sep=r','):
     """ Based on https://stackoverflow.com/a/17141899/190597 (falsetru) """
@@ -22,6 +24,50 @@ def parse_nested(text, left=r'[\[]', right=r'[\]]', sep=r','):
         raise ValueError('error: closing bracket is missing')
     return stack.pop()
 
-temp = '["a"|"b"|"c"]["d"|"e"|"f"]'
+temp = '[a|b|c][d|e|f]'
+class groupType(Enum) :
+	tstr = 1
+	tsye = 2
+	tsya = 3
+	trvs = 4
+	trsw = 5
+	tstt = 0
 
-print(parse_nested(temp))
+class group :
+	type = groupType.tstt
+	storage = []
+
+	def randomAll(self) :
+		if storage :
+			random.choice(storage)
+			type = groupType.tstt
+		
+
+#print(parse_nested(temp))
+
+def throwerror(msg) :
+    raise ValueError('error : '+msg)
+
+currfloor = 0
+avoidsp = False
+textmem = ""
+tempstack = []
+tempgroup = group()
+stack = []
+for ch in temp :
+	if ch == '[' :
+		currfloor += 1
+	elif ch == ']' :
+		if currfloor == 0 :
+			throwerror('Stack Error')
+		else :
+			tempgroup.storage = tempstack
+			stack.append(tempgroup)
+	elif ch == '|' :
+		tempstack.append(textmem)
+		textmem = ""
+	else :
+		textmem += ch
+
+attrs = [vars(cll) for cll in stack]
+print(attrs)
