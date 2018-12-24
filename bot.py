@@ -4,6 +4,7 @@ import platform
 import math
 import asyncio
 import datetime
+import ncfu
 from discord.ext import commands
 
 import random
@@ -38,7 +39,7 @@ ncfu_S = ["ch", "ck", "rd", "ge", "ld", "le", "ng", "sh", "th", "gh",
 #print "Hello, Dcoder!"
 #print S
 
-def ncfu_genMonsGeneral() :
+def ncfuDemo_genMonsGeneral() :
 	result = random.choice([random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_C),random.choice(ncfu_C)])+ random.choice([random.choice(ncfu_v),random.choice(ncfu_V)]) + random.choice([random.choice(ncfu_s),random.choice(ncfu_s),random.choice(ncfu_S),random.choice(ncfu_s),"",random.choice(ncfu_vS)]) + random.choice([random.choice([random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_C),random.choice(ncfu_C)])+ random.choice([random.choice(ncfu_v),random.choice(ncfu_V)]) + random.choice([random.choice(ncfu_s),random.choice(ncfu_s),random.choice(ncfu_S),random.choice(ncfu_s),"",random.choice(ncfu_vS),""])]) + random.choice([random.choice([random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_c),random.choice(ncfu_C),random.choice(ncfu_C)])+ random.choice([random.choice(ncfu_v),random.choice(ncfu_V)]) + random.choice([random.choice(ncfu_s),random.choice(ncfu_s),random.choice(ncfu_S),random.choice(ncfu_s),"",random.choice(ncfu_vS),""])]) + random.choice(["proc","ator","","","","","","","","","",""])
 	print("Generated : "+result)
 	return result;
@@ -60,6 +61,7 @@ async def status_task():
 	await bot.change_presence(activity=activitygame)
 	counter = 0
 	lastdd = datetime.datetime.now()
+	y_be = lastdd.year + 543
 	channel = bot.get_channel(openprocch)
 	print("Starting Proc Status Task...")
 	while not bot.is_closed():
@@ -71,19 +73,19 @@ async def status_task():
 			
 		counter += 10
 		
-		embed=discord.Embed(title="ONE HOUR TEN NAMES `mons`", description="Generate 10 names from `ncfunamegenmons`", color=0xff0080)
-		embed.add_field(name="1", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.add_field(name="2", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.add_field(name="3", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.add_field(name="4", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.add_field(name="5", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.add_field(name="6", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.add_field(name="7", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.add_field(name="8", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.add_field(name="9", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.add_field(name="10", value="`" + ncfu_genMonsGeneral() + "`", inline=True)
-		embed.set_footer(text=str(counter) + " names generated. Since last deploy ("+ str(lastdd)+")")
-		await channel.send("",embed=embed)
+		ncfu_mons_embed=discord.Embed(title="ONE HOUR TEN NAMES `mons_standard`", description="Generate 10 names from `ncfunt` using our arguments", color=0xff0080)
+		ncfu_mons_embed.add_field(name="1", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.add_field(name="2", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.add_field(name="3", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.add_field(name="4", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.add_field(name="5", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.add_field(name="6", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.add_field(name="7", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.add_field(name="8", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.add_field(name="9", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.add_field(name="10", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
+		ncfu_mons_embed.set_footer(text=str(counter) + " names generated. Since last deploy ("+ lastdd.strftime('We are the %d, %B %Y') +" : " + str(y_be))")
+		await channel.send("",embed=ncfu_mons_embed)
 		
 		
 		
@@ -107,8 +109,12 @@ async def say(ctx):
 	await ctx.send("I'm still here.")
 @bot.command()
 async def ncfunamegenmons(ctx):
-	"""Use NCFU to generate MONS name (UNSTABLE)"""
-	await ctx.send(">> `"+ ncfu_genMonsGeneral() + "`")
+	"""Use NCFUDemo to generate MONS name (UNSTABLE)"""
+	await ctx.send(">> `"+ ncfuDemo_genMonsGeneral() + "`")
+@bot.command()
+async def ncfunt(ctx, a: str):
+	"""Use NCFU to generate string using own template"""
+	await ctx.send(">> `"+ ncfu.n_t_generate(a) + "`")
 @bot.command()
 async def add(ctx, a: int, b: int):
 	"""Add 2 Numbers"""
