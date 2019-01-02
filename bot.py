@@ -47,10 +47,8 @@ def ncfuDemo_genMonsGeneral() :
 
 #print(ncfu_genMonsGeneral())
 
-#token = os.environ.get('BOT_TOKEN',None)
-token = 'NDU3OTA4NzA3ODE3NDIyODYw.Dvf7Lw.vlaheg5ndAFcBDi4v4CwvRJBAA0'
-#openprocch = int(os.environ.get('OPENPROC_CH',None))
-openprocch = 524035018352230410
+token = os.environ.get('BOT_TOKEN',None)
+openprocch = int(os.environ.get('OPENPROC_CH',None))
 
 
 bot = commands.Bot(command_prefix='::')
