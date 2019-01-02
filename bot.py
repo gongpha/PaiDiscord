@@ -68,7 +68,7 @@ def embed_error(ctxx, strr : str, vall : str, etype : int) :
 	errembed.add_field(name=strr,value=vall)
 	return errembed
 	
-def idToUser(ctxx, idthatt) :
+async def idToUser(ctxx, idthatt) :
 	if not str.isdigit(idthatt) :
 		user = await bot.get_user_info(ctxx.message.mentions[0].id)
 	else :
