@@ -68,7 +68,7 @@ def embed_error(ctxx, strr : str, vall : str, etype : int) :
 	errembed.add_field(name=strr,value=vall)
 	return errembed
 	
-async def idToUser(ctxx, idthatt) :
+def idToUser(ctxx, idthatt) :
 	if not str.isdigit(idthatt) :
 		user = await bot.get_user_info(ctxx.message.mentions[0].id)
 	else :
@@ -177,7 +177,7 @@ class BasicCommand :
 		"""Ping myself"""
 		await ctx.send("<@" + str(ctx.message.author.id) + ">")
 	@bot.command()
-	async def mention(ctx, idthat = none):
+	async def mention(ctx, idthat = None):
 		"""Ping Him!"""
 		user = idToUser(ctx, idthat)
 		if not idthat:
@@ -193,7 +193,7 @@ class BasicCommand :
 		"""Your Avatar URL"""
 		await ctx.send("`" + str(ctx.message.author) + "` : " + str(ctx.message.author.avatar_url))
 	@bot.command()
-	async def avatar(ctx, idthat = none):
+	async def avatar(ctx, idthat = None):
 		"""His Avatar URL"""
 		user = idToUser(ctx, idthat)
 		if not idthat:
