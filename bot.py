@@ -68,11 +68,11 @@ def embed_error(ctxx, strr : str, vall : str, etype : int) :
 	errembed.add_field(name=strr,value=vall)
 	return errembed
 	
-def idToUser(bot, ctx, idthat) :
-	if not str.isdigit(idthat) :
-		user = await bot.get_user_info(ctx.message.mentions[0].id)
+def idToUser(ctxx, idthatt) :
+	if not str.isdigit(idthatt) :
+		user = await bot.get_user_info(ctxx.message.mentions[0].id)
 	else :
-		user = await bot.get_user_info(idthat)
+		user = await bot.get_user_info(idthatt)
 	return user
 
 async def status_task():
@@ -179,7 +179,7 @@ class BasicCommand :
 	@bot.command()
 	async def mention(ctx, idthat = none):
 		"""Ping Him!"""
-		user = idToUser(bot, ctx, idthat)
+		user = idToUser(ctx, idthat)
 		if not idthat:
 			await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "You missed argument!", "Put an argument then try again", 1))
 		else : 
@@ -195,7 +195,7 @@ class BasicCommand :
 	@bot.command()
 	async def avatar(ctx, idthat = none):
 		"""His Avatar URL"""
-		user = idToUser(bot, ctx, idthat)
+		user = idToUser(ctx, idthat)
 		if not idthat:
 			await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "You missed argument!", "Put an argument then try again", 1))
 		else : 
