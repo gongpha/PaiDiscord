@@ -47,8 +47,10 @@ def ncfuDemo_genMonsGeneral() :
 
 #print(ncfu_genMonsGeneral())
 
-token = os.environ.get('BOT_TOKEN',None)
-openprocch = int(os.environ.get('OPENPROC_CH',None))
+#token = os.environ.get('BOT_TOKEN',None)
+token = 'NDU3OTA4NzA3ODE3NDIyODYw.Dvf7Lw.vlaheg5ndAFcBDi4v4CwvRJBAA0'
+#openprocch = int(os.environ.get('OPENPROC_CH',None))
+openprocch = 524035018352230410
 
 
 bot = commands.Bot(command_prefix='::')
@@ -67,13 +69,6 @@ def embed_error(ctxx, strr : str, vall : str, etype : int) :
 	errembed=discord.Embed(title="❌ Oops! There's something error", description=errtype(etype), color=0xff0000)
 	errembed.add_field(name=strr,value=vall)
 	return errembed
-	
-def idToUser(ctxx, idthatt) :
-	if not str.isdigit(idthatt) :
-		user = await bot.get_user_info(ctxx.message.mentions[0].id)
-	else :
-		user = await bot.get_user_info(idthatt)
-	return user
 
 async def status_task():
 	print("Starting Task...")
@@ -179,7 +174,11 @@ class BasicCommand :
 	@bot.command()
 	async def mention(ctx, idthat = None):
 		"""Ping Him!"""
-		user = idToUser(ctx, idthat)
+		if not str.isdigit(idthat) :
+			user = await bot.get_user_info(ctx.message.mentions[0].id)
+		else :
+			user = await bot.get_user_info(idthat)
+
 		if not idthat:
 			await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "You missed argument!", "Put an argument then try again", 1))
 		else : 
@@ -195,12 +194,16 @@ class BasicCommand :
 	@bot.command()
 	async def avatar(ctx, idthat = None):
 		"""His Avatar URL"""
-		user = idToUser(ctx, idthat)
+		if not str.isdigit(idthat) :
+			user = await bot.get_user_info(ctx.message.mentions[0].id)
+		else :
+			user = await bot.get_user_info(idthat)
+
 		if not idthat:
 			await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "You missed argument!", "Put an argument then try again", 1))
 		else : 
 			if not user  :
-				await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "User wasn't found!", "Make sure, you put a correct User ID", 1))
+				await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "User wasn't found!", "Make sure, you put a correct User ID or that", 1))
 			else :
 				await ctx.send("`" + str(user) + "` : " + str(user.avatar_url))
 
