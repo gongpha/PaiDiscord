@@ -219,7 +219,7 @@ class StatsCommand :
 
 class ImageCommand:
 	@bot.command(pass_context=True)
-	async def infoimg(ctx, user: discord.Member):
+	async def infoimg(ctx, user: discord.User):
 		img = Image.open("background.png")
 		draw = ImageDraw.Draw(img)
 		font = ImageFont.truetype("plat.ttf", 32)
@@ -229,9 +229,9 @@ class ImageCommand:
 		draw.text((5, 100), "User ID :  {}".format(user.id), (255, 255, 255), font=font)
 		draw.text((5, 140), "User Status : {}".format(user.status), (255, 255, 255), font=font)
 		draw.text((5, 180), "Created : {}".format(user.created_at), (255, 255, 255), font=font)
-		draw.text((5, 220), "Nickname: {}".format(user.display_name), (255, 255, 255), font=font)
+		#draw.text((5, 220), "Nickname: {}".format(user.display_name), (255, 255, 255), font=font)
 		draw.text((5, 300), "User Joined : {}".format(user.joined_at), (255, 255, 255), font=font)
-		draw.text((5, 260), "Users' Top Role : {}".format(user.top_role), (255, 255, 255), font=font)
+		#draw.text((5, 260), "Users' Top Role : {}".format(user.top_role), (255, 255, 255), font=font)
 		img.save('datinfo.png')
 		file = discord.File("datinfo.png", filename="datinfo.png")
 		await ctx.send(file=file)
