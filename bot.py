@@ -6,6 +6,9 @@ import asyncio
 import datetime
 import ncfu
 import statistics
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
 from discord.ext import commands
 
 import random
@@ -49,11 +52,13 @@ def ncfuDemo_genMonsGeneral() :
 
 token = os.environ.get('BOT_TOKEN',None)
 openprocch = int(os.environ.get('OPENPROC_CH',None))
+botname = "OpenProcess"
 
-
-bot = commands.Bot(command_prefix='::')
+cmd_prefix = '::'
+bot = commands.Bot(command_prefix=cmd_prefix, description="This is a bot :D")
+#bot.remove_command('help')
 client = discord.Client()
-# bot.remove_command("help")
+#bot.remove_command("help")
 
 def errtype(etype) :
 	if etype == 0 : 
@@ -63,6 +68,8 @@ def errtype(etype) :
 	else :
 		return "Wtf is this ?"
 		
+def strWithMonospace(string : str) :
+	return '`' + string +'`'
 def embed_error(ctxx, strr : str, vall : str, etype : int) :
 	errembed=discord.Embed(title="❌ Oops! There's something error", description=errtype(etype), color=0xff0000)
 	errembed.add_field(name=strr,value=vall)
@@ -87,7 +94,7 @@ async def status_task():
 			
 		counter += 10
 		
-		ncfu_mons_embed=discord.Embed(title="ONE HOUR TEN NAMES `mons_standard`", description="Generate 10 names from `ncfunt` using our arguments", color=0xff0080)
+		ncfu_mons_embed=discord.Embed(title="ONE HOUR TEN NAMES `mons_standard`", description="Generate 10 names from `ncfunt` using our arguments", color=0x9B59B6)
 		ncfu_mons_embed.add_field(name="1", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
 		ncfu_mons_embed.add_field(name="2", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
 		ncfu_mons_embed.add_field(name="3", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
@@ -111,12 +118,11 @@ async def status_task():
 
 @bot.event
 async def on_ready():
-	print('>> OpenProcess by gongpha')
 	print('>> login as')
 	print(bot.user.name)
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
-
+		
 class TestCommand:
 	@bot.command()
 	async def error_embed(ctx, method : str, solution : str, errtype : int) :
@@ -124,84 +130,76 @@ class TestCommand:
 		await ctx.send("Here, <@" + str(ctx.message.author.id) + ">", embed=embed_error(ctx, method, solution, errtype))
 		
 class BasicCommand :
-	@bot.command()
-	async def say(ctx):
-		"""Just say 'I'm still here.'"""
-		await ctx.send("I'm still here.")
-	@bot.command()
-	async def ncfunamegenmons(ctx):
-		"""Use NCFUDemo to generate MONS name (UNSTABLE)"""
-		await ctx.send(">> `"+ ncfuDemo_genMonsGeneral() + "`")
+	# @bot.command()
+	# async def say(ctx):
+		# """Just say 'I'm still here.'"""
+		# await ctx.send("I'm still here.")
+	# @bot.command()
+	# async def ncfunamegenmons(ctx):
+		# """Use NCFUDemo to generate MONS name (UNSTABLE)"""
+		# await ctx.send(">> `"+ ncfuDemo_genMonsGeneral() + "`")
 	@bot.command()
 	async def ncfunt(ctx, a: str):
 		"""Use NCFU to generate string using own template"""
 		await ctx.send(">> `"+ ncfu.n_t_generate(a) + "`")
-	@bot.command()
-	async def add(ctx, a: int, b: int):
-		"""Add 2 Numbers"""
-		await ctx.send(">> `" + str(a+b) + "`")
-	@bot.command()
-	async def sub(ctx, a: int, b: int):
-		"""Subtract 2 Numbers"""
-		await ctx.send(">> `" + str(a-b) + "`")
-	@bot.command()
-	async def mul(ctx, a: int, b: int):
-		"""Multiply 2 Numbers"""
-		await ctx.send(">> `" + str(a*b) + "`")
-	@bot.command()
-	async def div(ctx, a: int, b: int):
-		"""Divide 2 Numbers"""
-		await ctx.send(">> `" + str(a/b) + "`")
-	@bot.command()
-	async def sqrt(ctx, a: int):
-		"""SquareRoot of Number"""
-		await ctx.send(">> `" + str(math.sqrt(a)) + "`")
-	@bot.command()
-	async def mod(ctx, a: int, b: int):
-		"""Modulo 2 Numbers"""
-		await ctx.send(">> `" + str(a%b) + "`")
-	@bot.command()
-	async def msginfo(ctx):
-		"""This Message Information"""
-		await ctx.send("Author : `" + str(ctx.message.author) + 
-		"`\nChannel ID : `" + str(ctx.message.channel) + "`\nContent : `" + str(ctx.message.content) + "`")
+	# @bot.command()
+	# async def add(ctx, a: int, b: int):
+		# """Add 2 Numbers"""
+		# await ctx.send(">> `" + str(a+b) + "`")
+	# @bot.command()
+	# async def sub(ctx, a: int, b: int):
+		# """Subtract 2 Numbers"""
+		# await ctx.send(">> `" + str(a-b) + "`")
+	# @bot.command()
+	# async def mul(ctx, a: int, b: int):
+		# """Multiply 2 Numbers"""
+		# await ctx.send(">> `" + str(a*b) + "`")
+	# @bot.command()
+	# async def div(ctx, a: int, b: int):
+		# """Divide 2 Numbers"""
+		# await ctx.send(">> `" + str(a/b) + "`")
+	# @bot.command()
+	# async def sqrt(ctx, a: int):
+		# """SquareRoot of Number"""
+		# await ctx.send(">> `" + str(math.sqrt(a)) + "`")
+	# @bot.command()
+	# async def mod(ctx, a: int, b: int):
+		# """Modulo 2 Numbers"""
+		# await ctx.send(">> `" + str(a%b) + "`")
+	# @bot.command()
+	# async def msginfo(ctx):
+		# """This Message Information"""
+		# await ctx.send("Author : `" + str(ctx.message.author) + 
+		# "`\nChannel ID : `" + str(ctx.message.channel) + "`\nContent : `" + str(ctx.message.content) + "`")
 	@bot.command()
 	async def mentionme(ctx):
 		"""Ping myself"""
 		await ctx.send("<@" + str(ctx.message.author.id) + ">")
 	@bot.command()
-	async def mention(ctx, idthat = None):
+	async def mention(ctx, idthat : int):
 		"""Ping Him!"""
-		if not str.isdigit(idthat) :
-			user = await bot.get_user_info(ctx.message.mentions[0].id)
-		else :
-			user = await bot.get_user_info(idthat)
-
-		if not idthat:
-			await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "You missed argument!", "Put an argument then try again", 1))
-		else : 
-			if not user  :
-				await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "User wasn't found in the channel!", "Make sure, you put a correct User ID or that user has been in the channel", 1))
-			else :
-				await ctx.send("<@" + str(user.id) + ">")
-
+		await ctx.send("<@" + str(idthat) + ">")
 	@bot.command()
 	async def myavatar(ctx):
 		"""Your Avatar URL"""
 		await ctx.send("`" + str(ctx.message.author) + "` : " + str(ctx.message.author.avatar_url))
 	@bot.command()
-	async def avatar(ctx, idthat = None):
+	async def avatar(ctx, idthat):
 		"""His Avatar URL"""
 		if not str.isdigit(idthat) :
 			user = await bot.get_user_info(ctx.message.mentions[0].id)
 		else :
 			user = await bot.get_user_info(idthat)
-
+		
+		
+		#else :
+		#	user = idthat
+			
 		if not idthat:
 			await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "You missed argument!", "Put an argument then try again", 1))
 		else : 
 			if not user  :
-				await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "User wasn't found!", "Make sure, you put a correct User ID or that", 1))
+				await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "User wasn't found in the channel!", "Make sure, you put a correct User ID or that user has been in the channel", 1))
 			else :
 				await ctx.send("`" + str(user) + "` : " + str(user.avatar_url))
 
@@ -218,6 +216,42 @@ class StatsCommand :
 	async def median(ctx, *a):
 		"""Finding Median (Middle)"""
 		await ctx.send(">> `" + str(statistics.median(list(map(int, a)))) + "`")
+
+class ImageCommand:
+	@bot.command(pass_context=True)
+	async def infoimg(ctx, user: discord.Member):
+		img = Image.open("background.png")
+		draw = ImageDraw.Draw(img)
+		font = ImageFont.truetype("plat.ttf", 32)
+		fontbig = ImageFont.truetype("plat.ttf", 64)
+		draw.text((2, 0), "Information", (255, 255, 255), font=fontbig)
+		draw.text((5, 60), "Username : {}".format(user.name), (255, 255, 255), font=font)
+		draw.text((5, 100), "User ID :  {}".format(user.id), (255, 255, 255), font=font)
+		draw.text((5, 140), "User Status : {}".format(user.status), (255, 255, 255), font=font)
+		draw.text((5, 180), "Created : {}".format(user.created_at), (255, 255, 255), font=font)
+		draw.text((5, 220), "Nickname: {}".format(user.display_name), (255, 255, 255), font=font)
+		draw.text((5, 300), "User Joined : {}".format(user.joined_at), (255, 255, 255), font=font)
+		draw.text((5, 260), "Users' Top Role : {}".format(user.top_role), (255, 255, 255), font=font)
+		img.save('datinfo.png')
+		file = discord.File("datinfo.png", filename="datinfo.png")
+		await ctx.send(file=file)
+	@bot.command()
+	async def blur(ctx, url, scale):
+		"""Blur Image"""
+		
+
+@bot.command()
+async def helpNew(ctx) :
+	commands={}
+	commands[strWithMonospace(cmd_prefix+'null')]='null'
+	
+	msgh=discord.Embed(title='', description="written by gongpha#0394\nPowered by discord.py {} with Python {}".format(discord.__version__, platform.python_version()),color=0x9B59B6)
+	for command,description in commands.items():
+			msgh.add_field(name=command,value=description, inline=False)
+	msgh.set_footer(text='Requested by : {0}'.format(ctx.author), icon_url=ctx.message.author.avatar_url)
+	msgh.set_author(name="OpenProcess Information", icon_url="https://cdn.discordapp.com/avatars/457908707817422860/8d55af0c7e489818c9a8d3bd3b90eccc.webp?size=1024")
+	#msgh.set_thumbnail(url=ctx.author.avatar_url)
+	await ctx.send("", embed=msgh)
 
 #bot.add_cog(TestCommand())
 #bot.add_cog(BasicCommand())
