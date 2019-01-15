@@ -217,21 +217,16 @@ class StatsCommand :
 
 class ImageCommand:
 	@bot.command(pass_context=True)
-<<<<<<< HEAD
 	async def infoimg(ctx, rawuser):
 		if not str.isdigit(rawuser) :
 			user = await bot.get_user_info(ctx.message.mentions[0].id)
 		else :
 			user = await bot.get_user_info(rawuser)
-=======
-	async def infoimg(ctx, user: discord.User):
->>>>>>> 35391de6a8c5845e00ac7fb13872d98ef84d6b03
 		img = Image.open("background.png")
 		draw = ImageDraw.Draw(img)
 		fontsmall = ImageFont.truetype("plat.ttf", 22)
 		font = ImageFont.truetype("plat.ttf", 32)
 		fontbig = ImageFont.truetype("plat.ttf", 64)
-<<<<<<< HEAD
 
 		response = requests.get(user.avatar_url)
 		av = Image.open(BytesIO(response.content))
@@ -267,17 +262,7 @@ class ImageCommand:
 		#mutual_friends()
 		# friend = await user.mutual_friends()
 		# for ind,f in enumerate(friend) :
-			# draw.text((900-draw.textsize(f, fontsmall)[0], 48+(ind*25)), f, (0, 0, 0), font=fontsmall)
-=======
-		draw.text((2, 0), "Information", (255, 255, 255), font=fontbig)
-		draw.text((5, 60), "Username : {}".format(user.name), (255, 255, 255), font=font)
-		draw.text((5, 100), "User ID :  {}".format(user.id), (255, 255, 255), font=font)
-		#draw.text((5, 140), "User Status : {}".format(user.status), (255, 255, 255), font=font)
-		draw.text((5, 180), "Created : {}".format(user.created_at), (255, 255, 255), font=font)
-		#draw.text((5, 220), "Nickname: {}".format(user.display_name), (255, 255, 255), font=font)
-		#draw.text((5, 300), "User Joined : {}".format(user.joined_at), (255, 255, 255), font=font)
-		#draw.text((5, 260), "Users' Top Role : {}".format(user.top_role), (255, 255, 255), font=font)
->>>>>>> 35391de6a8c5845e00ac7fb13872d98ef84d6b03
+		# draw.text((900-draw.textsize(f, fontsmall)[0], 48+(ind*25)), f, (0, 0, 0), font=fontsmall)
 		img.save('datinfo.png')
 		file = discord.File("datinfo.png", filename="datinfo.png")
 		await ctx.send(file=file)
