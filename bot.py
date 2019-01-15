@@ -6,6 +6,8 @@ import asyncio
 import datetime
 import ncfu
 import statistics
+import requests
+from io import BytesIO
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
@@ -59,20 +61,13 @@ bot = commands.Bot(command_prefix=cmd_prefix, description="This is a bot :D")
 #bot.remove_command('help')
 client = discord.Client()
 #bot.remove_command("help")
-
-def errtype(etype) :
-	if etype == 0 : 
-		return "Null Error (IDK Too. What is this XD)"
-	elif etype == 1 :
-		return "Arguments error"
-	else :
-		return "Wtf is this ?"
 		
 def strWithMonospace(string : str) :
 	return '`' + string +'`'
-def embed_error(ctxx, strr : str, vall : str, etype : int) :
-	errembed=discord.Embed(title="❌ Oops! There's something error", description=errtype(etype), color=0xff0000)
+def embed_error(ctxx, strr : str, vall : str) :
+	errembed=discord.Embed(title="❌ Oops! There's something error", description="", color=0xff0000)
 	errembed.add_field(name=strr,value=vall)
+	errembed.set_footer(text='Requested by {0}'.format(ctxx.author), icon_url=ctxx.message.author.avatar_url)
 	return errembed
 
 async def status_task():
@@ -116,6 +111,21 @@ async def status_task():
 		await asyncio.sleep(3600)
 	print("!!! WARNING : COUNTER MAYBE RESET")
 
+# @bot.event
+# async def on_command_error(ctx, error):
+	# if isinstance(error, commands.MissingRequiredArgument):
+		# await ctx.send("", embed = embed_error(ctx, "Missing Required Arguments", "Make sure, you put correctly arguments"))
+	# elif isinstance(error, commands.BadArgument):
+		# await ctx.send("", embed = embed_error(ctx, "Bad Arguments or User not found!", "Make sure, you put correctly arguments, user id or user mention"))
+	# elif isinstance(error, commands.DisabledCommand):
+		# await ctx.send("", embed = embed_error(ctx, "This command is disabled", "You cannot use this command"))
+	# elif isinstance(error, commands.CommandOnCooldown):
+		# await ctx.send("Hey, {}. Cooldown".format(ctx.author))
+	# elif isinstance(error, commands.MissingPermissions):
+		# await ctx.send("", embed = embed_error(ctx, "You haven't permission!", "You cannot use this command"))
+	# elif isinstance(error, commands.ConversionError):
+		# await ctx.send("", embed = embed_error(ctx, "Converting Failed", "Make sure, you put correctly arguments"))
+	
 @bot.event
 async def on_ready():
 	print('>> login as')
@@ -125,9 +135,9 @@ async def on_ready():
 		
 class TestCommand:
 	@bot.command()
-	async def error_embed(ctx, method : str, solution : str, errtype : int) :
+	async def error_embed(ctx, method : str, solution : str) :
 		"""Testing Embed with Error"""
-		await ctx.send("Here, <@" + str(ctx.message.author.id) + ">", embed=embed_error(ctx, method, solution, errtype))
+		await ctx.send("Here, {}".format(ctx.author), embed=embed_error(ctx, method, solution))
 		
 class BasicCommand :
 	# @bot.command()
@@ -190,19 +200,7 @@ class BasicCommand :
 			user = await bot.get_user_info(ctx.message.mentions[0].id)
 		else :
 			user = await bot.get_user_info(idthat)
-		
-		
-		#else :
-		#	user = idthat
-			
-		if not idthat:
-			await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "You missed argument!", "Put an argument then try again", 1))
-		else : 
-			if not user  :
-				await ctx.send("Uh oh, <@" + str(ctx.message.author.id) + ">", embed = embed_error(ctx, "User wasn't found in the channel!", "Make sure, you put a correct User ID or that user has been in the channel", 1))
-			else :
-				await ctx.send("`" + str(user) + "` : " + str(user.avatar_url))
-
+		await ctx.send("`" + str(user) + "` : " + str(user.avatar_url))
 class StatsCommand :
 	@bot.command()
 	async def mean(ctx, *a):
@@ -219,19 +217,52 @@ class StatsCommand :
 
 class ImageCommand:
 	@bot.command(pass_context=True)
-	async def infoimg(ctx, user: discord.Member):
+	async def infoimg(ctx, rawuser):
+		if not str.isdigit(rawuser) :
+			user = await bot.get_user_info(ctx.message.mentions[0].id)
+		else :
+			user = await bot.get_user_info(rawuser)
 		img = Image.open("background.png")
 		draw = ImageDraw.Draw(img)
+		fontsmall = ImageFont.truetype("plat.ttf", 22)
 		font = ImageFont.truetype("plat.ttf", 32)
 		fontbig = ImageFont.truetype("plat.ttf", 64)
-		draw.text((2, 0), "Information", (255, 255, 255), font=fontbig)
-		draw.text((5, 60), "Username : {}".format(user.name), (255, 255, 255), font=font)
-		draw.text((5, 100), "User ID :  {}".format(user.id), (255, 255, 255), font=font)
-		draw.text((5, 140), "User Status : {}".format(user.status), (255, 255, 255), font=font)
-		draw.text((5, 180), "Created : {}".format(user.created_at), (255, 255, 255), font=font)
-		draw.text((5, 220), "Nickname: {}".format(user.display_name), (255, 255, 255), font=font)
-		draw.text((5, 300), "User Joined : {}".format(user.joined_at), (255, 255, 255), font=font)
-		draw.text((5, 260), "Users' Top Role : {}".format(user.top_role), (255, 255, 255), font=font)
+
+		response = requests.get(user.avatar_url)
+		av = Image.open(BytesIO(response.content))
+		av.thumbnail((128,128), Image.ANTIALIAS)
+		img.paste(av,(100,64))
+		draw.text((260, 64), user.name, (0, 0, 0), font=fontbig)
+		# display_name
+		draw.text((100, 38), ">> {}".format(ctx.message.author.name), (220, 220, 220), font=fontsmall)
+		draw.text((260, 128), str(user.id), (0, 0, 0), font=font)
+		#draw.text((5, 140), "User Status : {}".format(user.status), (255, 255, 255), font=font)
+		draw.text((260, 164), "Created : {}".format(user.created_at), (50, 50, 50), font=fontsmall)
+
+		# rel = user.relationship
+		
+		# if rel == None :
+			# draw.text((260, 220), "NO RELATIONSHIP", (221, 0, 0), font=fontsmall)
+		# else :
+			# rel.user = ctx.message.author
+			# if rel.type == discord.RelationshipType.friend :
+			
+		#draw.text((260, 220), "Is friend", (0, 170, 128), font=fontsmall)
+			# elif rel.type == discord.RelationshipType.blocked :
+				# draw.text((260, 220), "Blocked", (221, 0, 0), font=fontsmall)
+			# elif rel.type == discord.RelationshipType.incoming_request :
+				# draw.text((260, 220), "Outcomming Request", (255, 201, 15), font=fontsmall)
+			# elif rel.type == discord.RelationshipType.outgoing_request :
+				# draw.text((260, 220), "Incomming Request", (255, 201, 15), font=fontsmall)
+
+		if user.is_avatar_animated() :
+			draw.text((100, 195), "Animated", (131, 6, 255), font=fontsmall)
+
+
+		#mutual_friends()
+		# friend = await user.mutual_friends()
+		# for ind,f in enumerate(friend) :
+			# draw.text((900-draw.textsize(f, fontsmall)[0], 48+(ind*25)), f, (0, 0, 0), font=fontsmall)
 		img.save('datinfo.png')
 		file = discord.File("datinfo.png", filename="datinfo.png")
 		await ctx.send(file=file)
@@ -248,7 +279,7 @@ async def helpNew(ctx) :
 	msgh=discord.Embed(title='', description="written by gongpha#0394\nPowered by discord.py {} with Python {}".format(discord.__version__, platform.python_version()),color=0x9B59B6)
 	for command,description in commands.items():
 			msgh.add_field(name=command,value=description, inline=False)
-	msgh.set_footer(text='Requested by : {0}'.format(ctx.author), icon_url=ctx.message.author.avatar_url)
+	msgh.set_footer(text='Requested by {0}'.format(ctx.author), icon_url=ctx.message.author.avatar_url)
 	msgh.set_author(name="OpenProcess Information", icon_url="https://cdn.discordapp.com/avatars/457908707817422860/8d55af0c7e489818c9a8d3bd3b90eccc.webp?size=1024")
 	#msgh.set_thumbnail(url=ctx.author.avatar_url)
 	await ctx.send("", embed=msgh)
