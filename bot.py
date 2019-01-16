@@ -11,12 +11,13 @@ from io import BytesIO
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+from PIL import ImageFilter
 from discord.ext import commands
 
 import random
 
 ncfu_c = ["b", "c", "d","f","g","h","l","m","n","p","q","r","s","t","v","w","y","z"]
-	
+
 ncfu_C = ["b", "c", "ch", "d", "f", "g", "gh", "j", "k", "l", "llr", "m", "n", "nn", "p", "ph", "phpr", "q", "qu", "r", "rt", "rtm", "s", "sh", "t", "th", "v", "vm", "w", "wh", "y", "z"]
 
 ncfu_v = ["a", "e", "i", "o", "u", "y"]
@@ -51,7 +52,6 @@ def ncfuDemo_genMonsGeneral() :
 	return result;
 
 #print(ncfu_genMonsGeneral())
-
 token = os.environ.get('BOT_TOKEN',None)
 openprocch = int(os.environ.get('OPENPROC_CH',None))
 botname = "OpenProcess"
@@ -61,7 +61,7 @@ bot = commands.Bot(command_prefix=cmd_prefix, description="This is a bot :D")
 #bot.remove_command('help')
 client = discord.Client()
 #bot.remove_command("help")
-		
+
 def strWithMonospace(string : str) :
 	return '`' + string +'`'
 def embed_error(ctxx, strr : str, vall : str) :
@@ -84,11 +84,11 @@ async def status_task():
 		#await channel.send( "***ONE HOUR ONE NAME*** (mons)")
 		#for i in range(10) :
 		#	await channel.send("`" + ncfu_genMonsGeneral() + "`")
-			
-			
-			
+
+
+
 		counter += 10
-		
+
 		ncfu_mons_embed=discord.Embed(title="ONE HOUR TEN NAMES `mons_standard`", description="Generate 10 names from `ncfunt` using our arguments", color=0x9B59B6)
 		ncfu_mons_embed.add_field(name="1", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
 		ncfu_mons_embed.add_field(name="2", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
@@ -102,10 +102,10 @@ async def status_task():
 		ncfu_mons_embed.add_field(name="10", value="`" + ncfu.n_t_generate(ncfu.mons_std) + "`", inline=True)
 		ncfu_mons_embed.set_footer(text=str(counter) + " names generated. Since last deploy ("+ lastdd.strftime('%d, %B %Y') +" : " + str(y_be))
 		await channel.send("",embed=ncfu_mons_embed)
-		
-		
-		
-		
+
+
+
+
 		#await channel.send(str(counter) + " names generated. Since last deploy ("+ str(lastdd)+")")
 		print("names : " + str(counter))
 		await asyncio.sleep(3600)
@@ -125,20 +125,20 @@ async def status_task():
 		# await ctx.send("", embed = embed_error(ctx, "You haven't permission!", "You cannot use this command"))
 	# elif isinstance(error, commands.ConversionError):
 		# await ctx.send("", embed = embed_error(ctx, "Converting Failed", "Make sure, you put correctly arguments"))
-	
+
 @bot.event
 async def on_ready():
 	print('>> login as')
 	print(bot.user.name)
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
-		
+
 class TestCommand:
 	@bot.command()
 	async def error_embed(ctx, method : str, solution : str) :
 		"""Testing Embed with Error"""
 		await ctx.send("Here, {}".format(ctx.author), embed=embed_error(ctx, method, solution))
-		
+
 class BasicCommand :
 	# @bot.command()
 	# async def say(ctx):
@@ -179,7 +179,7 @@ class BasicCommand :
 	# @bot.command()
 	# async def msginfo(ctx):
 		# """This Message Information"""
-		# await ctx.send("Author : `" + str(ctx.message.author) + 
+		# await ctx.send("Author : `" + str(ctx.message.author) +
 		# "`\nChannel ID : `" + str(ctx.message.channel) + "`\nContent : `" + str(ctx.message.content) + "`")
 	@bot.command()
 	async def mentionme(ctx):
@@ -217,21 +217,16 @@ class StatsCommand :
 
 class ImageCommand:
 	@bot.command(pass_context=True)
-<<<<<<< HEAD
 	async def infoimg(ctx, rawuser):
 		if not str.isdigit(rawuser) :
 			user = await bot.get_user_info(ctx.message.mentions[0].id)
 		else :
 			user = await bot.get_user_info(rawuser)
-=======
-	async def infoimg(ctx, user: discord.User):
->>>>>>> 35391de6a8c5845e00ac7fb13872d98ef84d6b03
 		img = Image.open("background.png")
 		draw = ImageDraw.Draw(img)
 		fontsmall = ImageFont.truetype("plat.ttf", 22)
 		font = ImageFont.truetype("plat.ttf", 32)
 		fontbig = ImageFont.truetype("plat.ttf", 64)
-<<<<<<< HEAD
 
 		response = requests.get(user.avatar_url)
 		av = Image.open(BytesIO(response.content))
@@ -245,13 +240,13 @@ class ImageCommand:
 		draw.text((260, 164), "Created : {}".format(user.created_at), (50, 50, 50), font=fontsmall)
 
 		# rel = user.relationship
-		
+
 		# if rel == None :
 			# draw.text((260, 220), "NO RELATIONSHIP", (221, 0, 0), font=fontsmall)
 		# else :
 			# rel.user = ctx.message.author
 			# if rel.type == discord.RelationshipType.friend :
-			
+
 		#draw.text((260, 220), "Is friend", (0, 170, 128), font=fontsmall)
 			# elif rel.type == discord.RelationshipType.blocked :
 				# draw.text((260, 220), "Blocked", (221, 0, 0), font=fontsmall)
@@ -268,29 +263,55 @@ class ImageCommand:
 		# friend = await user.mutual_friends()
 		# for ind,f in enumerate(friend) :
 			# draw.text((900-draw.textsize(f, fontsmall)[0], 48+(ind*25)), f, (0, 0, 0), font=fontsmall)
-=======
-		draw.text((2, 0), "Information", (255, 255, 255), font=fontbig)
-		draw.text((5, 60), "Username : {}".format(user.name), (255, 255, 255), font=font)
-		draw.text((5, 100), "User ID :  {}".format(user.id), (255, 255, 255), font=font)
-		#draw.text((5, 140), "User Status : {}".format(user.status), (255, 255, 255), font=font)
-		draw.text((5, 180), "Created : {}".format(user.created_at), (255, 255, 255), font=font)
-		#draw.text((5, 220), "Nickname: {}".format(user.display_name), (255, 255, 255), font=font)
-		#draw.text((5, 300), "User Joined : {}".format(user.joined_at), (255, 255, 255), font=font)
-		#draw.text((5, 260), "Users' Top Role : {}".format(user.top_role), (255, 255, 255), font=font)
->>>>>>> 35391de6a8c5845e00ac7fb13872d98ef84d6b03
 		img.save('datinfo.png')
 		file = discord.File("datinfo.png", filename="datinfo.png")
 		await ctx.send(file=file)
 	@bot.command()
-	async def blur(ctx, url, scale):
+	async def blur(ctx, url):
 		"""Blur Image"""
-		
+		response = requests.get(url)
+		im = Image.open(BytesIO(response.content))
+		blurim = im.filter(ImageFilter.BLUR)
+		blurim.save('blur.png')
+		file = discord.File("blur.png", filename="blur.png")
+		await ctx.send(file=file)
+
+	@bot.command()
+	async def gaussianblur(ctx, url, scale=2):
+		"""Gaussian Blur Image"""
+		response = requests.get(url)
+		im = Image.open(BytesIO(response.content))
+		blurim = im.filter(ImageFilter.GaussianBlur(scale))
+		blurim.save('gaussianblur.png')
+		file = discord.File("gaussianblur.png", filename="gaussianblur.png")
+		await ctx.send(file=file)
+
+	@bot.command()
+	async def boxblur(ctx, url, scale=2):
+		"""Box Blur Image"""
+		response = requests.get(url)
+		im = Image.open(BytesIO(response.content))
+		blurim = im.filter(ImageFilter.BoxBlur(scale))
+		blurim.save('boxblur.png')
+		file = discord.File("boxblur.png", filename="boxblur.png")
+		await ctx.send(file=file)
 
 @bot.command()
 async def helpNew(ctx) :
 	commands={}
-	commands[strWithMonospace(cmd_prefix+'null')]='null'
-	
+	commands[strWithMonospace(cmd_prefix+'mention')]='Mention to user'
+	commands[strWithMonospace(cmd_prefix+'mentionme')]='Mention self'
+	commands[strWithMonospace(cmd_prefix+'avatar')]="Give user's avatar URL"
+	commands[strWithMonospace(cmd_prefix+'myavatar')]='Give my avatar URL'
+	commands[strWithMonospace(cmd_prefix+'ncfunt')]='Call NCFU by using own template'
+	commands[strWithMonospace(cmd_prefix+'mean')]='Finding Arithmetic mean'
+	commands[strWithMonospace(cmd_prefix+'h_mean')]='Finding Harmonic mean'
+	commands[strWithMonospace(cmd_prefix+'median')]='Finding Median (Middle)'
+	commands[strWithMonospace(cmd_prefix+'infoimg')]="Send User's info"
+	commands[strWithMonospace(cmd_prefix+'blur')]="Blur Image"
+	commands[strWithMonospace(cmd_prefix+'gaussianblur')]="Gaussian Blur Image"
+	commands[strWithMonospace(cmd_prefix+'boxblur')]="Box Blur Image"
+
 	msgh=discord.Embed(title='', description="written by gongpha#0394\nPowered by discord.py {} with Python {}".format(discord.__version__, platform.python_version()),color=0x9B59B6)
 	for command,description in commands.items():
 			msgh.add_field(name=command,value=description, inline=False)
