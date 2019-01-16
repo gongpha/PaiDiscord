@@ -262,7 +262,7 @@ class ImageCommand:
 		#mutual_friends()
 		# friend = await user.mutual_friends()
 		# for ind,f in enumerate(friend) :
-			# draw.text((900-draw.textsize(f, fontsmall)[0], 48+(ind*25)), f, (0, 0, 0), font=fontsmall)
+		# draw.text((900-draw.textsize(f, fontsmall)[0], 48+(ind*25)), f, (0, 0, 0), font=fontsmall)
 		img.save('datinfo.png')
 		file = discord.File("datinfo.png", filename="datinfo.png")
 		await ctx.send(file=file)
