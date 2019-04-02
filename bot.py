@@ -7,12 +7,22 @@ import datetime
 import ncfu
 import statistics
 import requests
+import traceback
+import typing
+import sys
+from bot_string import *
 from io import BytesIO
+from imageproc import filter
+from imageproc import generate
+from discord.ext import commands
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 from PIL import ImageFilter
-from discord.ext import commands
+from random import randint
+from difflib import SequenceMatcher
+from numpy import argmax
+
 
 import random
 
@@ -58,22 +68,203 @@ botname = "OpenProcess"
 
 cmd_prefix = '::'
 bot = commands.Bot(command_prefix=cmd_prefix, description="This is a bot :D")
-#bot.remove_command('help')
+bot.remove_command('help')
 client = discord.Client()
 #bot.remove_command("help")
 
 def strWithMonospace(string : str) :
 	return '`' + string +'`'
+
 def embed_error(ctxx, strr : str, vall : str) :
-	errembed=discord.Embed(title="❌ Oops! There's something error", description="", color=0xff0000)
-	errembed.add_field(name=strr,value=vall)
-	errembed.set_footer(text='Requested by {0}'.format(ctxx.author), icon_url=ctxx.message.author.avatar_url)
+	errembed=discord.Embed(title=stringstack["th"]["_error_title"], description="", color=0xff0000)
+	errembed.add_field(name=strr, value=vall)
+	errembed.set_footer(text=stringstack["th"]["_request_by"].format(ctxx.author), icon_url=ctxx.message.author.avatar_url)
 	return errembed
+
+def embed_error_not_found_meaning(ctx, main : str, orthis : str) :
+	return embed_error(ctx, stringstack["th"]["_not_found_with"].format(main), stringstack["th"]["_help_you_mean_this"].format(orthis))
+
+def embed_error_incorrect_meaning(ctx, main : str, orthis : str, what : str) :
+	return embed_error(ctx, stringstack["th"]["_incorrect_with"].format(main), stringstack["th"]["_help_you_mean_this_because"].format(orthis, what))
+
+def embed_error_special(ctxx, theerror) :
+	errembed=discord.Embed(title=stringstack["th"]["_error_title"], description="", color=0xff0000)
+	errorfixstr = ""
+	error = getattr(theerror, 'original', theerror)
+	print('COMMAND GOT EXPECTION {}:'.format(ctxx.command), file=sys.stderr)
+	traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+
+	if isinstance(theerror, commands.BadArgument) :
+		errorstr = "_error_bad_argument"
+	elif isinstance(theerror, commands.MissingRequiredArgument) :
+		errorstr = "_error_missing_required_argument"
+	elif isinstance(theerror, commands.DisabledCommand) :
+		errorstr = "_error_disabled_command"
+	elif isinstance(theerror, commands.NoPrivateMessage) :
+		errorstr = "_error_no_private_message"
+	elif isinstance(error, requests.exceptions.MissingSchema) :
+		errorstr = "_request_missing_schema"
+	elif isinstance(error, discord.NotFound) :
+		errorstr = "_error_not_found_user"
+	elif isinstance(theerror, commands.CommandInvokeError) :
+		errorstr = "_error_command_invoke_error"
+		errorfixstr = error
+	else :
+		errorstr = "_error_unknown"
+	errembed.add_field(name=stringstack["th"][errorstr],value=stringstack["th"][errorstr + "_fix"].format(errorfixstr))
+	errembed.set_footer(text=stringstack["th"]["_request_by"].format(ctxx.author), icon_url=ctxx.message.author.avatar_url)
+	return errembed
+
+def userref(ctx,idthat) :
+	if not str.isdigit(idthat) :
+		return ctx.message.mentions[0].id
+	else :
+		return idthat
+
+def userrefs(ctx, idthose) :
+	ele = []
+	ind = 0
+	for e in idthose :
+		if not str.isdigit(e) :
+			if len(ctx.message.mentions) > ind :
+				ele.append(ctx.message.mentions[ind].id)
+				ind += 1
+		else :
+			ele.append(int(e))
+	return ele;
+
+def listToIdList(thelist) :
+	ele = []
+	for u in thelist :
+		ele.append(mentionToId(str(u)))
+	return ele;
+
+def userlistToMention(ctx, userlist) :
+	ele = []
+	for u in userlist :
+		if not str.isdigit(u) :
+			ele.append(u)
+		else :
+			ele.append("<@" + str(u) + ">")
+	return ele;
+
+def IdListToMention(userlist : list) :
+	lists = []
+	for a in userlist :
+		lists.append("<@" + str(a) + ">")
+	return lists;
+
+def IdToMention(user) :
+	return "<@" + str(user) + ">"
+
+def cmpStrList(str, list, ratio = 0.8) :
+	nearestList = []
+	nearestListStr = []
+	for a in list :
+		try:
+			if SequenceMatcher(None, a.upper(), str.upper()).ratio() >= ratio :
+				return [True]
+			else :
+				nearestListStr.append(a)
+				nearestList.append(SequenceMatcher(None, a.upper(), str.upper()).ratio())
+		except AttributeError:
+			if SequenceMatcher(None, a, str).ratio() >= ratio :
+				return [True]
+			else :
+				nearestListStr.append(a)
+				nearestList.append(SequenceMatcher(None, a, str).ratio())
+
+	max_value = max(nearestList)
+	max_index = argmax(nearestList)
+	return [False, nearestListStr[max_index]]
+
+	return false
+
+def returnhttpstring(code, subfix = "", localize = "th") :
+	# http_code_return = {
+    #     200: "zero",
+    #     201: "one",
+    #     204: "two",
+	# 	304: "two",
+	# 	400: "two",
+	# 	401: "two",
+	# 	403: "two",
+	# 	404: "two",
+	# 	405: "two",
+	# 	429: "two",
+	# 	502: "two",
+    # }
+	return stringstack[localize]["_http_status_"+str(code)+subfix]
+
+async def isItMentionOrIdAndValid(user) :
+	if str.isdigit(user) :
+		try :
+			await bot.get_user_info(int(user))
+		except discord.NotFound :
+			return False
+		return True
+	else :
+		if user.startswith("<@") and user.endswith(">") :
+			return True
+		else :
+			return False
+
+def isItMentionOrId(user) :
+	if str.isdigit(user) :
+		return True
+	else :
+		if user.startswith("<@") and user.endswith(">") :
+			return True
+		else :
+			return False
+
+def mentionToId(ctx, mention) :
+	if mention == 'self' :
+		return ctx.author.id
+	result = ""
+	result = mention.replace('<@', '')
+	result = result.replace('>', '')
+	return result
+
+async def getLastImage(ctx) :
+	messages = await ctx.channel.history(limit=100).flatten()
+
+	for msg in messages :
+		if msg.attachments :
+			return Image.open(BytesIO(requests.get(msg.attachments[0].url).content))
+		else :
+			if msg.embeds :
+				return Image.open(BytesIO(requests.get(msg.embeds[0].url).content))
+	return Image.open(BytesIO(requests.get(ctx.author.avatar_url).content))
+
+async def loadImageFrom(ctx, source) :
+	async with ctx.channel.typing() :
+		url = ""
+		if isItMentionOrId(source) :
+			object = await bot.get_user_info(mentionToId(source))
+				# raise Exception("_error_not_found_user")
+				# userobj = await bot.get_user_info(int(mentionToId(source)))
+				# if userobj == None :
+				# 	await ctx.send("เอิ่ม...",embed=embed_error(ctx, stringstack["th"]["_error_not_found_user"], stringstack["th"]["_error_not_found_user_fix"]))
+				# else :
+				# 	url = userobj.avatar_url
+			if object == None :
+				raise discord.NotFound
+				return
+			url = object.avatar_url
+		else :
+			url = source
+
+		response = requests.get(url)
+		# if response.status_code != 200 :
+		# 	raise Exception("_error_http|_http_status_"+str(response.status_code))
+		# else:
+		return Image.open(BytesIO(response.content))
 
 async def status_task():
 	print("Starting Task...")
 	await bot.wait_until_ready()
-	activitygame = discord.Game(name="Processor")
+	activitygame = discord.Game(name="อะไรอยู่ไม่รู้")
 	await bot.change_presence(activity=activitygame)
 	counter = 0
 	lastdd = datetime.datetime.now()
@@ -125,6 +316,9 @@ async def status_task():
 		# await ctx.send("", embed = embed_error(ctx, "You haven't permission!", "You cannot use this command"))
 	# elif isinstance(error, commands.ConversionError):
 		# await ctx.send("", embed = embed_error(ctx, "Converting Failed", "Make sure, you put correctly arguments"))
+@bot.event
+async def on_command_error(ctx, error):
+	await ctx.send("มีข้อผิดพลาดจ้า", embed=embed_error_special(ctx, error))
 
 @bot.event
 async def on_ready():
@@ -133,130 +327,105 @@ async def on_ready():
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 
-class TestCommand:
-	@bot.command()
-	async def error_embed(ctx, method : str, solution : str) :
-		"""Testing Embed with Error"""
-		await ctx.send("Here, {}".format(ctx.author), embed=embed_error(ctx, method, solution))
+@bot.command()
+async def error_embed(ctx, method : str, solution : str) :
+	"""Testing Embed with Error"""
+	await ctx.send("Here, {}".format(ctx.author), embed=embed_error(ctx, method, solution))
 
-class BasicCommand :
-	# @bot.command()
-	# async def say(ctx):
-		# """Just say 'I'm still here.'"""
-		# await ctx.send("I'm still here.")
-	# @bot.command()
-	# async def ncfunamegenmons(ctx):
-		# """Use NCFUDemo to generate MONS name (UNSTABLE)"""
-		# await ctx.send(">> `"+ ncfuDemo_genMonsGeneral() + "`")
-	@bot.command()
-	async def ncfunt(ctx, a: str):
-		"""Use NCFU to generate string using own template"""
-		await ctx.send(">> `"+ ncfu.n_t_generate(a) + "`")
-	# @bot.command()
-	# async def add(ctx, a: int, b: int):
-		# """Add 2 Numbers"""
-		# await ctx.send(">> `" + str(a+b) + "`")
-	# @bot.command()
-	# async def sub(ctx, a: int, b: int):
-		# """Subtract 2 Numbers"""
-		# await ctx.send(">> `" + str(a-b) + "`")
-	# @bot.command()
-	# async def mul(ctx, a: int, b: int):
-		# """Multiply 2 Numbers"""
-		# await ctx.send(">> `" + str(a*b) + "`")
-	# @bot.command()
-	# async def div(ctx, a: int, b: int):
-		# """Divide 2 Numbers"""
-		# await ctx.send(">> `" + str(a/b) + "`")
-	# @bot.command()
-	# async def sqrt(ctx, a: int):
-		# """SquareRoot of Number"""
-		# await ctx.send(">> `" + str(math.sqrt(a)) + "`")
-	# @bot.command()
-	# async def mod(ctx, a: int, b: int):
-		# """Modulo 2 Numbers"""
-		# await ctx.send(">> `" + str(a%b) + "`")
-	# @bot.command()
-	# async def msginfo(ctx):
-		# """This Message Information"""
-		# await ctx.send("Author : `" + str(ctx.message.author) +
-		# "`\nChannel ID : `" + str(ctx.message.channel) + "`\nContent : `" + str(ctx.message.content) + "`")
-	@bot.command()
-	async def mentionme(ctx):
-		"""Ping myself"""
-		await ctx.send("<@" + str(ctx.message.author.id) + ">")
-	@bot.command()
-	async def mention(ctx, idthat : int):
-		"""Ping Him!"""
-		await ctx.send("<@" + str(idthat) + ">")
-	@bot.command()
-	async def myavatar(ctx):
-		"""Your Avatar URL"""
-		await ctx.send("`" + str(ctx.message.author) + "` : " + str(ctx.message.author.avatar_url))
-	@bot.command()
-	async def avatar(ctx, idthat):
-		"""His Avatar URL"""
-		if not str.isdigit(idthat) :
-			user = await bot.get_user_info(ctx.message.mentions[0].id)
+# @bot.command()
+# async def say(ctx):
+	# """Just say 'I'm still here.'"""
+	# await ctx.send("I'm still here.")
+# @bot.command()
+# async def ncfunamegenmons(ctx):
+	# """Use NCFUDemo to generate MONS name (UNSTABLE)"""
+	# await ctx.send(">> `"+ ncfuDemo_genMonsGeneral() + "`")
+@bot.command()
+async def ncfunt(ctx, *, a: str):
+	"""Use NCFU to generate string using own template"""
+	await ctx.send(">> `"+ ncfu.n_t_generate(a) + "`")
+# @bot.command()
+# async def add(ctx, a: int, b: int):
+	# """Add 2 Numbers"""
+	# await ctx.send(">> `" + str(a+b) + "`")
+# @bot.command()
+# async def sub(ctx, a: int, b: int):
+	# """Subtract 2 Numbers"""
+	# await ctx.send(">> `" + str(a-b) + "`")
+# @bot.command()
+# async def mul(ctx, a: int, b: int):
+	# """Multiply 2 Numbers"""
+	# await ctx.send(">> `" + str(a*b) + "`")
+# @bot.command()
+# async def div(ctx, a: int, b: int):
+	# """Divide 2 Numbers"""
+	# await ctx.send(">> `" + str(a/b) + "`")
+# @bot.command()
+# async def sqrt(ctx, a: int):
+	# """SquareRoot of Number"""
+	# await ctx.send(">> `" + str(math.sqrt(a)) + "`")
+# @bot.command()
+# async def mod(ctx, a: int, b: int):
+	# """Modulo 2 Numbers"""
+	# await ctx.send(">> `" + str(a%b) + "`")
+# @bot.command()
+# async def msginfo(ctx):
+	# """This Message Information"""
+	# await ctx.send("Author : `" + str(ctx.message.author) +
+	# "`\nChannel ID : `" + str(ctx.message.channel) + "`\nContent : `" + str(ctx.message.content) + "`")
+@bot.command()	  # 1    2      3
+async def mention(ctx, idthose : commands.Greedy[discord.Member], count : typing.Optional[int] = 1) :
+	"""Ping Him!"""
+	# if not count.isdigit() :
+	# 	await ctx.send("เดี๋ยว ๆ ๆ",embed=embed_error(ctx, stringstack["th"]["_error_int_is_not_number"].format(stringstack["th"]["_argument_index"].format(2)), stringstack["th"]["_error_int_is_not_number_fix"].format(stringstack["th"]["_argument_index"].format(2))))
+	# else :
+		# for _ in range(int(count)) :
+		# 	for u in IdListToMention(userrefs(ctx, list(idthose))) :
+		# 		strout += u
+		# await ctx.send(strout)
+	async with ctx.channel.typing() :
+		for _ in range(int(count)) :
+			for u in idthose :
+				print(">> Mention to {0} ({1})".format(u,u.id))
+				await ctx.send(u.mention)
+@bot.command()
+async def avatar_png(ctx, rawuser : typing.Optional[str] = "self", size : typing.Optional[str] = "1024") :
+	user = await bot.get_user_info(mentionToId(ctx, rawuser))
+	if not size.isdigit() :
+		result = cmpStrList(size, keyword["th"]["default"])
+		if result[0] :
+			size = 1024
 		else :
-			user = await bot.get_user_info(idthat)
-		await ctx.send("`" + str(user) + "` : " + str(user.avatar_url))
-class StatsCommand :
-	@bot.command()
-	async def mean(ctx, *a):
-		"""Finding Arithmetic mean"""
-		await ctx.send(">> `" + str(statistics.mean(list(map(int, a)))) + "`")
-	@bot.command()
-	async def h_mean(ctx, *a):
-		"""Finding Harmonic mean"""
-		await ctx.send(">> `" + str(statistics.harmonic_mean(list(map(int, a)))) + "`")
-	@bot.command()
-	async def median(ctx, *a):
-		"""Finding Median (Middle)"""
-		await ctx.send(">> `" + str(statistics.median(list(map(int, a)))) + "`")
-
-class ImageCommand:
-	@bot.command(pass_context=True)
-	async def infoimg(ctx, rawuser):
-		if not str.isdigit(rawuser) :
-			user = await bot.get_user_info(ctx.message.mentions[0].id)
-		else :
-			user = await bot.get_user_info(rawuser)
-		img = Image.open("background.png")
-		draw = ImageDraw.Draw(img)
-		fontsmall = ImageFont.truetype("plat.ttf", 22)
-		font = ImageFont.truetype("plat.ttf", 32)
-		fontbig = ImageFont.truetype("plat.ttf", 64)
-
-		response = requests.get(user.avatar_url)
-		av = Image.open(BytesIO(response.content))
-		av.thumbnail((128,128), Image.ANTIALIAS)
-		img.paste(av,(100,64))
-		draw.text((260, 64), user.name, (0, 0, 0), font=fontbig)
-		# display_name
-		draw.text((100, 38), ">> {}".format(ctx.message.author.name), (220, 220, 220), font=fontsmall)
-		draw.text((260, 128), str(user.id), (0, 0, 0), font=font)
-		#draw.text((5, 140), "User Status : {}".format(user.status), (255, 255, 255), font=font)
-		draw.text((260, 164), "Created : {}".format(user.created_at), (50, 50, 50), font=fontsmall)
-
-		# rel = user.relationship
-
-		# if rel == None :
-			# draw.text((260, 220), "NO RELATIONSHIP", (221, 0, 0), font=fontsmall)
-		# else :
-			# rel.user = ctx.message.author
-			# if rel.type == discord.RelationshipType.friend :
-
-		#draw.text((260, 220), "Is friend", (0, 170, 128), font=fontsmall)
-			# elif rel.type == discord.RelationshipType.blocked :
-				# draw.text((260, 220), "Blocked", (221, 0, 0), font=fontsmall)
-			# elif rel.type == discord.RelationshipType.incoming_request :
-				# draw.text((260, 220), "Outcomming Request", (255, 201, 15), font=fontsmall)
-			# elif rel.type == discord.RelationshipType.outgoing_request :
-				# draw.text((260, 220), "Incomming Request", (255, 201, 15), font=fontsmall)
-
-		if user.is_avatar_animated() :
-			draw.text((100, 195), "Animated", (131, 6, 255), font=fontsmall)
+			await ctx.send("เอ่อ เดี๋ยว ?",embed=embed_error_incorrect_meaning(ctx, size, result[1], stringstack["th"]["_default_input"]))
+			return
+	if user.avatar == None :
+		url = user.avatar_url
+		await ctx.send(stringstack["th"]["_avatar_request"].format(user, size, url))
+	else :
+		url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size={1}".format(user, size)
+		await ctx.send(stringstack["th"]["_avatar_request_size"].format(user, size, url))
+@bot.command()
+async def avatar(ctx, rawuser : typing.Optional[str] = "self"):
+	"""His Avatar URL"""
+	user = await bot.get_user_info(mentionToId(ctx, rawuser))
+	await ctx.send("`" + str(user) + "` : " + str(user.avatar_url))
+@bot.command()
+async def mean(ctx, *a):
+	"""Finding Arithmetic mean"""
+	await ctx.send(">> `" + str(statistics.mean(list(map(int, a)))) + "`")
+@bot.command()
+async def h_mean(ctx, *a):
+	"""Finding Harmonic mean"""
+	await ctx.send(">> `" + str(statistics.harmonic_mean(list(map(int, a)))) + "`")
+@bot.command()
+async def median(ctx, *a):
+	"""Finding Median (Middle)"""
+	await ctx.send(">> `" + str(statistics.median(list(map(int, a)))) + "`")
+@bot.command(pass_context=True)
+async def infoimg(ctx, *rawuser):
+	for u in list(rawuser) :
+		#user = await bot.get_user_info(mentionToId(u))
+		img = generate.infoimage(ctx,await bot.get_user_info(mentionToId(u)),Image.open("background.png"))
 
 
 		#mutual_friends()
@@ -266,59 +435,118 @@ class ImageCommand:
 		img.save('datinfo.png')
 		file = discord.File("datinfo.png", filename="datinfo.png")
 		await ctx.send(file=file)
-	@bot.command()
-	async def blur(ctx, url):
-		"""Blur Image"""
-		response = requests.get(url)
-		im = Image.open(BytesIO(response.content))
-		blurim = im.filter(ImageFilter.BLUR)
-		blurim.save('blur.png')
-		file = discord.File("blur.png", filename="blur.png")
-		await ctx.send(file=file)
-
-	@bot.command()
-	async def gaussianblur(ctx, url, scale=2):
-		"""Gaussian Blur Image"""
-		response = requests.get(url)
-		im = Image.open(BytesIO(response.content))
-		blurim = im.filter(ImageFilter.GaussianBlur(scale))
-		blurim.save('gaussianblur.png')
-		file = discord.File("gaussianblur.png", filename="gaussianblur.png")
-		await ctx.send(file=file)
-
-	@bot.command()
-	async def boxblur(ctx, url, scale=2):
-		"""Box Blur Image"""
-		response = requests.get(url)
-		im = Image.open(BytesIO(response.content))
-		blurim = im.filter(ImageFilter.BoxBlur(scale))
-		blurim.save('boxblur.png')
-		file = discord.File("boxblur.png", filename="boxblur.png")
-		await ctx.send(file=file)
+@bot.command()
+async def blur(ctx, url : typing.Optional[str]="auto"):
+	"""Blur Image"""
+	if url == "auto" :
+		im = await getLastImage(ctx)
+	else :
+		im = await loadImageFrom(ctx,url)
+	im = await loadImageFrom(ctx,url)
+	blurim = im.filter(ImageFilter.BLUR)
+	blurim.save('cache/blur.png')
+	file = discord.File("cache/blur.png", filename="blur.png")
+	await ctx.send(file=file)
 
 @bot.command()
-async def helpNew(ctx) :
-	commands={}
-	commands[strWithMonospace(cmd_prefix+'mention')]='Mention to user'
-	commands[strWithMonospace(cmd_prefix+'mentionme')]='Mention self'
-	commands[strWithMonospace(cmd_prefix+'avatar')]="Give user's avatar URL"
-	commands[strWithMonospace(cmd_prefix+'myavatar')]='Give my avatar URL'
-	commands[strWithMonospace(cmd_prefix+'ncfunt')]='Call NCFU by using own template'
-	commands[strWithMonospace(cmd_prefix+'mean')]='Finding Arithmetic mean'
-	commands[strWithMonospace(cmd_prefix+'h_mean')]='Finding Harmonic mean'
-	commands[strWithMonospace(cmd_prefix+'median')]='Finding Median (Middle)'
-	commands[strWithMonospace(cmd_prefix+'infoimg')]="Send User's info"
-	commands[strWithMonospace(cmd_prefix+'blur')]="Blur Image"
-	commands[strWithMonospace(cmd_prefix+'gaussianblur')]="Gaussian Blur Image"
-	commands[strWithMonospace(cmd_prefix+'boxblur')]="Box Blur Image"
+async def gaussianblur(ctx, scale : typing.Optional[int] = 2, url : typing.Optional[str]="auto"):
+	"""Gaussian Blur Image"""
+	if url == "auto" :
+		im = await getLastImage(ctx)
+	else :
+		im = await loadImageFrom(ctx,url)
+	blurim = im.filter(ImageFilter.GaussianBlur(scale))
+	blurim.save('cache/gaussianblur.png')
+	file = discord.File("cache/gaussianblur.png", filename="gaussianblur.png")
+	await ctx.send(file=file)
 
-	msgh=discord.Embed(title='', description="written by gongpha#0394\nPowered by discord.py {} with Python {}".format(discord.__version__, platform.python_version()),color=0x9B59B6)
+@bot.command()
+async def boxblur(ctx, scale : typing.Optional[int] = 2, url : typing.Optional[str]="auto"):
+	"""Box Blur Image"""
+	if url == "auto" :
+		im = await getLastImage(ctx)
+	else :
+		im = await loadImageFrom(ctx,url)
+	blurim = im.filter(ImageFilter.BoxBlur(scale))
+	blurim.save('cache/boxblur.png')
+	file = discord.File("cache/boxblur.png", filename="boxblur.png")
+	await ctx.send(file=file)
+
+@bot.command()
+async def medianimage(ctx, url="auto"):
+	"""Box Blur Image"""
+	if url == "auto" :
+		im = await getLastImage(ctx)
+	else :
+		im = await loadImageFrom(ctx,url)
+
+	filter.median(im).save('cache/medianimage.png')
+	file = discord.File("cache/medianimage.png", filename="medianimage.png")
+	await ctx.send(file=file)
+
+@bot.command()
+async def ก็มาดิครับ(ctx, *idthose) :
+	await ctx.send("ก็มาดิครับ ! " + " กับ ".join(userlistToMention(ctx, list(idthose))))
+
+@bot.command()
+async def resize(ctx, width : str, height : typing.Optional[str] = "asWidth", resample : typing.Optional[str] = "bilinear", url : typing.Optional[str] = "auto"):
+	"""Box Blur Image"""
+	if url == "auto" :
+		im = await getLastImage(ctx)
+	else :
+		im = await loadImageFrom(ctx,url)
+
+	if width.endswith("%") :
+		width = int((int(width.replace('%', '')) / 100) * im.width)
+
+	if height == "asWidth" :
+		height = width
+	else :
+		if height.endswith("%") :
+			height = int((int(height.replace('%', '')) / 100) * im.height)
+
+	resamp = {
+		"nearest" : Image.NEAREST,
+		"bilinear" : Image.BILINEAR,
+		"bicubic" : Image.BICUBIC,
+		"lanczos" : Image.LANCZOS
+	}
+
+	im.resize((int(width), int(height)), resamp.get(resample, lambda: Image.BILINEAR)).save('cache/resize.png')
+	file = discord.File("cache/resize.png", filename="resize.png")
+	await ctx.send(file=file)
+
+@bot.command()
+async def toplinekaraoke(ctx, text : str, color : typing.Optional[str] = 'random', percent : typing.Optional[int] = randint(10,100), locatev : typing.Optional[int] = 75, url : typing.Optional[str] = "auto") :
+	if url == "auto" :
+		im = await getLastImage(ctx)
+	else :
+		im = await loadImageFrom(ctx,url)
+	generate.topline_karaoke(text,im,color,percent, 0, locatev).save('toplinediamond.png')
+	file = discord.File("toplinediamond.png", filename="toplinediamond.png")
+	await ctx.send(file=file)
+@bot.command()
+async def help(ctx) :
+	commands={}
+	commands[strWithMonospace(cmd_prefix+'mention')]			=	stringstack["th"]["_help_mention_to_user"]
+	commands[strWithMonospace(cmd_prefix+'avatar')]				=	stringstack["th"]["_help_avatar_user_webp"]
+	commands[strWithMonospace(cmd_prefix+'myavatar')]			=	stringstack["th"]["_help_avatar_self_webp"]
+	commands[strWithMonospace(cmd_prefix+'ncfunt')]				=	stringstack["th"]["_help_ncfu"]
+	commands[strWithMonospace(cmd_prefix+'infoimg')]			=	stringstack["th"]["_help_info_img_less"]
+	commands[strWithMonospace(cmd_prefix+'blur')]				=	stringstack["th"]["_help_blur_image"]
+	commands[strWithMonospace(cmd_prefix+'gaussianblur')]		=	stringstack["th"]["_help_blur_image_gaussian"]
+	commands[strWithMonospace(cmd_prefix+'boxblur')]			=	stringstack["th"]["_help_blur_image_box"]
+
+	commands[strWithMonospace(cmd_prefix+'ก็มาดิครับ')]			=	"ก็มาดิครับ ไอเวร"
+
+	msgh=discord.Embed(title="", description = stringstack["th"]["_help_desc"].format(discord.__version__, platform.python_version()),color=0x9B59B6)
 	for command,description in commands.items():
 			msgh.add_field(name=command,value=description, inline=False)
-	msgh.set_footer(text='Requested by {0}'.format(ctx.author), icon_url=ctx.message.author.avatar_url)
-	msgh.set_author(name="OpenProcess Information", icon_url="https://cdn.discordapp.com/avatars/457908707817422860/8d55af0c7e489818c9a8d3bd3b90eccc.webp?size=1024")
+	msgh.add_field(name=stringstack["th"]["_help_more???"],value=stringstack["th"]["_help_other"], inline=False)
+	msgh.set_footer(text=stringstack["th"]["_request_by"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
+	msgh.set_author(name=stringstack["th"]["_bot_name"], icon_url="https://cdn.discordapp.com/avatars/457908707817422860/8d55af0c7e489818c9a8d3bd3b90eccc.webp?size=1024")
 	#msgh.set_thumbnail(url=ctx.author.avatar_url)
-	await ctx.send("", embed=msgh)
+	await ctx.send(stringstack["th"]["_help_title"], embed=msgh)
 
 #bot.add_cog(TestCommand())
 #bot.add_cog(BasicCommand())
