@@ -199,7 +199,7 @@ def returnhttpstring(code, subfix = "", localize = "th") :
 async def isItMentionOrIdAndValid(user) :
 	if str.isdigit(user) :
 		try :
-			await bot.get_user_info(int(user))
+			await bot.fetch_user(int(user))
 		except discord.NotFound :
 			return False
 		return True
@@ -231,19 +231,21 @@ async def getLastImage(ctx) :
 
 	for msg in messages :
 		if msg.attachments :
-			return Image.open(BytesIO(requests.get(msg.attachments[0].url).content))
+			return Image.open(BytesIO(requests.get(msg.attachments[-1].url).content))
 		else :
 			if msg.embeds :
-				return Image.open(BytesIO(requests.get(msg.embeds[0].url).content))
+				for e in reversed(msg.embeds) :
+					if e.url != discord.Embed.Empty :
+						return Image.open(BytesIO(requests.get(e.url).content))
 	return Image.open(BytesIO(requests.get(ctx.author.avatar_url).content))
 
 async def loadImageFrom(ctx, source) :
 	async with ctx.channel.typing() :
 		url = ""
 		if isItMentionOrId(source) :
-			object = await bot.get_user_info(mentionToId(source))
+			object = await bot.fetch_user(mentionToId(source))
 				# raise Exception("_error_not_found_user")
-				# userobj = await bot.get_user_info(int(mentionToId(source)))
+				# userobj = await bot.fetch_user(int(mentionToId(source)))
 				# if userobj == None :
 				# 	await ctx.send("เอิ่ม...",embed=embed_error(ctx, stringstack["th"]["_error_not_found_user"], stringstack["th"]["_error_not_found_user_fix"]))
 				# else :
@@ -390,7 +392,7 @@ async def mention(ctx, idthose : commands.Greedy[discord.Member], count : typing
 				await ctx.send(u.mention)
 @bot.command()
 async def avatar_png(ctx, rawuser : typing.Optional[str] = "self", size : typing.Optional[str] = "1024") :
-	user = await bot.get_user_info(mentionToId(ctx, rawuser))
+	user = await bot.fetch_user(mentionToId(ctx, rawuser))
 	if not size.isdigit() :
 		result = cmpStrList(size, keyword["th"]["default"])
 		if result[0] :
@@ -407,7 +409,7 @@ async def avatar_png(ctx, rawuser : typing.Optional[str] = "self", size : typing
 @bot.command()
 async def avatar(ctx, rawuser : typing.Optional[str] = "self"):
 	"""His Avatar URL"""
-	user = await bot.get_user_info(mentionToId(ctx, rawuser))
+	user = await bot.fetch_user(mentionToId(ctx, rawuser))
 	await ctx.send("`" + str(user) + "` : " + str(user.avatar_url))
 @bot.command()
 async def mean(ctx, *a):
@@ -424,8 +426,8 @@ async def median(ctx, *a):
 @bot.command(pass_context=True)
 async def infoimg(ctx, *rawuser):
 	for u in list(rawuser) :
-		#user = await bot.get_user_info(mentionToId(u))
-		img = generate.infoimage(ctx,await bot.get_user_info(mentionToId(u)),Image.open("background.png"))
+		#user = await bot.fetch_user(mentionToId(u))
+		img = generate.infoimage(ctx,await bot.fetch_user(mentionToId(u)),Image.open("background.png"))
 
 
 		#mutual_friends()
@@ -516,13 +518,16 @@ async def resize(ctx, width : str, height : typing.Optional[str] = "asWidth", re
 	file = discord.File("cache/resize.png", filename="resize.png")
 	await ctx.send(file=file)
 
+# locatev : typing.Optional[int] = 75
 @bot.command()
-async def toplinekaraoke(ctx, text : str, color : typing.Optional[str] = 'random', percent : typing.Optional[int] = randint(10,100), locatev : typing.Optional[int] = 75, url : typing.Optional[str] = "auto") :
+async def toplinekaraoke(ctx, text : str, color : typing.Optional[str] = 'random', percent : typing.Optional[int] = None, url : typing.Optional[str] = "auto") :
 	if url == "auto" :
 		im = await getLastImage(ctx)
 	else :
 		im = await loadImageFrom(ctx,url)
-	generate.topline_karaoke(text,im,color,percent, 0, locatev).save('toplinediamond.png')
+	if percent == None :
+		percent = randint(10,100)
+	generate.topline_karaoke(text,im,color,percent, 0, 0).save('toplinediamond.png')
 	file = discord.File("toplinediamond.png", filename="toplinediamond.png")
 	await ctx.send(file=file)
 @bot.command()
