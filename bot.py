@@ -11,6 +11,8 @@ import traceback
 import typing
 import sys
 from bot_string import *
+from bot_config import *
+from bot_template import template
 from io import BytesIO
 from imageproc import filter
 from imageproc import generate
@@ -219,7 +221,7 @@ def isItMentionOrId(user) :
 			return False
 
 def mentionToId(ctx, mention) :
-	if mention == 'self' :
+	if mention == 'self' or mention == None :
 		return ctx.author.id
 	result = ""
 	result = mention.replace('<@', '')
@@ -227,16 +229,30 @@ def mentionToId(ctx, mention) :
 	return result
 
 async def getLastImage(ctx) :
-	messages = await ctx.channel.history(limit=100).flatten()
-
-	for msg in messages :
-		if msg.attachments :
-			return Image.open(BytesIO(requests.get(msg.attachments[-1].url).content))
+	if ctx.message.attachments :
+		for a in reversed(ctx.message.attachments) :
+			for extname in standalone_image_ext :
+				if (a.filename.endswith("." + extname)) :
+					return Image.open(BytesIO(requests.get(a.url).content))
+	else :
+		if ctx.message.embeds :
+			for e in reversed(ctx.message.embeds) :
+				if e.url != discord.Embed.Empty :
+					return Image.open(BytesIO(requests.get(e.url).content))
 		else :
-			if msg.embeds :
-				for e in reversed(msg.embeds) :
-					if e.url != discord.Embed.Empty :
-						return Image.open(BytesIO(requests.get(e.url).content))
+			messages = await ctx.channel.history(limit=100).flatten()
+
+			for msg in messages :
+				if msg.attachments :
+					for a in reversed(msg.attachments) :
+						for extname in standalone_image_ext :
+							if (a.filename.endswith("." + extname)) :
+								return Image.open(BytesIO(requests.get(a.url).content))
+				else :
+					if msg.embeds :
+						for e in reversed(msg.embeds) :
+							if e.url != discord.Embed.Empty :
+								return Image.open(BytesIO(requests.get(e.url).content))
 	return Image.open(BytesIO(requests.get(ctx.author.avatar_url).content))
 
 async def loadImageFrom(ctx, source) :
@@ -329,10 +345,22 @@ async def on_ready():
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 
-@bot.command()
-async def error_embed(ctx, method : str, solution : str) :
-	"""Testing Embed with Error"""
-	await ctx.send("Here, {}".format(ctx.author), embed=embed_error(ctx, method, solution))
+@bot.event
+async def on_message(message):
+	if message.activity :
+		if message.activity["type"] == 3 :
+			await message.channel.send(stringstack["th"]["_response_rich_invite_spotify"])
+	if message.mention_everyone :
+		await message.channel.send(stringstack["th"]["_response_everyone"])
+	else :
+		for user in message.mentions :
+			if user.id == bot.user.id :
+				if message.author.id != bot.user.id :
+					if not message.content.startswith(cmd_prefix) :
+						await message.channel.send(stringstack["th"]["_response_user"].format(message.author.mention))
+				else :
+					await message.channel.send(stringstack["th"]["_response_self"])
+	await bot.process_commands(message)
 
 # @bot.command()
 # async def say(ctx):
@@ -425,29 +453,20 @@ async def median(ctx, *a):
 	await ctx.send(">> `" + str(statistics.median(list(map(int, a)))) + "`")
 @bot.command(pass_context=True)
 async def infoimg(ctx, *rawuser):
-	for u in list(rawuser) :
-		#user = await bot.fetch_user(mentionToId(u))
-		img = generate.infoimage(ctx,await bot.fetch_user(mentionToId(u)),Image.open("background.png"))
+	if not rawuser :
+		img = generate.infoimage(ctx, ctx.author, Image.open("background.png"))
+	else :
+		for u in list(rawuser) :
+			#user = await bot.fetch_user(mentionToId(u))
+			img = generate.infoimage(ctx, await bot.fetch_user(mentionToId(ctx, u)), Image.open("background.png"))
 
 
 		#mutual_friends()
 		# friend = await user.mutual_friends()
 		# for ind,f in enumerate(friend) :
 		# draw.text((900-draw.textsize(f, fontsmall)[0], 48+(ind*25)), f, (0, 0, 0), font=fontsmall)
-		img.save('datinfo.png')
-		file = discord.File("datinfo.png", filename="datinfo.png")
-		await ctx.send(file=file)
-@bot.command()
-async def blur(ctx, url : typing.Optional[str]="auto"):
-	"""Blur Image"""
-	if url == "auto" :
-		im = await getLastImage(ctx)
-	else :
-		im = await loadImageFrom(ctx,url)
-	im = await loadImageFrom(ctx,url)
-	blurim = im.filter(ImageFilter.BLUR)
-	blurim.save('cache/blur.png')
-	file = discord.File("cache/blur.png", filename="blur.png")
+	img.save('datinfo.png')
+	file = discord.File("datinfo.png", filename="datinfo.png")
 	await ctx.send(file=file)
 
 @bot.command()
@@ -530,23 +549,38 @@ async def toplinekaraoke(ctx, text : str, color : typing.Optional[str] = 'random
 	generate.topline_karaoke(text,im,color,percent, 0, 0).save('toplinediamond.png')
 	file = discord.File("toplinediamond.png", filename="toplinediamond.png")
 	await ctx.send(file=file)
+
+@bot.command()
+async def wanbuabankaraoke(ctx, text : str, percent : typing.Optional[int] = None, url : typing.Optional[str] = "auto") :
+	if url == "auto" :
+		im = await getLastImage(ctx)
+	else :
+		im = await loadImageFrom(ctx,url)
+	if percent == None :
+		percent = randint(10,100)
+	generate.topline_karaoke_wanbuaban(text,im,percent, 0, 0).save('wanbuaban.png')
+	file = discord.File("wanbuaban.png", filename="wanbuaban.png")
+	await ctx.send(file=file)
+
 @bot.command()
 async def help(ctx) :
-	commands={}
-	commands[strWithMonospace(cmd_prefix+'mention')]			=	stringstack["th"]["_help_mention_to_user"]
-	commands[strWithMonospace(cmd_prefix+'avatar')]				=	stringstack["th"]["_help_avatar_user_webp"]
-	commands[strWithMonospace(cmd_prefix+'myavatar')]			=	stringstack["th"]["_help_avatar_self_webp"]
-	commands[strWithMonospace(cmd_prefix+'ncfunt')]				=	stringstack["th"]["_help_ncfu"]
-	commands[strWithMonospace(cmd_prefix+'infoimg')]			=	stringstack["th"]["_help_info_img_less"]
-	commands[strWithMonospace(cmd_prefix+'blur')]				=	stringstack["th"]["_help_blur_image"]
-	commands[strWithMonospace(cmd_prefix+'gaussianblur')]		=	stringstack["th"]["_help_blur_image_gaussian"]
-	commands[strWithMonospace(cmd_prefix+'boxblur')]			=	stringstack["th"]["_help_blur_image_box"]
+	# commands={}
+	# commands[strWithMonospace(cmd_prefix+'mention')]			=	stringstack["th"]["_help_mention_to_user"]
+	# commands[strWithMonospace(cmd_prefix+'avatar')]				=	stringstack["th"]["_help_avatar_user_webp"]
+	# commands[strWithMonospace(cmd_prefix+'myavatar')]			=	stringstack["th"]["_help_avatar_self_webp"]
+	# commands[strWithMonospace(cmd_prefix+'ncfunt')]				=	stringstack["th"]["_help_ncfu"]
+	# commands[strWithMonospace(cmd_prefix+'infoimg')]			=	stringstack["th"]["_help_info_img_less"]
+	# commands[strWithMonospace(cmd_prefix+'blur')]				=	stringstack["th"]["_help_blur_image"]
+	# commands[strWithMonospace(cmd_prefix+'gaussianblur')]		=	stringstack["th"]["_help_blur_image_gaussian"]
+	# commands[strWithMonospace(cmd_prefix+'boxblur')]			=	stringstack["th"]["_help_blur_image_box"]
 
-	commands[strWithMonospace(cmd_prefix+'ก็มาดิครับ')]			=	"ก็มาดิครับ ไอเวร"
+	# commands[strWithMonospace(cmd_prefix+'ก็มาดิครับ')]			=	"ก็มาดิครับ ไอเวร"
 
 	msgh=discord.Embed(title="", description = stringstack["th"]["_help_desc"].format(discord.__version__, platform.python_version()),color=0x9B59B6)
-	for command,description in commands.items():
-			msgh.add_field(name=command,value=description, inline=False)
+	#for command,description in commands.items():
+	#		msgh.add_field(name=command,value=description, inline=False)
+	for command in bot.commands :
+		msgh.add_field(name="{0}{1}\n".format(command_prefix, command.name), value=command.help, inline=False)
 	msgh.add_field(name=stringstack["th"]["_help_more???"],value=stringstack["th"]["_help_other"], inline=False)
 	msgh.set_footer(text=stringstack["th"]["_request_by"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
 	msgh.set_author(name=stringstack["th"]["_bot_name"], icon_url="https://cdn.discordapp.com/avatars/457908707817422860/8d55af0c7e489818c9a8d3bd3b90eccc.webp?size=1024")

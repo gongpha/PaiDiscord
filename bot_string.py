@@ -10,6 +10,8 @@
 # commands[strWithMonospace(cmd_prefix+'blur')]="Blur Image"
 # commands[strWithMonospace(cmd_prefix+'gaussianblur')]="Gaussian Blur Image"
 # commands[strWithMonospace(cmd_prefix+'boxblur')]="Box Blur Image"
+
+# ภาษาไทย (Thai, Thailand)
 keyword = {
 	"th" : {
 		"default"		: ["เดิม","ดังเดิม","ดั้งเดิม","แบบเดิม","ต้นฉบับ","def","default"]
@@ -17,9 +19,20 @@ keyword = {
 }
 commandusage = {
 	"th" : {
-		"ncfunt"		: "<แม่แบบ>",
-		"mention"		: "<การกล่าวถึงสมาชิก...>",
-		"myavatar"		: "<การกล่าวถึงสมาชิก...>"
+		"ncfunt"			: "<แม่แบบ>",
+		"mention"			: "<การกล่าวถึงสมาชิก... = ตัวเอง>",
+		"avatar_png"		: "<การกล่าวถึงสมาชิก = ตัวเอง> <ขนาด = 1024>",
+		"avatar"			: "<การกล่าวถึงสมาชิก = ตัวเอง>",
+		"mean"				: "<ข้อมูล...>",
+		"h_mean"			: "<ข้อมูล...>",
+		"median"			: "<ข้อมูล...>",
+		"infoimg"			: "<การกล่าวถึงผู้ใช้... = ตัวเอง>",
+		"gaussianblur"		: "<ขนาด = 2, ภาพ = จากภาพล่าสุดหรือจากภาพโปรไฟล์ของตัวเอง>",
+		"boxblur"			: "<ขนาด = 2, ภาพ = จากภาพล่าสุดหรือจากภาพโปรไฟล์ของตัวเอง>",
+		"gaussianblur"		: "<ภาพ = จากภาพล่าสุดหรือจากภาพโปรไฟล์ของตัวเอง>",
+		"ก็มาดิครับ"			: "<การกล่าวถึงผู้ใช้...>",
+		"resize"			: "<กว้าง> <ยาว = กว้าง> <คำนวณ = เชิงเส้น> <ภาพ = จากภาพล่าสุดหรือจากภาพโปรไฟล์ของตัวเอง>",
+		"toplinekaraoke"	: "<ข้อความ> <สีของข้อความ = สุ่ม> <ร้อยละของสีที่ถูกกลืนไป = สุ่มจาก 10 ถึง 100> <ภาพ = จากภาพล่าสุดหรือจากภาพโปรไฟล์ของตัวเอง>"
 	}
 }
 stringstack = {
@@ -81,7 +94,7 @@ stringstack = {
 		"_help_title"							:	"อาจจะช่วยไม่เยอะสักเท่าไหร่",
 		"_help_more???"							:	"มีอีกไหมวะ ?",
 		"_help_desc"							:	'เขียนโดย gongpha#0394\nโดยใช้ discord.py {} กับ Python {}\n*"บอทแม่งทำไรไม่ได้เลยสัส"*',
-		"_help_other"							:	"นอกนั้นหาเอาเองสัส",
+		"_help_other"							:	"ยังไม่บอก หาเอาเอง XD",
 		"_help_mention_to_user"					:	"กล่าวถึงผู้ใช้ หรือ Ping ผู้ใช้ ตามจำนวน",
 		"_help_avatar_user_webp"				:	"ส่ง URL รูปโปรไฟล์ของคน ๆ นั้น (webp)",
 		"_help_avatar_self_webp"				:	"ส่ง URL รูปโปรไฟล์ของตัวเอง (webp)",
@@ -97,6 +110,14 @@ stringstack = {
 		"_help_i_think_its_this"				:	"เราว่าคุณกำลังบอกว่า มันหมายถึง `{0}`",
 		"_avatar_request"						:	"`{0}` : {2}",
 		"_avatar_request_size"					:	"`{0}` (ขนาด : {1}) : {2}",
-		"_default_input"						:	"เป็นข้อมูลเดิม"
+		"_default_input"						:	"เป็นข้อมูลเดิม",
+		"_response_everyone"					:	"มีอะไรเกิดขึ้นวะ !?",
+		"_response_user"						:	"อะไรเหรอ ? {0}",
+		"_response_self"						:	"นี่เราจะพูดถึงตัวเองเพื่ออะไรเนี่ย ? XD",
+		"_response_rich_invite_spotify"			:	"ไม่อยากฟังอ่ะ ฟังไม่เป็น XD",
+
+		"_template_obsolete_command"			:	"คำสั่ง `{0}` ล้าสมัย และถูกถอนการใช้งาน",
+		"_template_try_new_command"				:	"ลองคำสั่งใหม่ดูสิ ? {0}"
+
 	}
 }

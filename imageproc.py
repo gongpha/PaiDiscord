@@ -7,54 +7,56 @@ import requests
 from random import randint
 import platform
 
-def text_outline_topline(size, stroke, text, outline=None, fill=None, fontp=None) :
+def text_outline_topline(size, stroke, text, outline=None, shadow=None, fill=None, fontp=None) :
 
-	if platform.system() != "Windows" :
-		if fontp == None :
-			fontp = "font/topline.ttf"
-		font = ImageFont.truetype(fontp, int(size), layout_engine=ImageFont.LAYOUT_RAQM)
-	else :
-		if fontp == None :
-			fontp = "font/toplinebreak.ttf"
-		font = ImageFont.truetype(fontp, int(size))
+	if fontp == None :
+		fontp = "font/toplinebreak.ttf"
+	font = ImageFont.truetype(fontp, int(size))
 
 	if fill == None :
 		fill = (randint(0,255),randint(0,255),randint(0,255))
 	if outline == None :
 		outline = tuple((int(0.25 * c)) for c in fill)
+	if shadow == None :
+		shadow = (0,0,0)
+	else :
+		if shadow == "asOutline" :
+			shadow = outline
 
 	ascent, descent = font.getmetrics()
 	(width, baseline), (offset_x, offset_y) = font.font.getsize(text)
 	textX = 2
 	textY = 2 - offset_y
-	img_text = Image.new('RGBA', (width+4, baseline + 4), (0,0,0,0))
+	img_text = Image.new('RGBA', (width + (stroke*4), baseline + (stroke*4)), (0,0,0,0))
 	draw_txt = ImageDraw.Draw(img_text)
-	if platform.system() != "Windows" :
-		draw_txt.text((textX-stroke, textY-stroke), text,outline,font,0,'left',"ltr","ccmp mark mkmk", "th")
-		draw_txt.text((textX+stroke, textY-stroke), text,outline,font,0,'left',"ltr","ccmp mark mkmk", "th")
-		draw_txt.text((textX+stroke, textY+stroke), text,outline,font,0,'left',"ltr","ccmp mark mkmk", "th")
-		draw_txt.text((textX-stroke, textY+stroke), text,outline,font,0,'left',"ltr","ccmp mark mkmk", "th")
+	# platform.system() != "Windows"
 
-		draw_txt.text((textX-stroke, textY), text,outline,font,0,'left',"ltr","ccmp mark mkmk", "th")
-		draw_txt.text((textX+stroke, textY), text,outline,font,0,'left',"ltr","ccmp mark mkmk", "th")
-		draw_txt.text((textX, textY+stroke), text,outline,font,0,'left',"ltr","ccmp mark mkmk", "th")
-		draw_txt.text((textX, textY-stroke), text,outline,font,0,'left',"ltr","ccmp mark mkmk", "th")
-		draw_txt.text((textX+(stroke*2), textY+(stroke*2)), text,outline,font,0,'left',"ltr","ccmp mark mkmk", "th")
-		draw_txt.text((textX, textY), text, fill, font,0,'left',"ltr","ccmp mark mkmk", "th")
-	else :
-		draw_txt.text((textX-stroke, textY-stroke), text,outline,font)
-		draw_txt.text((textX+stroke, textY-stroke), text,outline,font)
-		draw_txt.text((textX+stroke, textY+stroke), text,outline,font)
-		draw_txt.text((textX-stroke, textY+stroke), text,outline,font)
+	draw_txt.text((textX-stroke+(stroke*2), textY-stroke+(stroke*2)), text,shadow,font)
+	draw_txt.text((textX+stroke+(stroke*2), textY-stroke+(stroke*2)), text,shadow,font)
+	draw_txt.text((textX+stroke+(stroke*2), textY+stroke+(stroke*2)), text,shadow,font)
+	draw_txt.text((textX-stroke+(stroke*2), textY+stroke+(stroke*2)), text,shadow,font)
+	draw_txt.text((textX-stroke+(stroke*2), textY+(stroke*2)), text,shadow,font)
+	draw_txt.text((textX+stroke+(stroke*2), textY+(stroke*2)), text,shadow,font)
+	draw_txt.text((textX+(stroke*2), textY+stroke+(stroke*2)), text,shadow,font)
+	draw_txt.text((textX+(stroke*2), textY-stroke+(stroke*2)), text,shadow,font)
 
-		draw_txt.text((textX-stroke, textY), text,outline,font)
-		draw_txt.text((textX+stroke, textY), text,outline,font)
-		draw_txt.text((textX, textY+stroke), text,outline,font)
-		draw_txt.text((textX, textY-stroke), text,outline,font)
-		draw_txt.text((textX+(stroke*2), textY+(stroke*2)), text,outline,font)
-		draw_txt.text((textX, textY), text, fill, font)
+	draw_txt.text((textX-stroke, textY-stroke), text,outline,font)
+	draw_txt.text((textX+stroke, textY-stroke), text,outline,font)
+	draw_txt.text((textX+stroke, textY+stroke), text,outline,font)
+	draw_txt.text((textX-stroke, textY+stroke), text,outline,font)
+	draw_txt.text((textX-stroke, textY), text,outline,font)
+	draw_txt.text((textX+stroke, textY), text,outline,font)
+	draw_txt.text((textX, textY+stroke), text,outline,font)
+	draw_txt.text((textX, textY-stroke), text,outline,font)
 
+	draw_txt.text((textX, textY), text, fill, font)
 	return [img_text, width, baseline, ascent, descent, offset_x, offset_y]
+
+def rgbToTuple(color : str) :
+	if color == 'random' :
+		return (randint(0,255),randint(0,255),randint(0,255))
+	else :
+		return tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
 
 class filter :
 	def median(im) :
@@ -141,18 +143,39 @@ class generate :
 			draw.text((100, 195), "Animated", (131, 6, 255), font=fontsmall)
 		return bg
 
-	def topline_karaoke(text, image, color, percent, x, y, size=0) :
+	def topline_karaoke(text, image, color, percent, x, y, size=1) :
 		# by gongpha, designed to like Topline-Diamond (ท็อปไลน์-ไดมอนด์)
-		if color == 'random' :
-			rgb = (randint(0,255),randint(0,255),randint(0,255))
-		else :
-			rgb = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
+		rgb = rgbToTuple(color)
 
-		if size == 0 :
-			size = int(32 * (image.width / 250))
+		size = int(32 * (image.width / 250) * size)
 
-		img_text_list = text_outline_topline(size, 2, text, (0,0,0), (255,255,255))
-		img_text_scored_list = text_outline_topline(size, 2, text, None, rgb)
+		img_text_list = text_outline_topline(size, 2, text, (0,0,0), "asOutline", (255,255,255))
+		img_text_scored_list = text_outline_topline(size, 2, text, None, "asOutline", rgb)
+
+		img_text = img_text_list[0]
+		img_text_scored = img_text_scored_list[0]
+		width = img_text_list[1]
+
+		# SCORED text
+
+		#print((0, 0, int(img_text_scored.width * percent / 100), img_text_scored.height))
+		img_text_crop = img_text.crop((int(img_text_scored.width * (percent / 100)), 0, img_text_scored.width, img_text_scored.height))
+		score_crop = img_text_scored.crop((0, 0, int(img_text_scored.width * (percent / 100)), img_text_scored.height))
+		# draw = ImageDraw.Draw(image)
+		# image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - width / 2),int((y / 100)*(image.height))),img_text_crop)
+		# image.paste(score_crop,(int(image.width / 2 - width/2),int((y / 100)*(image.height))),score_crop)
+		image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - width / 2), image.height - img_text_crop.height - 50),img_text_crop)
+		image.paste(score_crop,(int(image.width / 2 - width/2), image.height - score_crop.height - 50),score_crop)
+
+		return image
+
+	def topline_karaoke_wanbuaban(text, image, percent, x, y, size=1) :
+		# by gongpha, designed to like Topline-Diamond's Wanbuaban (ท็อปไลน์-ไดมอนด์ วังบัวบาน)
+
+		size = int(32 * (image.width / 250) * size)
+
+		img_text_list = text_outline_topline(size, 2, text, (0,0,0), (0,0,0), (255,255,255), "font/angsanaupc.ttf")
+		img_text_scored_list = text_outline_topline(size, 2, text, (255,255,255), (0,0,0), (0,50,255), "font/angsanaupc.ttf")
 
 		img_text = img_text_list[0]
 		img_text_scored = img_text_scored_list[0]
