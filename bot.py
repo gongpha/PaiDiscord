@@ -580,7 +580,7 @@ async def help(ctx) :
 	#for command,description in commands.items():
 	#		msgh.add_field(name=command,value=description, inline=False)
 	for command in bot.commands :
-		msgh.add_field(name="{0}{1}\n".format(command_prefix, command.name), value=command.help, inline=False)
+		msgh.add_field(name="{0}{1}\n".format(cmd_prefix, command.name), value=command.help, inline=False)
 	msgh.add_field(name=stringstack["th"]["_help_more???"],value=stringstack["th"]["_help_other"], inline=False)
 	msgh.set_footer(text=stringstack["th"]["_request_by"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
 	msgh.set_author(name=stringstack["th"]["_bot_name"], icon_url="https://cdn.discordapp.com/avatars/457908707817422860/8d55af0c7e489818c9a8d3bd3b90eccc.webp?size=1024")
