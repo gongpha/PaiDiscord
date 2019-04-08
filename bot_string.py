@@ -66,7 +66,7 @@ stringstack = {
 		"_http_status_405"						:	"การเข้าถึงของคำร้องขอไม่ได้รับการอนุญาต",
 		"_http_status_405_fix"					:	"วิธีการของ HTTP ไม่ถูกต้องสำหรับตำแหน่งที่จะเข้าถึง",
 		"_http_status_429"						:	"มีคำร้องขอมากมายถูกส่งมาในเวลาเดียวกัน",
-		"_http_status_429_fix"					:	"คุณได้ส่งคำร้องขอมากเกินจำเป็น กรุณาเข้าที่ https://discordapp.com/developers/docs/topics/rate-limits#rate-limits สำหรับข้อมูลเพิ่มเติม",
+		"_http_status_429_fix"					:	"คุณได้ส่งคำร้องขอมากเกินจำเป็น กรุณาเข้าไปที่ https://discordapp.com/developers/docs/topics/rate-limits#rate-limits สำหรับข้อมูลเพิ่มเติม",
 		"_http_status_502"						:	"เกตเวย์ไม่พร้อมใช้งาน",
 		"_http_status_502_fix"					:	"เกตเวย์ไม่พร้อมใช้งานสำหรับการส่งคำร้องขอ กรุณาลองใหม่อีกครั้ง",
 		"_http_status_5XX"						:	"เซิร์ฟเวอร์ผิดพลาด",
