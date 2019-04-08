@@ -174,8 +174,8 @@ class generate :
 
 		size = int(32 * (image.width / 250) * size)
 
-		img_text_list = text_outline_topline(size, 2, text, (0,0,0), (0,0,0), (255,255,255), "font/angsanaupc.ttf")
-		img_text_scored_list = text_outline_topline(size, 2, text, (255,255,255), (0,0,0), (0,50,255), "font/angsanaupc.ttf")
+		img_text_list = text_outline_topline(size, 2, text, (0,0,0), (0,0,0), (255,255,255), "font/angsab.ttf")
+		img_text_scored_list = text_outline_topline(size, 2, text, (255,255,255), (0,0,0), (0,50,255), "font/angsab.ttf")
 
 		img_text = img_text_list[0]
 		img_text_scored = img_text_scored_list[0]
