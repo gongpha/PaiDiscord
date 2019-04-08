@@ -454,19 +454,19 @@ async def median(ctx, *a):
 @bot.command(pass_context=True)
 async def infoimg(ctx, *rawuser):
 	if not rawuser :
-		img = generate.infoimage(ctx, ctx.author, Image.open("background.png"))
+		img = generate.infoimage(ctx, ctx.author, Image.open("template/background.png"))
 	else :
 		for u in list(rawuser) :
 			#user = await bot.fetch_user(mentionToId(u))
-			img = generate.infoimage(ctx, await bot.fetch_user(mentionToId(ctx, u)), Image.open("background.png"))
+			img = generate.infoimage(ctx, await bot.fetch_user(mentionToId(ctx, u)), Image.open("template/background.png"))
 
 
 		#mutual_friends()
 		# friend = await user.mutual_friends()
 		# for ind,f in enumerate(friend) :
 		# draw.text((900-draw.textsize(f, fontsmall)[0], 48+(ind*25)), f, (0, 0, 0), font=fontsmall)
-	img.save('datinfo.png')
-	file = discord.File("datinfo.png", filename="datinfo.png")
+	img.save('cache/datinfo.png')
+	file = discord.File("cache/datinfo.png", filename="datinfo.png")
 	await ctx.send(file=file)
 
 @bot.command()
@@ -546,8 +546,8 @@ async def toplinekaraoke(ctx, text : str, color : typing.Optional[str] = 'random
 		im = await loadImageFrom(ctx,url)
 	if percent == None :
 		percent = randint(10,100)
-	generate.topline_karaoke(text,im,color,percent, 0, 0).save('toplinediamond.png')
-	file = discord.File("toplinediamond.png", filename="toplinediamond.png")
+	generate.topline_karaoke(text,im,color,percent, 0, 0).save('cache/toplinediamond.png')
+	file = discord.File("cache/toplinediamond.png", filename="toplinediamond.png")
 	await ctx.send(file=file)
 
 @bot.command()
@@ -558,8 +558,8 @@ async def wanbuabankaraoke(ctx, text : str, percent : typing.Optional[int] = Non
 		im = await loadImageFrom(ctx,url)
 	if percent == None :
 		percent = randint(10,100)
-	generate.topline_karaoke_wanbuaban(text,im,percent, 0, 0).save('wanbuaban.png')
-	file = discord.File("wanbuaban.png", filename="wanbuaban.png")
+	generate.topline_karaoke_wanbuaban(text,im,percent, 0, 0).save('cache/wanbuaban.png')
+	file = discord.File("cache/wanbuaban.png", filename="wanbuaban.png")
 	await ctx.send(file=file)
 
 @bot.command()

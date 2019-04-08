@@ -13,3 +13,8 @@ toplinediamond.png
 __pycache__/bot_string.cpython-37.pyc
 __pycache__/imageproc.cpython-37.pyc
 __pycache__/ncfu.cpython-37.pyc
+*.pyc
+cache/medianimage.png
+cache/text.png
+python-webkit2png/
+wanbuaban.png
