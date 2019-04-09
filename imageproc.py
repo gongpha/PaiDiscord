@@ -52,8 +52,8 @@ def text_outline_topline(size, stroke, text, outline=None, shadow=None, fill=Non
 	draw_txt.text((textX, textY), text, fill, font)
 	return [img_text, width, baseline, ascent, descent, offset_x, offset_y]
 
-def rgbToTuple(color : str) :
-	if color == 'random' :
+def rgbToTuple(color) :
+	if color == None :
 		return (randint(0,255),randint(0,255),randint(0,255))
 	else :
 		return tuple(int(color[i:i+2], 16) for i in (0, 2, 4))

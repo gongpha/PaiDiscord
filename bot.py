@@ -13,6 +13,7 @@ import sys
 from bot_string import *
 from bot_config import *
 from bot_template import template
+from bot_group import *
 from io import BytesIO
 from imageproc import filter
 from imageproc import generate
@@ -232,7 +233,7 @@ async def getLastImage(ctx) :
 	if ctx.message.attachments :
 		for a in reversed(ctx.message.attachments) :
 			for extname in standalone_image_ext :
-				if (a.filename.endswith("." + extname)) :
+				if (a.filename.lower().endswith("." + extname)) :
 					return Image.open(BytesIO(requests.get(a.url).content))
 	else :
 		if ctx.message.embeds :
@@ -246,7 +247,7 @@ async def getLastImage(ctx) :
 				if msg.attachments :
 					for a in reversed(msg.attachments) :
 						for extname in standalone_image_ext :
-							if (a.filename.endswith("." + extname)) :
+							if (a.filename.lower().endswith("." + extname)) :
 								return Image.open(BytesIO(requests.get(a.url).content))
 				else :
 					if msg.embeds :
@@ -405,7 +406,6 @@ async def ncfunt(ctx, *, a: str):
 	# "`\nChannel ID : `" + str(ctx.message.channel) + "`\nContent : `" + str(ctx.message.content) + "`")
 @bot.command()	  # 1    2      3
 async def mention(ctx, idthose : commands.Greedy[discord.Member], count : typing.Optional[int] = 1) :
-	"""Ping Him!"""
 	# if not count.isdigit() :
 	# 	await ctx.send("เดี๋ยว ๆ ๆ",embed=embed_error(ctx, stringstack["th"]["_error_int_is_not_number"].format(stringstack["th"]["_argument_index"].format(2)), stringstack["th"]["_error_int_is_not_number_fix"].format(stringstack["th"]["_argument_index"].format(2))))
 	# else :
@@ -413,6 +413,8 @@ async def mention(ctx, idthose : commands.Greedy[discord.Member], count : typing
 		# 	for u in IdListToMention(userrefs(ctx, list(idthose))) :
 		# 		strout += u
 		# await ctx.send(strout)
+	if count > 25 :
+		count = 25
 	async with ctx.channel.typing() :
 		for _ in range(int(count)) :
 			for u in idthose :
@@ -436,20 +438,16 @@ async def avatar_png(ctx, rawuser : typing.Optional[str] = "self", size : typing
 		await ctx.send(stringstack["th"]["_avatar_request_size"].format(user, size, url))
 @bot.command()
 async def avatar(ctx, rawuser : typing.Optional[str] = "self"):
-	"""His Avatar URL"""
 	user = await bot.fetch_user(mentionToId(ctx, rawuser))
 	await ctx.send("`" + str(user) + "` : " + str(user.avatar_url))
 @bot.command()
 async def mean(ctx, *a):
-	"""Finding Arithmetic mean"""
 	await ctx.send(">> `" + str(statistics.mean(list(map(int, a)))) + "`")
 @bot.command()
 async def h_mean(ctx, *a):
-	"""Finding Harmonic mean"""
 	await ctx.send(">> `" + str(statistics.harmonic_mean(list(map(int, a)))) + "`")
 @bot.command()
 async def median(ctx, *a):
-	"""Finding Median (Middle)"""
 	await ctx.send(">> `" + str(statistics.median(list(map(int, a)))) + "`")
 @bot.command(pass_context=True)
 async def infoimg(ctx, *rawuser):
@@ -470,9 +468,8 @@ async def infoimg(ctx, *rawuser):
 	await ctx.send(file=file)
 
 @bot.command()
-async def gaussianblur(ctx, scale : typing.Optional[int] = 2, url : typing.Optional[str]="auto"):
-	"""Gaussian Blur Image"""
-	if url == "auto" :
+async def gaussianblur(ctx, scale : typing.Optional[int] = 2, url : typing.Optional[str]=None):
+	if url == None :
 		im = await getLastImage(ctx)
 	else :
 		im = await loadImageFrom(ctx,url)
@@ -482,9 +479,8 @@ async def gaussianblur(ctx, scale : typing.Optional[int] = 2, url : typing.Optio
 	await ctx.send(file=file)
 
 @bot.command()
-async def boxblur(ctx, scale : typing.Optional[int] = 2, url : typing.Optional[str]="auto"):
-	"""Box Blur Image"""
-	if url == "auto" :
+async def boxblur(ctx, scale : typing.Optional[int] = 2, url : typing.Optional[str]=None):
+	if url == None :
 		im = await getLastImage(ctx)
 	else :
 		im = await loadImageFrom(ctx,url)
@@ -494,9 +490,8 @@ async def boxblur(ctx, scale : typing.Optional[int] = 2, url : typing.Optional[s
 	await ctx.send(file=file)
 
 @bot.command()
-async def medianimage(ctx, url="auto"):
-	"""Box Blur Image"""
-	if url == "auto" :
+async def medianimage(ctx, url=None):
+	if url == None :
 		im = await getLastImage(ctx)
 	else :
 		im = await loadImageFrom(ctx,url)
@@ -510,9 +505,8 @@ async def ก็มาดิครับ(ctx, *idthose) :
 	await ctx.send("ก็มาดิครับ ! " + " กับ ".join(userlistToMention(ctx, list(idthose))))
 
 @bot.command()
-async def resize(ctx, width : str, height : typing.Optional[str] = "asWidth", resample : typing.Optional[str] = "bilinear", url : typing.Optional[str] = "auto"):
-	"""Box Blur Image"""
-	if url == "auto" :
+async def resize(ctx, width : str, height : typing.Optional[str] = "asWidth", resample : typing.Optional[str] = "bilinear", url : typing.Optional[str] = None):
+	if url == None :
 		im = await getLastImage(ctx)
 	else :
 		im = await loadImageFrom(ctx,url)
@@ -537,10 +531,18 @@ async def resize(ctx, width : str, height : typing.Optional[str] = "asWidth", re
 	file = discord.File("cache/resize.png", filename="resize.png")
 	await ctx.send(file=file)
 
+@bot.command()
+async def topline(ctx, *, text : str) :
+	im = await getLastImage(ctx)
+	generate.topline_karaoke(text,im,None,randint(10,100), 0, 0).save('cache/toplinediamond.png')
+	file = discord.File("cache/toplinediamond.png", filename="toplinediamond.png")
+	await ctx.send(file=file)
+
 # locatev : typing.Optional[int] = 75
 @bot.command()
-async def toplinekaraoke(ctx, text : str, color : typing.Optional[str] = 'random', percent : typing.Optional[int] = None, url : typing.Optional[str] = "auto") :
-	if url == "auto" :
+async def toplinekaraoke(ctx, text : str, color : typing.Optional[str] = None, percent : typing.Optional[int] = None, url : typing.Optional[str] = None) :
+	"topline"
+	if url == None :
 		im = await getLastImage(ctx)
 	else :
 		im = await loadImageFrom(ctx,url)
@@ -551,37 +553,46 @@ async def toplinekaraoke(ctx, text : str, color : typing.Optional[str] = 'random
 	await ctx.send(file=file)
 
 @bot.command()
-async def wanbuabankaraoke(ctx, text : str, percent : typing.Optional[int] = None, url : typing.Optional[str] = "auto") :
-	if url == "auto" :
+async def wanbuaban(ctx, *, text : str) :
+	im = await getLastImage(ctx)
+	generate.topline_karaoke_wanbuaban(text,im,randint(0,100), 0, 0).save('cache/wanbuaban.png')
+	file = discord.File("cache/wanbuaban.png", filename="wanbuaban.png")
+	await ctx.send(file=file)
+
+@bot.command()
+async def wanbuabankaraoke(ctx, text : str, percent : typing.Optional[int] = None, url : typing.Optional[str] = None) :
+	"wanbuaban"
+	if url == None :
 		im = await getLastImage(ctx)
 	else :
 		im = await loadImageFrom(ctx,url)
 	if percent == None :
-		percent = randint(10,100)
+		percent = randint(0,100)
 	generate.topline_karaoke_wanbuaban(text,im,percent, 0, 0).save('cache/wanbuaban.png')
 	file = discord.File("cache/wanbuaban.png", filename="wanbuaban.png")
 	await ctx.send(file=file)
 
 @bot.command()
-async def help(ctx) :
-	# commands={}
-	# commands[strWithMonospace(cmd_prefix+'mention')]			=	stringstack["th"]["_help_mention_to_user"]
-	# commands[strWithMonospace(cmd_prefix+'avatar')]				=	stringstack["th"]["_help_avatar_user_webp"]
-	# commands[strWithMonospace(cmd_prefix+'myavatar')]			=	stringstack["th"]["_help_avatar_self_webp"]
-	# commands[strWithMonospace(cmd_prefix+'ncfunt')]				=	stringstack["th"]["_help_ncfu"]
-	# commands[strWithMonospace(cmd_prefix+'infoimg')]			=	stringstack["th"]["_help_info_img_less"]
-	# commands[strWithMonospace(cmd_prefix+'blur')]				=	stringstack["th"]["_help_blur_image"]
-	# commands[strWithMonospace(cmd_prefix+'gaussianblur')]		=	stringstack["th"]["_help_blur_image_gaussian"]
-	# commands[strWithMonospace(cmd_prefix+'boxblur')]			=	stringstack["th"]["_help_blur_image_box"]
-
-	# commands[strWithMonospace(cmd_prefix+'ก็มาดิครับ')]			=	"ก็มาดิครับ ไอเวร"
-
-	msgh=discord.Embed(title="", description = stringstack["th"]["_help_desc"].format(discord.__version__, platform.python_version()),color=0x9B59B6)
-	#for command,description in commands.items():
-	#		msgh.add_field(name=command,value=description, inline=False)
-	for command in bot.commands :
-		msgh.add_field(name="{0}{1}\n".format(cmd_prefix, command.name), value=command.help, inline=False)
-	msgh.add_field(name=stringstack["th"]["_help_more???"],value=stringstack["th"]["_help_other"], inline=False)
+async def help(ctx, sect : typing.Optional[str] = None) :
+	print(sect)
+	if sect == None :
+		msgh=discord.Embed(title="", description = stringstack["th"]["_help_desc"],color=0x9B59B6)#.format(discord.__version__, platform.python_version()),color=0x9B59B6)
+		for group in command_group :
+			msgh.add_field(name=stringstack["th"]["_section_head_" + group],value="`{0}help {1}`".format(cmd_prefix, group), inline=True)
+		#for command in bot.commands :
+		#	msgh.add_field(name="{0}{1}\n".format(cmd_prefix, command.name), value=command.help, inline=False)
+		msgh.add_field(name=stringstack["th"]["_help_more???"],value=stringstack["th"]["_help_other"], inline=False)
+	else :
+		for group in command_group :
+			if group == sect :
+				msgh=discord.Embed(title=stringstack["th"]["_section_head_" + group], description="",color=0x9B59B6)
+				for cmd in command_group[group] :
+					for command in bot.commands :
+						if command.help == cmd or command.name == cmd :
+							try :
+								msgh.add_field(name="{0}{1}\n".format(cmd_prefix, command.name),value=commandinfo["th"][cmd][0], inline=True)
+							except KeyError :
+								msgh.add_field(name="{0}{1}\n".format(cmd_prefix, command.name),value=stringstack["th"]["_unknown"], inline=True)
 	msgh.set_footer(text=stringstack["th"]["_request_by"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
 	msgh.set_author(name=stringstack["th"]["_bot_name"], icon_url=bot.user.avatar_url)
 	#msgh.set_thumbnail(url=ctx.author.avatar_url)
