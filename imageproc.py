@@ -1,8 +1,8 @@
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-from PIL import ImageFilter
 from io import BytesIO
+from utils.text import textimage
 import requests
 from random import randint
 import platform
@@ -149,14 +149,8 @@ class generate :
 
 		size = int(32 * (image.width / 250) * size)
 
-		img_text_list = text_outline_topline(size, 2, text, (0,0,0), "asOutline", (255,255,255))
-		img_text_scored_list = text_outline_topline(size, 2, text, None, "asOutline", rgb)
-
-		img_text = img_text_list[0]
-		img_text_scored = img_text_scored_list[0]
-		width = img_text_list[1]
-
-		# SCORED text
+		img_text = textimage(text, "font/toplinebreak.ttf", size, (255,255,255), (0,0,0), "asOutline", 2)
+		img_text_scored = textimage(text, "font/toplinebreak.ttf", size, rgb, None, "asOutline", 2)
 
 		#print((0, 0, int(img_text_scored.width * percent / 100), img_text_scored.height))
 		img_text_crop = img_text.crop((int(img_text_scored.width * (percent / 100)), 0, img_text_scored.width, img_text_scored.height))
@@ -164,8 +158,8 @@ class generate :
 		# draw = ImageDraw.Draw(image)
 		# image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - width / 2),int((y / 100)*(image.height))),img_text_crop)
 		# image.paste(score_crop,(int(image.width / 2 - width/2),int((y / 100)*(image.height))),score_crop)
-		image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - width / 2), image.height - img_text_crop.height - 50),img_text_crop)
-		image.paste(score_crop,(int(image.width / 2 - width/2), image.height - score_crop.height - 50),score_crop)
+		image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - img_text.width / 2), image.height - img_text_crop.height - 50),img_text_crop)
+		image.paste(score_crop,(int(image.width / 2 - img_text.width / 2), image.height - score_crop.height - 50),score_crop)
 
 		return image
 
@@ -174,14 +168,8 @@ class generate :
 
 		size = int(32 * (image.width / 250) * size)
 
-		img_text_list = text_outline_topline(size, 2, text, (0,0,0), (0,0,0), (255,255,255), "font/angsab.ttf")
-		img_text_scored_list = text_outline_topline(size, 2, text, (255,255,255), (0,0,0), (0,50,255), "font/angsab.ttf")
-
-		img_text = img_text_list[0]
-		img_text_scored = img_text_scored_list[0]
-		width = img_text_list[1]
-
-		# SCORED text
+		img_text = textimage(text, "font/angsab.ttf", size, (255,255,255), (0,0,0), (0,0,0), 2)
+		img_text_scored = textimage(text, "font/angsab.ttf", size, (0,50,255), (255,255,255), (0,0,0), 2)
 
 		#print((0, 0, int(img_text_scored.width * percent / 100), img_text_scored.height))
 		img_text_crop = img_text.crop((int(img_text_scored.width * (percent / 100)), 0, img_text_scored.width, img_text_scored.height))
@@ -189,7 +177,18 @@ class generate :
 		# draw = ImageDraw.Draw(image)
 		# image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - width / 2),int((y / 100)*(image.height))),img_text_crop)
 		# image.paste(score_crop,(int(image.width / 2 - width/2),int((y / 100)*(image.height))),score_crop)
-		image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - width / 2), image.height - img_text_crop.height - 50),img_text_crop)
-		image.paste(score_crop,(int(image.width / 2 - width/2), image.height - score_crop.height - 50),score_crop)
+		image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - img_text.width / 2), image.height - img_text_crop.height - 50),img_text_crop)
+		image.paste(score_crop,(int(image.width / 2 - img_text.width / 2), image.height - score_crop.height - 50),score_crop)
 
 		return image
+	def i_know_who_is(text) :
+		# by gongpha
+		bg = Image.open("template/meme/กูรู้หมดแล้ว.png")
+
+		img_text = textimage(text, "font/sukhumvitb.ttf", 50, (160, 28, 51), None, None, 0)
+
+		# draw = ImageDraw.Draw(bg)
+		# draw.text((41, 158), text, (140, 28, 51), font=font)
+		r = img_text.rotate(1, expand = True)
+		bg.paste(r,(41, 158),r)
+		return bg

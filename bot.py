@@ -26,6 +26,8 @@ from random import randint
 from difflib import SequenceMatcher
 from numpy import argmax
 
+from utils.discord_image import *
+
 
 import random
 
@@ -222,7 +224,7 @@ def isItMentionOrId(user) :
 			return False
 
 def mentionToId(ctx, mention) :
-	if mention == 'self' or mention == None :
+	if mention == None :
 		return ctx.author.id
 	result = ""
 	result = mention.replace('<@', '')
@@ -421,23 +423,17 @@ async def mention(ctx, idthose : commands.Greedy[discord.Member], count : typing
 				print(">> Mention to {0} ({1})".format(u,u.id))
 				await ctx.send(u.mention)
 @bot.command()
-async def avatar_png(ctx, rawuser : typing.Optional[str] = "self", size : typing.Optional[str] = "1024") :
+async def avatar_png(ctx, rawuser : typing.Optional[str] = None) :
 	user = await bot.fetch_user(mentionToId(ctx, rawuser))
-	if not size.isdigit() :
-		result = cmpStrList(size, keyword["th"]["default"])
-		if result[0] :
-			size = 1024
-		else :
-			await ctx.send("เอ่อ เดี๋ยว ?",embed=embed_error_incorrect_meaning(ctx, size, result[1], stringstack["th"]["_default_input"]))
-			return
 	if user.avatar == None :
 		url = user.avatar_url
-		await ctx.send(stringstack["th"]["_avatar_request"].format(user, size, url))
+		await ctx.send(stringstack["th"]["_avatar_request"].format(user, url))
 	else :
-		url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size={1}".format(user, size)
-		await ctx.send(stringstack["th"]["_avatar_request_size"].format(user, size, url))
+		url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(user)
+		width, height = Image.open(BytesIO(requests.get(url).content)).size
+		await ctx.send(stringstack["th"]["_avatar_request_size"].format(user, "{0} x {1}".format(width, height), url))
 @bot.command()
-async def avatar(ctx, rawuser : typing.Optional[str] = "self"):
+async def avatar(ctx, rawuser : typing.Optional[str] = None):
 	user = await bot.fetch_user(mentionToId(ctx, rawuser))
 	await ctx.send("`" + str(user) + "` : " + str(user.avatar_url))
 @bot.command()
@@ -573,8 +569,23 @@ async def wanbuabankaraoke(ctx, text : str, percent : typing.Optional[int] = Non
 	await ctx.send(file=file)
 
 @bot.command()
+async def กูรู้หมดแล้ว(ctx, *, text : str) :
+	generate.i_know_who_is(text).save('cache/i_know_who_is.png')
+	file = discord.File("cache/i_know_who_is.png", filename="i_know_who_is.png")
+	await ctx.send(file=file)
+
+@bot.command()
+async def avatar_circle(ctx, rawuser : typing.Optional[str] = None):
+	user = await bot.fetch_user(mentionToId(ctx, rawuser))
+	im = avatar_image_circle(user)
+	im.save("cache/circle_avatar.png")
+	width, height = im.size
+
+	file = discord.File("cache/circle_avatar.png", filename="circle_avatar.png")
+	await ctx.send(stringstack["th"]["_avatar_request_nourl"].format(user, "{0} x {1}".format(width, height)),file=file)
+
+@bot.command()
 async def help(ctx, sect : typing.Optional[str] = None) :
-	print(sect)
 	if sect == None :
 		msgh=discord.Embed(title="", description = stringstack["th"]["_help_desc"],color=0x9B59B6)#.format(discord.__version__, platform.python_version()),color=0x9B59B6)
 		for group in command_group :
