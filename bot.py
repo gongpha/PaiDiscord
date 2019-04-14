@@ -537,7 +537,6 @@ async def topline(ctx, *, text : str) :
 # locatev : typing.Optional[int] = 75
 @bot.command()
 async def toplinekaraoke(ctx, text : str, color : typing.Optional[str] = None, percent : typing.Optional[int] = None, url : typing.Optional[str] = None) :
-	"topline"
 	if url == None :
 		im = await getLastImage(ctx)
 	else :
@@ -557,7 +556,6 @@ async def wanbuaban(ctx, *, text : str) :
 
 @bot.command()
 async def wanbuabankaraoke(ctx, text : str, percent : typing.Optional[int] = None, url : typing.Optional[str] = None) :
-	"wanbuaban"
 	if url == None :
 		im = await getLastImage(ctx)
 	else :
@@ -601,7 +599,14 @@ async def help(ctx, sect : typing.Optional[str] = None) :
 					for command in bot.commands :
 						if command.help == cmd or command.name == cmd :
 							try :
-								msgh.add_field(name="{0}{1}\n".format(cmd_prefix, command.name),value=commandinfo["th"][cmd][0], inline=True)
+								reglist = ""
+								if len(commandinfo["th"][cmd]) > 2 :
+									for r in commandinfo["th"][cmd][2] :
+										reglist += "   *{}*".format(r)
+										desc = "`{0}`\n{1}\n{2}".format(commandinfo["th"][cmd][1], commandinfo["th"][cmd][0],reglist)
+								else :
+									desc = "`{0}`\n{1}".format(commandinfo["th"][cmd][1], commandinfo["th"][cmd][0])
+								msgh.add_field(name="{0}{1}\n".format(cmd_prefix, command.name),value=desc, inline=True)
 							except KeyError :
 								msgh.add_field(name="{0}{1}\n".format(cmd_prefix, command.name),value=stringstack["th"]["_unknown"], inline=True)
 	msgh.set_footer(text=stringstack["th"]["_request_by"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
