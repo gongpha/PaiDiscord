@@ -27,7 +27,7 @@ from difflib import SequenceMatcher
 from numpy import argmax
 
 from utils.discord_image import *
-
+from utils.procimg import get_all_proc
 
 import random
 
@@ -341,12 +341,27 @@ async def status_task():
 async def on_command_error(ctx, error):
 	await ctx.send("มีข้อผิดพลาดจ้า", embed=embed_error_special(ctx, error))
 
+@commands.command()
+async def imageproc_run(ctx) :
+	await ctx.send("no")
+
 @bot.event
 async def on_ready():
 	print('>> login as')
 	print(bot.user.name)
 	print(bot.user.id)
 	print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
+
+	procl = get_all_proc('proc/imggen/')
+	for p in procl :
+		for c in p[0] :
+			command_name = c.command_name if c.command_name != None else c
+			command_desc = c.local_desc
+		proc_name = p[1]
+		proc_author = p[2]
+		proc_desc = p[3]
+		#cmd = commands.command(p.)
+		bot.add_command(imageproc_run)
 
 @bot.event
 async def on_message(message):
@@ -573,7 +588,7 @@ async def กูรู้หมดแล้ว(ctx, *, text : str) :
 	await ctx.send(file=file)
 
 @bot.command()
-async def avatar_circle(ctx, rawuser : typing.Optional[str] = None):
+async def avatar_circle(ctx, rawuser : typing.Optional[str] = None) :
 	user = await bot.fetch_user(mentionToId(ctx, rawuser))
 	im = avatar_image_circle(user)
 	im.save("cache/circle_avatar.png")
@@ -581,6 +596,7 @@ async def avatar_circle(ctx, rawuser : typing.Optional[str] = None):
 
 	file = discord.File("cache/circle_avatar.png", filename="circle_avatar.png")
 	await ctx.send(stringstack["th"]["_avatar_request_nourl"].format(user, "{0} x {1}".format(width, height)),file=file)
+
 
 @bot.command()
 async def help(ctx, sect : typing.Optional[str] = None) :
@@ -617,5 +633,5 @@ async def help(ctx, sect : typing.Optional[str] = None) :
 #bot.add_cog(TestCommand())
 #bot.add_cog(BasicCommand())
 #bot.add_cog(StatsCommand())
-bot.loop.create_task(status_task())
+#bot.loop.create_task(status_task())
 bot.run(token)
