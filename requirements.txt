@@ -2,3 +2,5 @@
 pillow
 requests
 numpy
+pythainlp
+python-dateutil

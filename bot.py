@@ -28,6 +28,9 @@ from numpy import argmax
 
 from utils.discord_image import *
 from utils.procimg import get_all_proc
+from utils.thai_format import th_format_date_diff
+from pythainlp.util import thai_strftime
+from dateutil.relativedelta import relativedelta
 
 import random
 
@@ -71,6 +74,7 @@ token = os.environ.get('BOT_TOKEN',None)
 openprocch = int(os.environ.get('OPENPROC_CH',None))
 botname = "OpenProcess"
 
+bot_theme = 0x9B59B6
 cmd_prefix = '::'
 bot = commands.Bot(command_prefix=cmd_prefix, description="This is a bot :D")
 bot.remove_command('help')
@@ -345,6 +349,29 @@ async def on_command_error(ctx, error):
 async def imageproc_run(ctx) :
 	await ctx.send("no")
 
+@bot.command()
+async def exp__users(ctx, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :
+	if end is None:
+		end = start + 20
+	stri = "```"
+	for u in range(start, end+1) :
+		if u >= len(bot.users) :
+			continue
+		stri += f"{u}. {bot.users[u]}\n"
+	stri += '```'
+	e = discord.Embed(title=f"{len(bot.users)} : ผู้ใช้ {(end + 1) - start} ราย",color=0x9B59B6)
+	e.add_field(name=f"{start} - {end} จาก {len(bot.users)}", value=stri)
+	await ctx.send(embed=e)
+
+@bot.command()
+async def exp__member(ctx, *, member : discord.Member) :
+	e = discord.Embed(title=f"{str(member)}" + (f" ({member.nick})" if member.nick != None else ""),color=member.top_role.color)
+	e.set_thumbnail(url=member.avatar_url)
+	e.add_field(name="เข้าร่วม Discord เมื่อ", value=thai_strftime(member.created_at, f"%d %B %Y เวลา %H:%M:%S+(%f)\nเมื่อ {th_format_date_diff(member.created_at)}"))
+	e.add_field(name=f"เข้าร่วม {member.guild.name} เมื่อ", value=thai_strftime(member.joined_at, f"%d %B %Y เวลา %H:%M:%S+(%f)\nเมื่อ {th_format_date_diff(member.joined_at)}"))
+	#e.add_field(name=f"เข้าร่วม {member.gulid.name} เมื่อ", value=thai_strftime(member.joined_at), inline=True)
+	await ctx.send(embed=e)
+
 @bot.event
 async def on_ready():
 	print('>> login as')
@@ -610,7 +637,7 @@ async def help(ctx, sect : typing.Optional[str] = None) :
 	else :
 		for group in command_group :
 			if group == sect :
-				msgh=discord.Embed(title=stringstack["th"]["_section_head_" + group], description="",color=0x9B59B6)
+				msgh=discord.Embed(title=stringstack["th"]["_section_head_" + group], description="",color=bot_theme)
 				for cmd in command_group[group] :
 					for command in bot.commands :
 						if command.help == cmd or command.name == cmd :
