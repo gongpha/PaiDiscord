@@ -6,7 +6,8 @@ def th_format_date_diff(time=False):
     'just now', etc
     """
     from datetime import datetime
-    now = datetime.now()
+    from pytz import timezone
+    now = datetime.utcnow().astimezone(timezone("Asia/Bangkok"))
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
     elif isinstance(time,datetime):
