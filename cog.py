@@ -1,15 +1,16 @@
 import discord
 from discord.ext import commands
 import json
+import yaml
 
 class Cog(commands.Cog) :
-    def __init__(self, bot):
-        self.bot = bot
-        with open('i18n/cogs/{}/{}.json'.format(self.__class__.__name__, bot.lang), encoding="utf8") as json_file:
-            self.stringstack = json.load(json_file)
-        self.cog_name = self.stringstack["cog_name"]
-        self.cog_desc = self.stringstack["cog_desc"]
-        super().__init__()
+	def __init__(self, bot):
+		self.bot = bot
+		with open('i18n/cogs/{}/{}.yml'.format(self.__class__.__name__, bot.lang), encoding="utf8") as json_file:
+			self.stringstack = yaml.safe_load(json_file)
+		self.cog_name = self.stringstack["cog"]["name"]
+		self.cog_desc = self.stringstack["cog"]["description"]
+		super().__init__()
 
     # @classmethod
     # def setup(c, bot) :
@@ -19,7 +20,8 @@ class Cog(commands.Cog) :
     #
     # 	bot.add_cog(cg)
 def loadInformation(cog) :
-    for c in cog.get_commands() :
-        c.description = cog.stringstack["command_{}_desc".format(c.name)]
-        c.usage = cog.stringstack["command_{}_usge".format(c.name)]
-    return cog
+	for c in cog.get_commands() :
+		c.description = cog.stringstack["command"][c.name]["description"]
+		c.usage = cog.stringstack["command"][c.name]["usage"]
+		c.aliases = cog.stringstack["command"][c.name]["aliases"]
+	return cog

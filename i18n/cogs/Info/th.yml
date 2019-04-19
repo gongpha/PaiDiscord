@@ -1,0 +1,23 @@
+cog :
+    name                    : ข้อมูล
+    description             : หาข้อมูลเกี่ยวกับผู้ใช้ ช่อง เซิร์ฟเวอร์ และอีกมากมาย
+
+command :
+    help :
+        description         : ส่งข้อความช่วยเหลือ
+        usage               : "<ส่วน>"
+        aliases             :
+            - ช่วย
+            - ช่วยเหลือ
+            - command
+            - commands
+            - cmd
+    guild :
+        description         : ข้อมูลของเซิร์ฟเวอร์
+        usage               :
+        aliases             :
+            - server
+            - เซิร์ฟเวอร์
+            - สมาคม
+            - เซิฟ
+            - sv

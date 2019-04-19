@@ -1,0 +1,44 @@
+request_by                  : ร้องขอโดย {}
+empty                       : ว่างเปล่า
+no_command                  : ไม่มีคำสั่ง
+
+VoiceRegion :
+    amsterdam               : อัมสเตอร์ดัม
+    brazil                  : บราซิล
+    eu_central              : ยุโรปกลาง
+    eu_west                 : ยุโรปตะวันตก
+    frankfurt               : แฟรงก์เฟิร์ต
+    hongkong                : ฮ่องกง
+    japan                   : ญี่ปุ่น
+    london                  : ลอนดอน
+    russia                  : รัสเซีย
+    singapore               : สิงคโปร์
+    southafrica             : แอฟริกาใต้
+    sydney                  : ซิดนีย์
+    us_central              : อเมริกากลาง
+    us_east                 : อเมริกาตะวันออก
+    us_south                : อเมริกาใต้
+    us_west                 : อเมริกาตะวันตก
+    vip_amsterdam           : อัมสเตอร์ดัม (VIP)
+    vip_us_east             : อเมริกาใต้ (VIP)
+    vip_us_west             : อเมริกาตะวันตก (VIP)
+
+Model :
+    Guild                   : เซิร์ฟเวอร์
+    Member                  : สมาชิก
+    User                    : ผู้ใช้
+    Message                 : ข้อความ
+    ID                      : ID
+    Embed                   : ฝัง
+    Attachment              : แนบ
+    Channel                 : ช่อง
+    TextChannel             : ช่องข้อความ
+    VoiceChannel            : ช่องเสียง
+    CategoryChannel         : หมวดหมู่
+    DMChannel               : ข้อความส่วนตัว
+    Emoji                   : อีโมจิ
+    Role                    : บทบาท
+    Region                  : ภูมิภาค
+    Owner                   : เจ้าของ
+
+CreatedAt                   : สร้างเมื่อ

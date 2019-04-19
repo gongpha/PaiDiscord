@@ -3,6 +3,7 @@ from discord.ext import commands
 import typing
 from cog import Cog
 from cog import loadInformation
+from pytz import timezone
 
 class Info(Cog) :
 	def __init__(self, bot) :
@@ -11,9 +12,9 @@ class Info(Cog) :
 	def help_overview_embed(self, ctx) :
 		h = discord.Embed()
 		h.color = self.bot.theme
-		h.description = self.bot.stringstack["bot_description"]
+		h.description = self.bot.bot_description
 		h.set_footer(text=self.bot.stringstack["request_by"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
-		h.set_author(name=self.bot.stringstack["bot_name"], icon_url=self.bot.user.avatar_url)
+		h.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
 		for n, c in self.bot.cogs.items() :
 			h.add_field(name=c.cog_name,value=f"`{self.bot.command_prefix}help {c.qualified_name}`",inline=True)
 		return h
@@ -32,6 +33,8 @@ class Info(Cog) :
 
 	@commands.command()
 	async def help(self, ctx, *sect : str) :
+		#print(self.bot.name)
+		#print(self.bot.description)
 		h = None
 		if not sect :
 			h = self.help_overview_embed(ctx)
@@ -44,5 +47,21 @@ class Info(Cog) :
 		if h != None :
 			await ctx.send(embed=h)
 
+	@commands.command()
+	async def guild(self, ctx) :
+		#print(self.bot.name)
+		#print(self.bot.description)
+		guild = ctx.message.guild
+		s = discord.Embed()
+		s.color = self.bot.theme
+		s.set_thumbnail(url=member.icon_url)
+		s.set_footer(text=self.bot.stringstack["request_by"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
+		s.title = guild.name
+		s.add_field(name=self.bot.stringstack["Model"]["ID"],value=guild.id, inline=True)
+		s.add_field(name=self.bot.stringstack["Model"]["Region"],value=self.bot.stringstack["VoiceRegion"][guild.region.name], inline=True)
+		s.add_field(name=self.bot.stringstack["Model"]["Owner"],value=guild.owner.mention, inline=True)
+		s.add_field(name=self.bot.stringstack["CreatedAt"],value=guild.created_at.astimezone(timezone(self.bot.timezone)), inline=True)
+
+		await ctx.send(embed=s)
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))

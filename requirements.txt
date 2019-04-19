@@ -4,3 +4,4 @@ requests
 numpy
 pythainlp
 python-dateutil
+pyyaml

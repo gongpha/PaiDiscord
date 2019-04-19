@@ -1,0 +1,12 @@
+info :
+  name : ประมวล ฉายเดี่ยว
+  description : บอทอะไรก็ไม่รู้
+  std : PramualDev
+  command_prefix : ">>"
+  timezone : Asia/Bangkok
+  lang : th
+  log_ch : 530055377249894421
+  err_ch : 568682030817345556
+  theme : 0xff7f00
+cogs :
+  - cogs.Info

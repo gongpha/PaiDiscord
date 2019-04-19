@@ -1,7 +1,7 @@
 import os
 import asyncio, discord
 import platform
-import json
+import yaml
 import sys
 import traceback
 from discord.ext import commands
@@ -10,22 +10,22 @@ class NoToken(Exception):
 	"""No Token was found or invalid token"""
 	pass
 
-cogs_list = [
-	"cogs.Info"
-]
-
 class Pramual(commands.Bot) :
 	def __init__(self, *args, **kwargs) :
 		command_prefix = kwargs.pop('command_prefix', commands.when_mentioned_or('::'))
+		self.bot_name = kwargs.pop('name', "null")
+		self.bot_description = kwargs.pop('description', "null")
 		self.loop = kwargs.pop('loop', asyncio.get_event_loop())
 		self.std = kwargs.pop('std', None)
 		self.token = os.environ.get(self.std, None)
 		self.log_channel_id = kwargs.pop('log_ch', None)
 		self.error_channel_id = kwargs.pop('err_ch', None)
+		self.timezone = kwargs.pop('timezone', None)
 		self.theme = kwargs.pop('theme', 0x9B59B6)
 		self.lang = kwargs.pop('lang', None)
-		with open('i18n/{}.json'.format(self.lang), encoding="utf8") as json_file :
-			self.stringstack = json.load(json_file)
+		self.cog_list = kwargs.pop('cog_list', None)
+		with open('i18n/{}.yml'.format(self.lang), encoding="utf8") as json_file :
+			self.stringstack = yaml.safe_load(json_file)
 		if self.token == None :
 			raise NoToken("Invalid Token")
 		super().__init__(command_prefix=command_prefix, *args, **kwargs)
@@ -39,7 +39,7 @@ class Pramual(commands.Bot) :
 		self.log_channel = super().get_channel(self.log_channel_id)
 		self.error_channel = super().get_channel(self.error_channel_id)
 
-		for c in cogs_list :
+		for c in self.cog_list :
 			self.load_extension(c)
 
 	def run_bot(self) :

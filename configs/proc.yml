@@ -1,0 +1,5 @@
+proc_dev :
+    - bot_dev
+proc_release :
+    - bot_th
+    - bot_en
