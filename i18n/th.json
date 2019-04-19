@@ -1,5 +1,7 @@
 {
   "bot_name"                      : "ประมวล",
   "bot_description"               : "บอทอะไรก็ไม่รู้",
-  "request_by"                    : "ร้องขอโดย {}"
+  "request_by"                    : "ร้องขอโดย {}",
+  "empty"                         : "ว่างเปล่า",
+  "no_command"                    : "ไม่มีคำสั่ง"
 }

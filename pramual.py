@@ -2,10 +2,12 @@ import os
 import asyncio, discord
 import platform
 import json
+import sys
+import traceback
 from discord.ext import commands
 
 class NoToken(Exception):
-	"""No Token was found or invaild token"""
+	"""No Token was found or invalid token"""
 	pass
 
 cogs_list = [
@@ -19,6 +21,7 @@ class Pramual(commands.Bot) :
 		self.std = kwargs.pop('std', None)
 		self.token = os.environ.get(self.std, None)
 		self.log_channel_id = kwargs.pop('log_ch', None)
+		self.error_channel_id = kwargs.pop('err_ch', None)
 		self.theme = kwargs.pop('theme', 0x9B59B6)
 		self.lang = kwargs.pop('lang', None)
 		with open('i18n/{}.json'.format(self.lang), encoding="utf8") as json_file :
@@ -34,6 +37,7 @@ class Pramual(commands.Bot) :
 		print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 
 		self.log_channel = super().get_channel(self.log_channel_id)
+		self.error_channel = super().get_channel(self.error_channel_id)
 
 		for c in cogs_list :
 			self.load_extension(c)
@@ -62,6 +66,16 @@ class Pramual(commands.Bot) :
 		e.color = 0xff0000
 		e.timestamp = ctx.message.created_at
 
+		error = getattr(error, 'original', error)
+
+		traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+
+		tb = error.__traceback__
+		f = tb.tb_frame
+		lineno = tb.tb_lineno
+		filename = f.f_code.co_filename
 
 		e.add_field(name='Expection', value="("+str(ctx.message.id) + ")\n```" + str(getattr(error, 'original', error)) + "```", inline=False)
-		await self.log_channel.send(embed=e)
+		e.add_field(name='Filename', value=filename, inline=True)
+		e.add_field(name='Line No.', value=lineno, inline=True)
+		await self.error_channel.send(embed=e)
