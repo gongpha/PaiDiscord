@@ -1,7 +1,7 @@
 cog :
     name                    : ข้อมูล
     description             : หาข้อมูลเกี่ยวกับผู้ใช้ ช่อง เซิร์ฟเวอร์ และอีกมากมาย
-
+    icon_emoji              : information_source
 command :
     help :
         description         : ส่งข้อความช่วยเหลือ
@@ -21,3 +21,17 @@ command :
             - สมาคม
             - เซิฟ
             - sv
+    alias :
+        description         : ชื่อแฝงของคำสั่งนั้น
+        usage               : "<คำสั่ง>"
+        aliases             :
+            - aliases
+            - คำสั่งแฝง
+            - คำสั่งอื่น
+            - คำสั่งชื่ออื่น
+            - คำสั่งชื่อที่คล้ายกัน
+            - คำสั่งชื่อที่เหมือนกัน
+            - othercommand
+            - othercmd
+            - othercommands
+            - othercmds

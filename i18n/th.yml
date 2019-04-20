@@ -40,5 +40,8 @@ Model :
     Role                    : บทบาท
     Region                  : ภูมิภาค
     Owner                   : เจ้าของ
+    Command                 : คำสั่ง
+    Alias                   : แฝง
 
 CreatedAt                   : สร้างเมื่อ
+DateTimeText                : "%d %B พ.ศ. %Y เวลา %H:%M:%S+(%f)\nเมื่อ {}"

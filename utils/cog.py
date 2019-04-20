@@ -10,6 +10,7 @@ class Cog(commands.Cog) :
 			self.stringstack = yaml.safe_load(json_file)
 		self.cog_name = self.stringstack["cog"]["name"]
 		self.cog_desc = self.stringstack["cog"]["description"]
+		self.cog_emoji = self.stringstack["cog"]["icon_emoji"]
 		super().__init__()
 
     # @classmethod
