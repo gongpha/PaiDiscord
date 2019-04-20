@@ -1,4 +1,3 @@
-import os
 import asyncio, discord
 import platform
 import yaml
@@ -17,7 +16,7 @@ class Pramual(commands.Bot) :
 		self.bot_description = kwargs.pop('description', "null")
 		self.loop = kwargs.pop('loop', asyncio.get_event_loop())
 		self.std = kwargs.pop('std', None)
-		self.token = os.environ.get(self.std, None)
+		self.token = kwargs.pop('token', None)
 		self.log_channel_id = kwargs.pop('log_ch', None)
 		self.error_channel_id = kwargs.pop('err_ch', None)
 		self.timezone = kwargs.pop('timezone', None)

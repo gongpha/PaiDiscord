@@ -2,6 +2,7 @@ info :
   name : ประมวล ฉายเดี่ยว
   description : บอทอะไรก็ไม่รู้
   std : PramualDev
+  token : ?PramualTokenDev
   command_prefix : ">>"
   timezone : Asia/Bangkok
   lang : th
