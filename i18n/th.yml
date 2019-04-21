@@ -1,6 +1,6 @@
-request_by                  : ร้องขอโดย {}
-empty                       : ว่างเปล่า
-no_command                  : ไม่มีคำสั่ง
+RequestBy                   : ร้องขอโดย {}
+Empty                       : ว่างเปล่า
+NoCommand                   : ไม่มีคำสั่ง
 
 VoiceRegion :
     amsterdam               : อัมสเตอร์ดัม
@@ -36,6 +36,7 @@ Model :
     VoiceChannel            : ช่องเสียง
     CategoryChannel         : หมวดหมู่
     DMChannel               : ข้อความส่วนตัว
+    Reaction                : รีแอคชัน
     Emoji                   : อีโมจิ
     Role                    : บทบาท
     Region                  : ภูมิภาค
@@ -43,5 +44,17 @@ Model :
     Command                 : คำสั่ง
     Alias                   : แฝง
 
+Permission :
+    ManageChannels          : จัดการช่อง
+    ManageMessages          : จัดการข้อความ
+
+Reason :
+    CommandBy               : ถูดจัดการโดย {}
+
 CreatedAt                   : สร้างเมื่อ
 DateTimeText                : "%d %B พ.ศ. %Y เวลา %H:%M:%S+(%f)\nเมื่อ {}"
+TimeoutWaitingReaction      : หมดเวลาการรอรีแอคชัน โปรดส่งคำสั่งมาใหม่หากต้องการดำเนินการอีกครั้ง
+Warning                     : ⚠️ คำเตือน !
+ActionCannotUndo            : การกระทำดังกล่าวไม่สามารถคืนค่าได้
+PleaseReactionAllCommander  : โปรดเพิ่มรีแอคชันด้านล่างนี้ทั้งหมด เพื่อดำเนินการ (ผู้ใช้ที่ส่งคำสั่งเท่านั้น)
+NoPermissionWith            : ไม่มีสิทธิ์ *{}*

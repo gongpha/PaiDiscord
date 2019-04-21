@@ -21,6 +21,7 @@ command :
             - สมาคม
             - เซิฟ
             - sv
+            - กลุ่ม
     alias :
         description         : ชื่อแฝงของคำสั่งนั้น
         usage               : "<คำสั่ง>"

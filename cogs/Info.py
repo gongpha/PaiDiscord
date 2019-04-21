@@ -21,9 +21,9 @@ class Info(Cog) :
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
-		h = embed_t(self.bot, ctx, cog.cog_name, cog.cog_desc)
+		h = embed_t(self.bot, ctx, ":{}: {}".format(cog.cog_emoji, cog.cog_name), cog.cog_desc)
 		if not cog.get_commands() :
-			h.add_field(name="﻿",value="*{}*".format(self.bot.stringstack["no_command"]))
+			h.add_field(name="﻿",value="*{}*".format(self.bot.stringstack["NoCommand"]))
 		for c in cog.get_commands() :
 			h.add_field(name=f"`{self.bot.command_prefix}{c.name}`",value=c.description,inline=True)
 		return h
@@ -69,7 +69,7 @@ class Info(Cog) :
 		s = discord.Embed()
 		s.color = self.bot.theme
 		s.set_thumbnail(url=guild.icon_url)
-		s.set_footer(text=self.bot.stringstack["request_by"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
+		s.set_footer(text=self.bot.stringstack["RequestBy"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
 		s.title = guild.name
 		s.add_field(name=self.bot.stringstack["Model"]["ID"],value=guild.id, inline=True)
 		s.add_field(name=self.bot.stringstack["Model"]["Region"],value=self.bot.stringstack["VoiceRegion"][guild.region.name], inline=True)

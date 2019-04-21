@@ -23,6 +23,7 @@ class Pramual(commands.Bot) :
 		self.theme = kwargs.pop('theme', 0x9B59B6)
 		self.lang = kwargs.pop('lang', None)
 		self.cog_list = kwargs.pop('cog_list', None)
+		self.owner_list = kwargs.pop('owner', None)
 		with open('i18n/{}.yml'.format(self.lang), encoding="utf8") as json_file :
 			self.stringstack = yaml.safe_load(json_file)
 		if self.token == None :
