@@ -24,5 +24,6 @@ def loadInformation(cog) :
 	for c in cog.get_commands() :
 		c.description = cog.stringstack["command"][c.name]["description"]
 		c.usage = cog.stringstack["command"][c.name]["usage"]
-		c.aliases = cog.stringstack["command"][c.name]["aliases"]
+		if c.aliases :
+			c.aliases = cog.stringstack["command"][c.name]["aliases"]
 	return cog

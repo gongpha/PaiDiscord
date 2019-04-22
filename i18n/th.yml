@@ -47,6 +47,8 @@ Model :
 Permission :
     ManageChannels          : จัดการช่อง
     ManageMessages          : จัดการข้อความ
+    ManageNicknames         : จัดการชื่อเล่น
+    ManageRoles             : จัดการบทบาท
 
 Reason :
     CommandBy               : ถูดจัดการโดย {}

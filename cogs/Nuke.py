@@ -4,10 +4,6 @@ import typing
 from utils.cog import Cog
 from utils.cog import loadInformation
 from utils.template import *
-from pytz import timezone
-from utils.thai_format import th_format_date_diff
-from pythainlp.util import thai_strftime
-from dateutil.relativedelta import relativedelta
 from utils.check import *
 class Nuke(Cog) :
 	pbot = None
@@ -16,8 +12,8 @@ class Nuke(Cog) :
 		super().__init__(bot)
 
 	@commands.command()
-	@IsOwnerGuild(pbot)
-	async def nuke__channels(self, ctx, *sect : str) :
+	@IsOwnerGuild()
+	async def nuke__channels(self, ctx) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 		if not ctx.message.guild.me.guild_permissions.manage_channels :
@@ -29,8 +25,8 @@ class Nuke(Cog) :
 					await ch.delete(reason=self.bot.stringstack["Reason"]["CommandBy"].format(ctx.author))
 
 	@commands.command()
-	@IsOwnerGuild(pbot)
-	async def nuke__messages(self, ctx, *sect : str) :
+	@IsOwnerGuild()
+	async def nuke__messages(self, ctx) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 		if not ctx.message.guild.me.guild_permissions.manage_messages :

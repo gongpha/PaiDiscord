@@ -57,7 +57,7 @@ class Pramual(commands.Bot) :
 		await self.log_channel.send(embed=e)
 
 	async def on_command_error(self, ctx, error) :
-		e = discord.Embed(title=f"Command Error : `{self.command_prefix}{ctx.command.name}`")
+		e = discord.Embed(title="Command Error : `{}{}`".format(self.command_prefix if ctx.command.name != None else "",ctx.command.name if ctx.command.name != None else "UNKNOWN"))
 		e.description = f"Called to `{self.std}`"
 		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)
 		e.add_field(name='Guild', value='`{0.name}` ({0.id})'.format(ctx.message.guild) if ctx.message.guild else 'Direct Message')
