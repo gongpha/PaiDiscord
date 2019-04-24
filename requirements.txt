@@ -4,3 +4,5 @@ requests
 numpy
 pythainlp
 python-dateutil
+yaml
+aiohttp
