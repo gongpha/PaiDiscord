@@ -1,0 +1,18 @@
+cog :
+    name                    : คาราโอเกะ
+    description             : สร้างคาราโอเกะจากรูปภาพ
+    icon_emoji              : microphone
+    author                  : gongpha
+    translated              : gongpha
+command :
+    wanbuaban :
+        description         : "คาราโอเกะ : วังบัวบาน\nนำรูปแบบของค่ายเพลงส่วนใหญ่โดยใช้ฟอนต์ Angsana UPC และไม่มีตัวหนังสือภาษาอังกฤษ"
+        usage               : <ข้อความ>
+        aliases             :
+            - วังบัวบาน
+            - _wbb
+            - wanbuabankaraoke
+            - wangbuaban
+            - wangbuabankaraoke
+            - karaokewanbuaban
+        karaoke_name        : วังบัวบาน

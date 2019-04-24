@@ -19,3 +19,4 @@ cogs :
   - cogs.Info
   - cogs.Nuke
   - cogs.MagickBomb
+  - cogs.Karaoke

@@ -2,6 +2,8 @@ cog :
     name                    : ปรมาณู
     description             : ทำลายล้าง !
     icon_emoji              : radioactive
+    author                  : gongpha
+    translated              : gongpha
 command :
     nuke__channels :
         description         : ลบช่องทั้งหมด (เจ้าของเซิร์ฟเวอร์เท่านั้น)

@@ -2,6 +2,8 @@ cog :
     name                    : ระเบิดเวทมนต์
     description             : เห้ย ! มันคือเ*ี้ยอะไรเนี่ย มันคงจะขลังมาก
     icon_emoji              : sparkles
+    author                  : gongpha
+    translated              : gongpha
 command :
     magick__sidname :
         description         : เปลี่ยนชื่อทุกสิ่งในเซิร์ฟเวอร์ให้กลายเป็น ID ของสิ่งนั้น และชนิดของสิ่งนั้น (x0000000000000)

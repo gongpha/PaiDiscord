@@ -2,6 +2,8 @@ cog :
     name                    : ข้อมูล
     description             : หาข้อมูลเกี่ยวกับผู้ใช้ ช่อง เซิร์ฟเวอร์ และอีกมากมาย
     icon_emoji              : information_source
+    author                  : gongpha
+    translated              : gongpha
 command :
     help :
         description         : ส่งข้อความช่วยเหลือ
@@ -36,3 +38,11 @@ command :
             - othercmd
             - othercommands
             - othercmds
+    avatar :
+        description         : ส่งภาพประจำตัวของผู้ใช้คนนั้น
+        usage               : "<สมาชิก>"
+        aliases             :
+            - profile_picture
+            - profilepic
+            - profileavatar
+            - profilepicture

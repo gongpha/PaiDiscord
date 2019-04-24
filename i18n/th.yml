@@ -43,6 +43,7 @@ Model :
     Owner                   : เจ้าของ
     Command                 : คำสั่ง
     Alias                   : แฝง
+    Text                    : ข้อความ
 
 Permission :
     ManageChannels          : จัดการช่อง

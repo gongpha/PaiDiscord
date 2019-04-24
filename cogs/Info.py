@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import typing
 from utils.cog import Cog
+import aiohttp
 from utils.cog import loadInformation
 from utils.template import embed_t
 from pytz import timezone
@@ -27,6 +28,11 @@ class Info(Cog) :
 		for c in cog.get_commands() :
 			h.add_field(name=f"`{self.bot.command_prefix}{c.name}`",value=c.description,inline=True)
 		return h
+
+	async def user__avatar(self, user : [discord.User, discord.Member]) :
+		async with self.session.get(user.avatar_url_as(format="png")) as r :
+			avatar = await r.read()
+		return (avatar, user.avatar_url_as(format="png"))
 
 	@commands.command()
 	async def help(self, ctx, *sect : str) :
@@ -77,5 +83,11 @@ class Info(Cog) :
 		s.add_field(name=self.bot.stringstack["CreatedAt"],value=thai_strftime(guild.created_at, self.bot.stringstack["DateTimeText"].format(th_format_date_diff(guild.created_at.astimezone(timezone(self.bot.timezone))))), inline=True)
 
 		await ctx.send(embed=s)
+
+	@commands.command()
+	async def avatar(self, ctx, member : discord.Member = None) :
+		member = member or ctx.author
+		async with ctx.typeing() :
+			await user__avatar[1]
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))
