@@ -13,7 +13,7 @@ import yaml
 with open('configs/proc.yml') as f:
     proclist = yaml.safe_load(f)
 
-for p in proclist["proc_dev" if len(sys.argv) <= 1 else sys.argv[1] + ".py"] :
+for p in proclist["proc_dev" if len(sys.argv) <= 1 else sys.argv[1]] :
     with open('configs/{}.yml'.format(p), encoding="utf8") as f:
         config = yaml.safe_load(f)
 
