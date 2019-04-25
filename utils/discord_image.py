@@ -4,6 +4,8 @@ from io import BytesIO
 import requests
 import discord
 
+standalone_image_ext = ("png", "jpeg", "jpg", "webp", "tiff")
+
 def avatar_image_circle(user) :
     url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(user)
     im = Image.open(BytesIO(requests.get(url).content))

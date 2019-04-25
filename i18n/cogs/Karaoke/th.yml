@@ -6,7 +6,7 @@ cog :
     translated              : gongpha
 command :
     wanbuaban :
-        description         : "คาราโอเกะ : วังบัวบาน\nนำรูปแบบของค่ายเพลงส่วนใหญ่โดยใช้ฟอนต์ Angsana UPC และไม่มีตัวหนังสือภาษาอังกฤษ"
+        description         : "คาราโอเกะ : วังบัวบาน\nนำรูปแบบของค่ายเพลงส่วนใหญ่มาใช้โดยใช้ฟอนต์ Angsana UPC และไม่มีตัวหนังสือภาษาอังกฤษ"
         usage               : <ข้อความ>
         aliases             :
             - วังบัวบาน
@@ -15,4 +15,18 @@ command :
             - wangbuaban
             - wangbuabankaraoke
             - karaokewanbuaban
+        karaoke_name        : วังบัวบาน
+    topline :
+        description         : "คาราโอเกะ : ท็อปไลน์\nนำรูปแบบของค่ายท็อปไลน์ - ไดมอนด์ ปี พ.ศ. 2533 มาใช้"
+        usage               : <ข้อความ>
+        aliases             :
+            - ท็อปไลน์
+            - _tpln
+            - toplinediamond
+            - toplinekaraoke
+            - karaoketopline
+            - topline_pp
+            - topline_poompuang
+            - topline_2533
+            - topline_1990
         karaoke_name        : วังบัวบาน

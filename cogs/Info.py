@@ -59,7 +59,7 @@ class Info(Cog) :
 			c_a = c.aliases.copy()
 			c_a.insert(0, c.name)
 			if sect in c_a :
-				h = embed_t(self.bot, ctx, "{} {} ({})".format(self.bot.stringstack["Model"]["Command"], sect, c.name) if sect != c.name else "{} {}".format(self.bot.stringstack["Model"]["Command"], sect), "")
+				h = embed_t(self.bot, ctx, "{} {} ({})".format(self.stringstack["AliasFor"], sect, c.name) if sect != c.name else "{} {}".format(self.stringstack["AliasFor"], sect), "")
 				h.add_field(name=self.bot.stringstack["Model"]["Command"], value=f"`{c.name}`")
 				h.add_field(name=self.bot.stringstack["Model"]["Alias"], value="\n".join([f"`{i}`" for i in c.aliases]))
 				break

@@ -1,0 +1,8 @@
+
+cog :
+    name                    : การจัดการ
+    description             : การตั้งค่า จัดการ ผู้ใช้ ช่อง บทบาท เซิร์ฟเวอร์
+    icon_emoji              : wrench
+    author                  : gongpha
+    translated              : gongpha
+command :
