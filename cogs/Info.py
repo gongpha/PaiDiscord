@@ -15,10 +15,11 @@ class Info(Cog) :
 		super().__init__(bot)
 
 	def help_overview_embed(self, ctx) :
-		h = embed_t(self.bot, ctx, "", self.bot.bot_description)
-		h.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
+		h = embed_t(self.bot, ctx, "❔ {}".format(self.stringstack["Help"]), "")
+		h.color = self.bot.theme[1] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
 		for n, c in self.bot.cogs.items() :
-			h.add_field(name=":{}: {}".format(c.cog_emoji, c.cog_name),value=f"`{self.bot.command_prefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
+			if not c.cog_hidden :
+				h.add_field(name=":{}: {}".format(c.cog_emoji, c.cog_name),value=f"`{self.bot.command_prefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
@@ -38,15 +39,22 @@ class Info(Cog) :
 	async def help(self, ctx, *sect : str) :
 		#print(self.bot.name)
 		#print(self.bot.description)
+		e = None
 		h = None
 		if not sect :
 			h = self.help_overview_embed(ctx)
+			e = discord.Embed()
+			e.color = self.bot.theme[0] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
+			e.description = self.bot.bot_description
+			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
 		else :
 			for n, c in self.bot.cogs.items() :
 				if n.lower() == sect[0].lower() :
 					h = self.help_specific_embed(ctx, c)
 
 		#msgh.set_thumbnail(url=ctx.author.avatar_url)
+		if e != None :
+			await ctx.send(embed=e)
 		if h != None :
 			await ctx.send(embed=h)
 
@@ -87,7 +95,7 @@ class Info(Cog) :
 	@commands.command()
 	async def avatar(self, ctx, member : discord.Member = None) :
 		member = member or ctx.author
-		async with ctx.typeing() :
+		async with ctx.typing() :
 			await user__avatar[1]
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))

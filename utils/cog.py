@@ -13,6 +13,8 @@ class Cog(commands.Cog) :
 		self.cog_name = self.stringstack["cog"]["name"]
 		self.cog_desc = self.stringstack["cog"]["description"]
 		self.cog_emoji = self.stringstack["cog"]["icon_emoji"]
+		self.cog_hidden = False
+		
 		super().__init__()
 
     # @classmethod

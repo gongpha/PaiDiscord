@@ -3,6 +3,8 @@ from utils.template import embed_em
 
 def IsOwnerBot() :
 	async def predicate(ctx) :
+		if ctx.author.id not in ctx.bot.owner_list :
+			await ctx.send(embed=embed_em(ctx.bot, ctx, ctx.bot.stringstack["YouAreNotBotOwner"]))
 		return ctx.author.id in ctx.bot.owner_list
 	return commands.check(predicate)
 

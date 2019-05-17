@@ -1,0 +1,34 @@
+info :
+  name : Pai (พาย)
+  description : >
+    บอทหน้าแมวของ gongpha
+    `2a2569300067`
+  description_long : >
+
+  std : PramualPai
+  token : ?PramualTokenPai
+  command_prefix : "_"
+  timezone : Asia/Bangkok
+  lang : th
+  log_ch : 530055377249894421
+  err_ch : 568682030817345556
+  theme :
+      - 0xff7f00
+      - 0x007fff
+  owner :
+      - 269418798975680513 # gongpha#0238       DEVELOPER
+      - 338475895285088257 # gongpha#0394       DEVELOPER'S SMURF
+      - 357099320069062666 # Kengkat1#4558      TESTER
+      - 524907194852966410 # Kengkat2#1787      TESTER'S SMURF
+      - 359621664641908736 # Monochrome#0378    TESTER
+      - 359616528041246723 # Unallocated#5609	TESTER
+  database_host : ?PramualDatabaseHost
+  database_username : ?PramualDatabaseUsername
+  database_password : ?PramualDatabasePassword
+  database_database : ?PramualDatabaseDatabase
+cogs :
+  - cogs.Info
+  - cogs.Nuke
+  - cogs.MagickBomb
+  - cogs.Karaoke
+  - cogs.Experimental

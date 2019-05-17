@@ -61,3 +61,8 @@ Warning                     : ⚠️ คำเตือน !
 ActionCannotUndo            : การกระทำดังกล่าวไม่สามารถคืนค่าได้
 PleaseReactionAllCommander  : โปรดเพิ่มรีแอคชันด้านล่างนี้ทั้งหมด เพื่อดำเนินการ (ผู้ใช้ที่ส่งคำสั่งเท่านั้น)
 NoPermissionWith            : ไม่มีสิทธิ์ *{}*
+YouAreNotBotOwner           : คุณไม่ใช่เจ้าของบอทนี้ คุณจึงไม่มีสิทธิ์ใช้งานคำสั่งนี้ได้
+WelcomeUserToGuild          : ยินดีต้อนรับ {} เข้าสู่ {} !
+UserWasJoinedGuildNo        : "{} ได้เข้าร่วมเซิร์ฟเวอร์เป็นคนที่ {}"
+UserWasLeftTheGuild         : "{} ได้ออกจาก {}"
+NowGuildHadNoMembersLeft    : "ขณะนี้เหลือสมาชิกในเซิร์ฟเวอร์อยู่ {} คน"

@@ -1,0 +1,16 @@
+cog :
+    name                    : การทดลองขั้นสูง
+    description             : สามารถใช้ได้แค่เจ้าของบอทเท่านั้น
+    icon_emoji              : wrench
+    author                  : gongpha
+    translated              : gongpha
+command :
+    _shutdown :
+        description         : ปิดการใช้งานบอท
+        usage               :
+        aliases             :
+            - _ปิดบอท
+            - _ปิดไคลเอนต์
+            - _killbot
+            - _killclient
+            - _shut
