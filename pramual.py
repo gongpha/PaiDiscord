@@ -27,6 +27,7 @@ class Pramual(commands.Bot) :
 		self.lang = kwargs.pop('lang', None)
 		self.cog_list = kwargs.pop('cog_list', None)
 		self.owner_list = kwargs.pop('owner', None)
+		self.waitForMessage = {}
 		#self.database_host = kwargs.pop('databaseHost', None)
 		#self.database_username = kwargs.pop('databaseUsername', None)
 		#self.database_password = kwargs.pop('databasePassword', None)
@@ -52,7 +53,7 @@ class Pramual(commands.Bot) :
 
 		game = discord.Game(name="humans", type=discord.ActivityType.listening)
 
-		self.change_presence(status=discord.Status.online, activity=game)
+		await self.change_presence(status=discord.Status.online, activity=game)
 
 		#if all([self.database_host, self.database_username, self.database_password, self.database_database]) :
 			# try:
@@ -106,20 +107,46 @@ class Pramual(commands.Bot) :
 		e.add_field(name='Filename', value=filename, inline=True)
 		e.add_field(name='Line No.', value=lineno, inline=True)
 		await self.error_channel.send(embed=e)
+
 	async def on_member_join(self, member) :
-		e = discord.Embed(title=self.stringstack["WelcomeUserToGuild"].format(member.mention, member.guild))
-		e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(display_name,len(member.guild.members)))
+		e = discord.Embed(title=self.stringstack["WelcomeUserToGuild"].format(member, member.guild))
+		e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.display_name,len(member.guild.members)))
 		e.color = 0x00AA80
 		e.set_thumbnail(url=member.avatar_url)
 		e.set_footer(text=member.id)
-
 		await member.guild.system_channel.send(embed=e)
 
 	async def on_member_remove(self, member) :
-		e = discord.Embed(title=self.stringstack["UserWasLeftTheGuild"].format(member.mention, member.guild))
+		e = discord.Embed(title=self.stringstack["UserWasLeftTheGuild"].format(member, member.guild))
 		e.description = "*{}*".format(self.stringstack["NowGuildHadNoMembersLeft"].format(len(member.guild.members)))
 		e.color = 0xDD0000
 		e.set_thumbnail(url=member.avatar_url)
 		e.set_footer(text=member.id)
-
 		await member.guild.system_channel.send(embed=e)
+
+	async def on_message(self, message) :
+		#print(self.waitForMessage)
+		if message.channel.id in self.waitForMessage :
+			if message.author.id in self.waitForMessage[message.channel.id] :
+				if self.waitForMessage[message.channel.id][message.author.id] == 1 :
+					await message.channel.send(":thinking:")
+					del self.waitForMessage[message.channel.id][message.author.id]
+					return
+		if message.activity :
+			if message.activity["type"] == 3 :
+				await message.channel.send(self.stringstack["Response"]["UserSentActivitiesSpotify"])
+		#if message.mention_everyone :
+		#	await message.channel.send(stringstack["th"]["_response_everyone"])
+		else :
+			for user in message.mentions :
+				if user.id == self.user.id :
+					if message.author.id != self.user.id :
+						if not message.content.startswith(self.command_prefix) :
+							await message.channel.send(self.stringstack["Response"]["UserSentBot"].format(message.author.mention))
+
+							if not message.channel.id in self.waitForMessage :
+								self.waitForMessage[message.channel.id] = {}
+							self.waitForMessage[message.channel.id][message.author.id] = 1
+					else :
+						await message.channel.send(self.stringstack["Response"]["BotSentItself"])
+		await self.process_commands(message)

@@ -1,5 +1,6 @@
 RequestBy                   : ร้องขอโดย {}
 Empty                       : ว่างเปล่า
+None                        : ไม่มี
 NoCommand                   : ไม่มีคำสั่ง
 
 VoiceRegion :
@@ -44,6 +45,18 @@ Model :
     Command                 : คำสั่ง
     Alias                   : แฝง
     Text                    : ข้อความ
+    Name                    : ชื่อ
+    Nickname                : ชื่อเล่น
+    Status                  : สถานะ
+    Desktop                 : เดสก์ทอป
+    Mobile                  : อุปกรณ์พกพา
+    Web                     : เว็บ
+Status :
+    Online                  : ออนไลน์
+    Idle                    : ไม่อยู่
+    DoNotDisturb            : ห้ามรบกวน
+    Offline                 : ออฟไลน์
+    Invisible               : ล่องหน
 
 Permission :
     ManageChannels          : จัดการช่อง
@@ -54,8 +67,16 @@ Permission :
 Reason :
     CommandBy               : ถูดจัดการโดย {}
 
+Response :
+    UserSentActivitiesSpotify   : ฟังไม่เป็นอ่ะ
+    UserSentEveryone            : มีอะไรเกิดขึ้น ?
+    UserSentBot                 : มีอะไรเหรอ ? {}
+    BotSentItself               : นี่เราจะกล่าวถึงตัวเองทำไมเนี่ย ? =w=
+
 CreatedAt                   : สร้างเมื่อ
-DateTimeText                : "%d %B พ.ศ. %Y เวลา %H:%M:%S+(%f)\nเมื่อ {}"
+JoinedAt                    : เข้าร่วมเมื่อ
+JoinedGuildAt               : เข้าร่วม {} เมื่อ
+DateTimeText                : "%d %B พ.ศ. %Y เวลา %H:%M:%S + (%f)\nเมื่อ {}"
 TimeoutWaitingReaction      : หมดเวลาการรอรีแอคชัน โปรดส่งคำสั่งมาใหม่หากต้องการดำเนินการอีกครั้ง
 Warning                     : ⚠️ คำเตือน !
 ActionCannotUndo            : การกระทำดังกล่าวไม่สามารถคืนค่าได้

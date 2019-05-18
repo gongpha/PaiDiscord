@@ -1,9 +1,9 @@
 info :
   name : Pai (พาย)
-  description : >
+  description : |-
     บอทหน้าแมวของ gongpha
     `2a2569300067`
-  description_long : >
+  description_long : ""
 
   std : PramualPai
   token : ?PramualTokenPai

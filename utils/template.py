@@ -1,16 +1,17 @@
 import discord
 import asyncio
 import random
-def embed_t(bot, ctx, title, description) :
+def embed_t(ctx, title, description) :
 	e = discord.Embed()
-	e.color = int(random.choice(bot.theme))
+	#print(e.color)
+	e.color = int(random.choice(ctx.bot.theme))
 	e.description = description
 	e.title = title
-	e.set_footer(text=bot.stringstack["RequestBy"].format(ctx.author.display_name), icon_url=ctx.message.author.avatar_url)
+	e.set_footer(text=ctx.bot.stringstack["RequestBy"].format(ctx.author.display_name), icon_url=ctx.message.author.avatar_url)
 
 	return e
 
-def embed_em(bot, ctx, reason) :
+def embed_em(ctx, reason) :
 	e = discord.Embed()
 	e.color = 0xFF0000
 	e.title = "❌ {}".format(reason)

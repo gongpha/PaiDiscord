@@ -17,7 +17,7 @@ class Nuke(Cog) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 		if not ctx.message.guild.me.guild_permissions.manage_channels :
-			await ctx.send(embed=embed_em(self.bot, ctx, self.bot.stringstack["NoPermissionWith"].format(self.bot.stringstack["Permission"]["ManageChannels"])))
+			await ctx.send(embed=embed_em(ctx, self.bot.stringstack["NoPermissionWith"].format(self.bot.stringstack["Permission"]["ManageChannels"])))
 		else :
 			e = embed_t(self.bot, ctx, self.bot.stringstack["Warning"], self.bot.stringstack["ActionCannotUndo"])
 			if await waitReactionRequired(ctx, self.bot, ['\N{HEAVY CHECK MARK}','\N{BALLOT BOX WITH CHECK}','\N{WHITE HEAVY CHECK MARK}'], ctx.author.id, e) :
@@ -30,7 +30,7 @@ class Nuke(Cog) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 		if not ctx.message.guild.me.guild_permissions.manage_messages :
-			await ctx.send(embed=embed_em(self.bot, ctx, self.bot.stringstack["NoPermissionWith"].format(self.bot.stringstack["Permission"]["ManageMessages"])))
+			await ctx.send(embed=embed_em(ctx, self.bot.stringstack["NoPermissionWith"].format(self.bot.stringstack["Permission"]["ManageMessages"])))
 		else :
 			e = embed_t(self.bot, ctx, self.bot.stringstack["Warning"], self.bot.stringstack["ActionCannotUndo"])
 			if await waitReactionRequired(ctx, self.bot, ['\N{HEAVY CHECK MARK}','\N{BALLOT BOX WITH CHECK}','\N{WHITE HEAVY CHECK MARK}'], ctx.author.id, e) :

@@ -15,7 +15,7 @@ class Info(Cog) :
 		super().__init__(bot)
 
 	def help_overview_embed(self, ctx) :
-		h = embed_t(self.bot, ctx, "", self.bot.bot_description)
+		h = embed_t(ctx, "", self.bot.bot_description)
 		h.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
 		for n, c in self.bot.cogs.items() :
 			h.add_field(name=":{}: {}".format(c.cog_emoji, c.cog_name),value=f"`{self.bot.command_prefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])

@@ -4,7 +4,7 @@ from utils.template import embed_em
 def IsOwnerBot() :
 	async def predicate(ctx) :
 		if ctx.author.id not in ctx.bot.owner_list :
-			await ctx.send(embed=embed_em(ctx.bot, ctx, ctx.bot.stringstack["YouAreNotBotOwner"]))
+			await ctx.send(embed=embed_em(ctx, ctx.bot.stringstack["YouAreNotBotOwner"]))
 		return ctx.author.id in ctx.bot.owner_list
 	return commands.check(predicate)
 
@@ -15,7 +15,7 @@ def IsOwnerGuild() :
 
 async def CheckPermission(ctx, permission, string) :
 	if not permission :
-		await ctx.send(embed=embed_em(ctx.bot, ctx, ctx.bot.stringstack["NoPermissionWith"].format(ctx.bot.stringstack["Permission"][string])))
+		await ctx.send(embed=embed_em(ctx, ctx.bot.stringstack["NoPermissionWith"].format(ctx.bot.stringstack["Permission"][string])))
 	return permission
 
 def CanManageMessages() :
