@@ -31,8 +31,8 @@ class Info(Cog) :
 			h.add_field(name=f"`{self.bot.command_prefix}{c.name}`",value=c.description,inline=True)
 		return h
 
-	def user_information(self, ctx, object) :
-		e = embed_t(ctx, "", "")
+	async def user_information(self, ctx, object) :
+		e = embed_t(ctx, "", object.mention)
 		e.color = object.color if object.color.value != 0 else discord.Embed.Empty
 
 		e.add_field(name=ctx.bot.stringstack["Model"]["Name"], value=object, inline=True)
@@ -41,7 +41,8 @@ class Info(Cog) :
 		e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(object.created_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
 		if isinstance(object, discord.Member) :
 			e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(ctx.message.guild),value=thai_strftime(object.joined_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(object.joined_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
-		e.set_author(name=object.display_name, icon_url=object.avatar_url)
+		e.set_author(name=object.display_name + (" 🤖" if object.bot else ""), icon_url=object.avatar_url)
+
 		if isinstance(object, discord.Member) :
 			status_indicator = {
 				discord.Status.online : [ctx.bot.stringstack["Status"]["Online"], "📗"],
@@ -61,9 +62,21 @@ class Info(Cog) :
 			)
 			e.add_field(name=ctx.bot.stringstack["Model"]["Status"], value=status_all, inline=True)
 		e.set_thumbnail(url=object.avatar_url)
+		ep = None
+		# if not object.bot :
+		# 	ep = embed_t(ctx, ctx.bot.stringstack["Model"]["Profile"], object.mention)
+		#
+		# 	pro = await object.profile()
+		#
+		# 	hypesquad_indicator = {
+		# 		discord.HypeSquadHouse.bravery : 0x9C81F2,
+		# 		discord.HypeSquadHouse.brilliance : 0xF67B63,
+		# 		discord.HypeSquadHouse.balance : 0x3ADEC0
+		# 	}
+		#
+		# 	e.color = hypesquad_indicator[hypesquad_houses]
 
-
-		return e
+		return [e, ep]
 
 	async def user__avatar(self, user : [discord.User, discord.Member]) :
 		async with self.session.get(user.avatar_url_as(format="png")) as r :
@@ -128,16 +141,17 @@ class Info(Cog) :
 		await ctx.send(embed=s)
 
 	@commands.command()
-	async def avatar(self, ctx, member : discord.Member = None) :
-		member = member or ctx.author
+	async def avatar(self, ctx, obj = None) :
+		member, passed = await AnyUser.convert(ctx,obj)
 		#async with ctx.typing() :
 		await ctx.send("`{}` : {}".format(member, member.avatar_url_as(format="png")))
 
 	@commands.command()
 	async def anyuser(self, ctx, obj = None) :
-		res = await AnyUser.convert(ctx,obj)
-		obj = (res[0] if res != None else res) or ctx.author
-		e = self.user_information(ctx,obj)
-		await ctx.send(embed=e)
+		result, passed = await AnyUser.convert(ctx,obj)
+		ee = await self.user_information(ctx,result or ctx.author)
+		for e in ee :
+			if e != None :
+				await ctx.send(embed=e)
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))

@@ -6,7 +6,7 @@ class AnyUser :
 		passed = 0
 		result = None
 		if not obj :
-			return None
+			return (None, -2)
 		try :
 			result = await MemberConverter().convert(ctx, obj)
 		except BadArgument :
@@ -21,5 +21,5 @@ class AnyUser :
 					try :
 						result = await ctx.bot.fetch_user(obj)
 					except discord.NotFound :
-						return None;
+						return (None, -1)
 		return (result, passed)
