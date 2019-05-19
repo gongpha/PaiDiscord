@@ -15,7 +15,7 @@ def embed_em(ctx, reason) :
 	e = discord.Embed()
 	e.color = 0xFF0000
 	e.title = "❌ {}".format(reason)
-	e.set_footer(text=bot.stringstack["RequestBy"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
+	e.set_footer(text=ctx.bot.stringstack["RequestBy"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
 	return e
 
 async def waitReactionRequired(ctx, bot, give, ruser, embed) :

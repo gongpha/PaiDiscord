@@ -3,10 +3,10 @@ from discord.ext.commands import *
 
 class AnyUser :
 	async def convert(ctx, obj) :
-		passed = 0
+		passed = 1
 		result = None
 		if not obj :
-			return (None, -2)
+			return (None, 0)
 		try :
 			result = await MemberConverter().convert(ctx, obj)
 		except BadArgument :
@@ -20,6 +20,8 @@ class AnyUser :
 					passed += 1
 					try :
 						result = await ctx.bot.fetch_user(obj)
-					except discord.NotFound :
-						return (None, -1)
+					except discord.NotFound as e :
+						return (e, -1)
+					except discord.HTTPException as e:
+						return (e, -2)
 		return (result, passed)

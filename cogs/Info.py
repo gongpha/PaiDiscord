@@ -4,7 +4,7 @@ import typing
 from utils.cog import Cog
 import aiohttp
 from utils.cog import loadInformation
-from utils.template import embed_t
+from utils.template import embed_t, embed_em
 from pytz import timezone
 from utils.thai_format import th_format_date_diff
 from pythainlp.util import thai_strftime
@@ -32,7 +32,10 @@ class Info(Cog) :
 		return h
 
 	async def user_information(self, ctx, object) :
-		e = embed_t(ctx, "", object.mention)
+		nof = [object.mention]
+		if object.bot :
+			nof.append("🤖")
+		e = embed_t(ctx, "", " : ".join(nof))
 		e.color = object.color if object.color.value != 0 else discord.Embed.Empty
 
 		e.add_field(name=ctx.bot.stringstack["Model"]["Name"], value=object, inline=True)
@@ -41,7 +44,7 @@ class Info(Cog) :
 		e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(object.created_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
 		if isinstance(object, discord.Member) :
 			e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(ctx.message.guild),value=thai_strftime(object.joined_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(object.joined_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
-		e.set_author(name=object.display_name + (" 🤖" if object.bot else ""), icon_url=object.avatar_url)
+		e.set_author(name=object.display_name, icon_url=object.avatar_url)
 
 		if isinstance(object, discord.Member) :
 			status_indicator = {
@@ -51,18 +54,21 @@ class Info(Cog) :
 				discord.Status.offline : [ctx.bot.stringstack["Status"]["Offline"], "📓"],
 				discord.Status.invisible : [ctx.bot.stringstack["Status"]["Invisible"], "📓"],
 			}
-			status_all = "{0} **{1}**\n\n{3} **{4}** : {2}\n{6} **{7}** : {5}\n{9} **{10}** : {8}\n".format(
-				status_indicator[object.status][1], status_indicator[object.status][0],
-				"🖥️ " + ctx.bot.stringstack["Model"]["Desktop"],
-				status_indicator[object.desktop_status][1], status_indicator[object.desktop_status][0],
-				"🌐 " + ctx.bot.stringstack["Model"]["Web"],
-				status_indicator[object.web_status][1], status_indicator[object.web_status][0],
-				"📱 " + ctx.bot.stringstack["Model"]["Mobile"],
-				status_indicator[object.mobile_status][1], status_indicator[object.mobile_status][0],
-			)
-			e.add_field(name=ctx.bot.stringstack["Model"]["Status"], value=status_all, inline=True)
+
+			if not object.bot :
+				status_all = "\n\n{1} **{2}** : {0}\n{4} **{5}** : {3}\n{7} **{8}** : {6}".format(
+					"🖥️ " + ctx.bot.stringstack["Model"]["Desktop"],
+					status_indicator[object.desktop_status][1], status_indicator[object.desktop_status][0],
+					"🌐 " + ctx.bot.stringstack["Model"]["Web"],
+					status_indicator[object.web_status][1], status_indicator[object.web_status][0],
+					"📱 " + ctx.bot.stringstack["Model"]["Mobile"],
+					status_indicator[object.mobile_status][1], status_indicator[object.mobile_status][0],
+				)
+			else :
+				status_all = ""
+			status_one = "{0} **{1}**{2}".format(status_indicator[object.status][1], status_indicator[object.status][0],status_all)
+			e.add_field(name=ctx.bot.stringstack["Model"]["Status"], value=status_one, inline=True)
 		e.set_thumbnail(url=object.avatar_url)
-		ep = None
 		# if not object.bot :
 		# 	ep = embed_t(ctx, ctx.bot.stringstack["Model"]["Profile"], object.mention)
 		#
@@ -76,7 +82,7 @@ class Info(Cog) :
 		#
 		# 	e.color = hypesquad_indicator[hypesquad_houses]
 
-		return [e, ep]
+		return e
 
 	async def user__avatar(self, user : [discord.User, discord.Member]) :
 		async with self.session.get(user.avatar_url_as(format="png")) as r :
@@ -149,9 +155,21 @@ class Info(Cog) :
 	@commands.command()
 	async def anyuser(self, ctx, obj = None) :
 		result, passed = await AnyUser.convert(ctx,obj)
-		ee = await self.user_information(ctx,result or ctx.author)
-		for e in ee :
-			if e != None :
-				await ctx.send(embed=e)
+		if passed < 0 :
+			err = embed_em(ctx, self.bot.stringstack["UserNotFoundFromObject"].format(str(obj)))
+			#err.description = "```{}```".format(result.text)
+			err.set_footer(text="{} : {} : {}".format(result.status, result.code, passed))
+			await ctx.send(embed=err)
+		else :
+			ee = await self.user_information(ctx,result or ctx.author)
+			enum_pass = {
+				0 : self.bot.stringstack["Empty"],
+				1 : self.bot.stringstack["Model"]["Member"],
+				2 : self.bot.stringstack["Model"]["User"],
+				3 : self.bot.stringstack["Model"]["User"] + "++",
+				4 : self.bot.stringstack["Model"]["ID"],
+			}
+			ee.add_field(name=self.stringstack["AnyUser__pass"], value="{} : {}".format(passed, enum_pass[passed]))
+			await ctx.send(embed=ee)
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))
