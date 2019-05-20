@@ -14,3 +14,17 @@ command :
             - _killbot
             - _killclient
             - _shut
+    _send :
+        description         : ส่งข้อความผ่านช่องด้วย ID
+        usage               : <ID ของช่อง> <ข้อความ...>
+        aliases             :
+            - _ส่ง
+            - _snd
+            - _chat
+    # _send_embed :
+    #     description         : ส่งฝังผ่านช่องด้วย ID
+    #     usage               : <ID ของช่อง> <JSON ของฝัง...>
+    #     aliases             :
+    #         - _ส่งฝัง
+    #         - _embed
+    #         - _snde

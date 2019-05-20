@@ -16,11 +16,12 @@ class MagickBomb(Cog) :
 	@CanManageMessages()
 	@CanManageNicknames()
 	@CanManageRoles()
+	@IsNotDM()
 	async def magick__sidname(self, ctx) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 
-		e = embed_t(self.bot, ctx, self.bot.stringstack["Warning"], self.bot.stringstack["ActionCannotUndo"])
+		e = embed_wm(self.bot, ctx, self.bot.stringstack["Warning"], self.bot.stringstack["ActionCannotUndo"])
 		if await waitReactionRequired(ctx, self.bot, ['\N{HEAVY CHECK MARK}','\N{BALLOT BOX WITH CHECK}','\N{WHITE HEAVY CHECK MARK}'], ctx.author.id, e) :
 			for ch in ctx.message.guild.channels :
 				await ch.edit(name="c{}".format(str(ch.id)), reason=self.bot.stringstack["Reason"]["CommandBy"].format(ctx.author))

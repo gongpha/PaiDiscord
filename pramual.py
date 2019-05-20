@@ -49,9 +49,15 @@ class Pramual(commands.Bot) :
 		self.error_channel = super().get_channel(self.error_channel_id)
 
 		for c in self.cog_list :
-			self.load_extension(c)
+			try :
+				self.load_extension(c)
+			except commands.errors.ExtensionFailed as error :
+				print("""Load Extension "{}" Failed.""".format(c))
+				error = getattr(error, 'original', error)
 
-		game = discord.Game(name="humans", type=discord.ActivityType.listening)
+				traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+
+		game = discord.Game(name="OwO", type=discord.ActivityType.listening)
 
 		await self.change_presence(status=discord.Status.online, activity=game)
 
@@ -110,7 +116,7 @@ class Pramual(commands.Bot) :
 
 	async def on_member_join(self, member) :
 		e = discord.Embed(title=self.stringstack["WelcomeUserToGuild"].format(member, member.guild))
-		e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.display_name,len(member.guild.members)))
+		e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
 		e.color = 0x00AA80
 		e.set_thumbnail(url=member.avatar_url)
 		e.set_footer(text=member.id)

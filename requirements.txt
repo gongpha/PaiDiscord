@@ -6,3 +6,4 @@ pythainlp
 python-dateutil
 pyyaml
 aiohttp
+pymongo 

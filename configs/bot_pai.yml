@@ -28,7 +28,8 @@ info :
   database_database : ?PramualDatabaseDatabase
 cogs :
   - cogs.Info
+  - cogs.Image
+  - cogs.Karaoke
   - cogs.Nuke
   - cogs.MagickBomb
-  - cogs.Karaoke
   - cogs.Experimental

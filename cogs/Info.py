@@ -113,7 +113,7 @@ class Info(Cog) :
 			await ctx.send(embed=h)
 
 	@commands.command()
-	async def alias(self, ctx, sect : str) :
+	async def alias(self, ctx, *, sect : str) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 		h = None
@@ -147,13 +147,13 @@ class Info(Cog) :
 		await ctx.send(embed=s)
 
 	@commands.command()
-	async def avatar(self, ctx, obj = None) :
+	async def avatar(self, ctx, *, obj = None) :
 		member, passed = await AnyUser.convert(ctx,obj)
 		#async with ctx.typing() :
 		await ctx.send("`{}` : {}".format(member, member.avatar_url_as(format="png")))
 
 	@commands.command()
-	async def anyuser(self, ctx, obj = None) :
+	async def anyuser(self, ctx, *, obj = None) :
 		result, passed = await AnyUser.convert(ctx,obj)
 		if passed < 0 :
 			err = embed_em(ctx, self.bot.stringstack["UserNotFoundFromObject"].format(str(obj)))
@@ -161,12 +161,12 @@ class Info(Cog) :
 			err.set_footer(text="{} : {} : {}".format(result.status, result.code, passed))
 			await ctx.send(embed=err)
 		else :
-			ee = await self.user_information(ctx,result or ctx.author)
+			ee = await self.user_information(ctx,result)
 			enum_pass = {
 				0 : self.bot.stringstack["Empty"],
 				1 : self.bot.stringstack["Model"]["Member"],
 				2 : self.bot.stringstack["Model"]["User"],
-				3 : self.bot.stringstack["Model"]["User"] + "++",
+				3 : self.bot.stringstack["Model"]["User"] + "++", # RARE CASE TO GET THIS VALUE
 				4 : self.bot.stringstack["Model"]["ID"],
 			}
 			ee.add_field(name=self.stringstack["AnyUser__pass"], value="{} : {}".format(passed, enum_pass[passed]))

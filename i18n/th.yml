@@ -79,12 +79,14 @@ JoinedAt                    : เข้าร่วมเมื่อ
 JoinedGuildAt               : เข้าร่วม {} เมื่อ
 DateTimeText                : "%d %B พ.ศ. %Y เวลา %H:%M:%S + (%f)\nเมื่อ {}"
 TimeoutWaitingReaction      : หมดเวลาการรอรีแอคชัน โปรดส่งคำสั่งมาใหม่หากต้องการดำเนินการอีกครั้ง
-Warning                     : ⚠️ คำเตือน !
+Warning                     : คำเตือน !
 ActionCannotUndo            : การกระทำดังกล่าวไม่สามารถคืนค่าได้
 PleaseReactionAllCommander  : โปรดเพิ่มรีแอคชันด้านล่างนี้ทั้งหมด เพื่อดำเนินการ (ผู้ใช้ที่ส่งคำสั่งเท่านั้น)
 NoPermissionWith            : ไม่มีสิทธิ์ *{}*
 UserNotFoundFromObject      : ไม่พบผู้ใช้ `{}`
 YouAreNotBotOwner           : คุณไม่ใช่เจ้าของบอทนี้ คุณจึงไม่มีสิทธิ์ใช้งานคำสั่งนี้ได้
+YouAreNotGuildOwner         : คุณไม่ใช่เจ้าของเซิร์ฟเวอร์นี้ คุณจึงไม่มีสิทธิ์ใช้งานคำสั่งนี้ได้
+CommandInDMNotAvailable     : ไม่สามารถใช้คำสั่งในข้อความส่วนตัวได้
 WelcomeUserToGuild          : ยินดีต้อนรับ {} เข้าสู่ {} !
 UserWasJoinedGuildNo        : "{} ได้เข้าร่วมเซิร์ฟเวอร์เป็นคนที่ {}"
 UserWasLeftTheGuild         : "{} ได้ออกจาก {}"

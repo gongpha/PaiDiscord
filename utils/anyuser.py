@@ -6,7 +6,7 @@ class AnyUser :
 		passed = 1
 		result = None
 		if not obj :
-			return (None, 0)
+			return (ctx.author, 0)
 		try :
 			result = await MemberConverter().convert(ctx, obj)
 		except BadArgument :

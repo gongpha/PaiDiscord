@@ -1,5 +1,7 @@
 from discord.ext import commands
+from discord import DMChannel
 from utils.template import embed_em
+from utils.template import embed_wm
 
 def IsOwnerBot() :
 	async def predicate(ctx) :
@@ -10,7 +12,16 @@ def IsOwnerBot() :
 
 def IsOwnerGuild() :
 	async def predicate(ctx) :
+		if ctx.author.id != ctx.message.guild.owner_id :
+			await ctx.send(embed=embed_em(ctx, ctx.bot.stringstack["YouAreNotGuildOwner"]))
 		return ctx.author.id == ctx.message.guild.owner_id
+	return commands.check(predicate)
+
+def IsNotDM() :
+	async def predicate(ctx) :
+		if isinstance(ctx.message.channel, DMChannel) :
+			await ctx.send(embed=embed_wm(ctx, ctx.bot.stringstack["CommandInDMNotAvailable"]))
+		return not isinstance(ctx.message.channel, DMChannel)
 	return commands.check(predicate)
 
 async def CheckPermission(ctx, permission, string) :
