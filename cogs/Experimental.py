@@ -20,10 +20,15 @@ class Experimental(Cog) :
 	async def _shutdown(self, ctx) :
 		await ctx.send("👋")
 		u = ctx.author
-		g = ctx.message.guild
-		e = discord.Embed(title="Client was shutdowned by {0} ({1}) from guild {2} ({3})".format(u, u.id, g, g.id))
+		if isinstance(ctx.message.channel, DMChannel) :
+			g = ctx.message.channel
+		else :
+			g = ctx.message.guild
+		e = discord.Embed(title="Client was shutdowned by {0} ({1}) from{4} {2} ({3})".format(u, u.id, g, g.id, "" if isinstance(ctx.message.channel, DMChannel) else " guild"))
 		e.color = 0xDD0000
 		await self.bot.log_channel.send(embed=e)
+		self.bot.connection.close()
+		await self.bot.session.close()
 		self.bot.loop.stop()
 		await self.bot.close()
 

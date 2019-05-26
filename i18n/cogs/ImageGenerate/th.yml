@@ -1,0 +1,13 @@
+cog :
+    name                    : สร้างรูป
+    description             : กำเนิดรูปจากคำสั่ง ทำเป็น Meme ได้ !
+    icon_emoji              :
+            - frame_photo
+            - sparkles
+    author                  : gongpha
+    translated              : gongpha
+command :
+    imggen_list :
+        description         : ตัวสร้างทั้งหมด
+        usage               :
+        aliases             :

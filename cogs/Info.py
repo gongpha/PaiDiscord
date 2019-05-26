@@ -2,14 +2,15 @@ import discord
 from discord.ext import commands
 import typing
 from utils.cog import Cog
-import aiohttp
 from utils.cog import loadInformation
-from utils.template import embed_t, embed_em
+from utils.template import embed_t, embed_em, embed_wm
 from pytz import timezone
 from utils.thai_format import th_format_date_diff
 from pythainlp.util import thai_strftime
 from dateutil.relativedelta import relativedelta
 from utils.anyuser import AnyUser
+from utils.query import fetchone, commit
+import datetime
 
 class Info(Cog) :
 	def __init__(self, bot) :
@@ -20,7 +21,7 @@ class Info(Cog) :
 		h.color = self.bot.theme[1] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
 		for n, c in self.bot.cogs.items() :
 			if not c.cog_hidden :
-				h.add_field(name=":{}: {}".format(c.cog_emoji, c.cog_name),value=f"`{self.bot.command_prefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
+				h.add_field(name=":{}: {}".format(": :".join(c.cog_emoji), c.cog_name),value=f"`{self.bot.command_prefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
@@ -28,11 +29,43 @@ class Info(Cog) :
 		if not cog.get_commands() :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.stringstack["NoCommand"]))
 		for c in cog.get_commands() :
-			h.add_field(name=f"`{self.bot.command_prefix}{c.name}`",value=c.description,inline=True)
+			h.add_field(name=f"`{self.bot.command_prefix}{c.name}`",value=c.description.format(ctx.bot) or ctx.bot.stringstack["Empty"],inline=True)
 		return h
 
+	async def profile_information(self, ctx, object) :
+		r = fetchone(self.bot.connection, "SELECT profile_name, profile_description, credits FROM pai_discord_profile WHERE snowflake = %s", object.id)
+
+		if object.bot :
+			e = embed_wm(ctx, ctx.bot.stringstack["CannotUseWithBot"])
+		else :
+			new = False
+			t = 0
+			if not r["result"] and r["rows"] == 0 :
+				new = True
+				try :
+					fromid = ctx.message.guild.id
+				except AttributeError :
+					fromid = ctx.message.channel.id
+				t = commit(self.bot.connection, "INSERT INTO `pai_discord_profile` (`snowflake`, `profile_name`, `profile_description`, `first_seen`, `first_seen_in_guild`, `credits`, `owner`, `badges`, `level`, `exp`) VALUES (%s, '', '', %s, %s, 0, 0, '{}', 1, 0)", (object.id, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), fromid))
+				r = {
+					"result" : {
+						"profile_name" : object.display_name + " *",
+						"profile_description" : "",
+						"credits" : 0
+					}
+				}
+			e = embed_t(ctx, "", r["result"]["profile_description"])
+			e.color = object.color if object.color.value != 0 else discord.Embed.Empty
+
+			e.add_field(name=":credit_card: " + ctx.bot.stringstack["Model"]["Credit"], value=r["result"]["credits"], inline=True)
+			e.set_author(name=r["result"]["profile_name"] or object, icon_url=object.avatar_url)
+			e.set_footer(text="🆔 {} : ⏲ {}".format(object.id, ctx.bot.stringstack["QueryExecuteTime"].format(r["time"] if not new else t)))
+
+
+		return e
+
 	async def user_information(self, ctx, object) :
-		nof = [object.mention]
+		nof = [object.mention, str(object.id)]
 		if object.bot :
 			nof.append("🤖")
 		e = embed_t(ctx, "", " : ".join(nof))
@@ -84,10 +117,10 @@ class Info(Cog) :
 
 		return e
 
-	async def user__avatar(self, user : [discord.User, discord.Member]) :
-		async with self.session.get(user.avatar_url_as(format="png")) as r :
-			avatar = await r.read()
-		return (avatar, user.avatar_url_as(format="png"))
+	# async def user__avatar(self, user : [discord.User, discord.Member]) :
+	# 	async with self.session.get(user.avatar_url_as(format="png")) as r :
+	# 		avatar = await r.read()
+	# 	return (avatar, user.avatar_url_as(format="png"))
 
 	@commands.command()
 	async def help(self, ctx, *sect : str) :
@@ -149,6 +182,11 @@ class Info(Cog) :
 	@commands.command()
 	async def avatar(self, ctx, *, obj = None) :
 		member, passed = await AnyUser.convert(ctx,obj)
+		if passed < 0 :
+			err = embed_em(ctx, self.bot.stringstack["ObjectNotFoundFromObject"].format(self.bot.stringstack["Model"]["User"], str(obj)))
+			#err.description = "```{}```".format(result.text)
+			err.set_footer(text="{} : {} : {}".format(member.status, member.code, passed))
+			await ctx.send(embed=err)
 		#async with ctx.typing() :
 		await ctx.send("`{}` : {}".format(member, member.avatar_url_as(format="png")))
 
@@ -156,7 +194,7 @@ class Info(Cog) :
 	async def anyuser(self, ctx, *, obj = None) :
 		result, passed = await AnyUser.convert(ctx,obj)
 		if passed < 0 :
-			err = embed_em(ctx, self.bot.stringstack["UserNotFoundFromObject"].format(str(obj)))
+			err = embed_em(ctx, self.bot.stringstack["ObjectNotFoundFromObject"].format(self.bot.stringstack["Model"]["User"], str(obj)))
 			#err.description = "```{}```".format(result.text)
 			err.set_footer(text="{} : {} : {}".format(result.status, result.code, passed))
 			await ctx.send(embed=err)
@@ -170,6 +208,17 @@ class Info(Cog) :
 				4 : self.bot.stringstack["Model"]["ID"],
 			}
 			ee.add_field(name=self.stringstack["AnyUser__pass"], value="{} : {}".format(passed, enum_pass[passed]))
+			await ctx.send(embed=ee)
+	@commands.command()
+	async def profile(self, ctx, *, obj = None) :
+		result, passed = await AnyUser.convert(ctx,obj)
+		if passed < 0 :
+			err = embed_em(ctx, self.bot.stringstack["ObjectNotFoundFromObject"].format(self.bot.stringstack["Model"]["User"], str(obj)))
+			#err.description = "```{}```".format(result.text)
+			err.set_footer(text="{} : {} : {}".format(result.status, result.code, passed))
+			await ctx.send(embed=err)
+		else :
+			ee = await self.profile_information(ctx,result)
 			await ctx.send(embed=ee)
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))

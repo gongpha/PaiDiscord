@@ -1,0 +1,18 @@
+cog :
+    name                    : การร้องขอ
+    description             : ใช้บอทเพื่อร้องขอข้อมูลจากอินเทอร์เน็ต
+    icon_emoji              : arrow_upper_left
+    author                  : gongpha
+    translated              : gongpha
+command :
+    request :
+        description         : |-
+            ร้องขอข้อมูล
+
+            แหล่งที่ใช้ได้ ให้ใช้คำสั่ง `{0.command_prefix}request_list`
+        usage               : <ชื่อของแหล่ง>
+        aliases             :
+    request_list :
+        description         : แหล่งทั้งหมด
+        usage               :
+        aliases             :

@@ -26,10 +26,17 @@ info :
   database_username : ?PramualDatabaseUsername
   database_password : ?PramualDatabasePassword
   database_database : ?PramualDatabaseDatabase
+  game : OwO
 cogs :
   - cogs.Info
   - cogs.Image
   - cogs.Karaoke
   - cogs.Nuke
   - cogs.MagickBomb
+  - cogs.Request
   - cogs.Experimental
+auth :
+  imgur :
+      refresh_token : d434e83984e3e9463989ad236e9d9739ba5785ce
+      client_id : f9cbc3a2e673e10
+      client_secret : 1c81750ec9b0193949a16ed4db1ea44a25279257

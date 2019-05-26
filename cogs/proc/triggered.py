@@ -1,19 +1,20 @@
 from io import BytesIO
 from random import randint
-
 from PIL import Image
-from utils.procimg import ProcImg
+from discord.ext import commands
+#from utils.procimg import ProcImg
 
-name = {
-	"th" : "Triggered"
-}
-author = "gongpha"
-desc = {
-	"th" : "ถึงกับ ทริกเกอร์ !"
-}
-classname = ("Triggered",)
-class Triggered(ProcImg) :
-	def generate(self, users, members, avatars, date, kwargs) :
+# name = {
+# 	"th" : "Triggered"
+# }
+# author = "gongpha"
+# desc = {
+# 	"th" : "ถึงกับ ทริกเกอร์ !"
+# }
+# classname = ("Triggered",)
+class Triggered(commands.Cog) :
+	@commands.command()
+	async def triggered(self, ctx, u = None) :
 		img = Image.open("a.png").convert('RGBA')
 		thmm = int((img.width * img.height) / 750000)
 		triggered = Image.open("triggered-hd.png")
@@ -40,4 +41,6 @@ class Triggered(ProcImg) :
 			frames.append(base)
 
 		return frames
+def setup(bot) :
+	bot.add_cog(Triggered(bot))
 	#[0].save("a.gif", save_all=True, append_images=frames[1:], format='gif', loop=0, duration=20, disposal=2, optimize=True)

@@ -12,7 +12,8 @@ class Cog(commands.Cog) :
 			self.stringstack = yaml.safe_load(json_file)
 		self.cog_name = self.stringstack["cog"]["name"]
 		self.cog_desc = self.stringstack["cog"]["description"]
-		self.cog_emoji = self.stringstack["cog"]["icon_emoji"]
+		self.cog_emoji = [self.stringstack["cog"]["icon_emoji"]] if not isinstance(self.stringstack["cog"]["icon_emoji"],(list, tuple)) else [item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]
+		# [item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]
 		self.cog_hidden = False
 
 		super().__init__()
@@ -30,4 +31,8 @@ def loadInformation(cog) :
 		c.usage = cog.stringstack["command"][c.name]["usage"]
 		if cog.stringstack["command"][c.name]["aliases"] :
 			c.aliases = cog.stringstack["command"][c.name]["aliases"]
+		try :
+			c.sql = cog.stringstack["command"][c.name]["sql"]
+		except KeyError :
+			c.sql = False
 	return cog

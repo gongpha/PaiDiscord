@@ -5,4 +5,4 @@ numpy
 pythainlp
 python-dateutil
 pyyaml
-aiohttp
+pymysql

@@ -26,6 +26,8 @@ async def getLastImage(ctx) :
 			for e in reversed(ctx.message.embeds) :
 				if e.url != discord.Embed.Empty :
 					return Image.open(BytesIO(requests.get(e.url).content))
+				if e.image != discord.Embed.Empty :
+					return Image.open(BytesIO(requests.get(e.image.url).content))
 		else :
 			messages = await ctx.channel.history(limit=100).flatten()
 
@@ -40,4 +42,6 @@ async def getLastImage(ctx) :
 						for e in reversed(msg.embeds) :
 							if e.url != discord.Embed.Empty :
 								return Image.open(BytesIO(requests.get(e.url).content))
+							if e.image != discord.Embed.Empty :
+								return Image.open(BytesIO(requests.get(e.image.url).content))
 	return Image.open(BytesIO(requests.get(ctx.author.avatar_url).content))

@@ -5,7 +5,10 @@ import sys
 import traceback
 import random
 from discord.ext import commands
-#import MySQLdb as mariadb
+from utils.template import embed_em
+import pymysql.cursors
+import aiohttp
+import datetime
 
 class NoToken(Exception):
 	"""No Token was found or invalid token"""
@@ -28,10 +31,15 @@ class Pramual(commands.Bot) :
 		self.cog_list = kwargs.pop('cog_list', None)
 		self.owner_list = kwargs.pop('owner', None)
 		self.waitForMessage = {}
-		#self.database_host = kwargs.pop('databaseHost', None)
-		#self.database_username = kwargs.pop('databaseUsername', None)
-		#self.database_password = kwargs.pop('databasePassword', None)
-		#self.database_database = kwargs.pop('databaseDatabase', None)
+		self.connection = None
+		self.session = aiohttp.ClientSession()
+		self.game = kwargs.pop('game', None)
+		self.database_host = kwargs.pop('databaseHost', None)
+		self.database_username = kwargs.pop('databaseUsername', None)
+		self.database_password = kwargs.pop('databasePassword', None)
+		self.database_database = kwargs.pop('databaseDatabase', None)
+		self.auth = kwargs.pop('auth', None)
+		self.start_time = datetime.datetime.now()
 		with open('i18n/{}.yml'.format(self.lang), encoding="utf8") as json_file :
 			self.stringstack = yaml.safe_load(json_file)
 		if self.token == None :
@@ -57,29 +65,27 @@ class Pramual(commands.Bot) :
 
 				traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
-		game = discord.Game(name="OwO", type=discord.ActivityType.listening)
+		if self.game :
+			game = discord.Game(name=self.game, type=discord.ActivityType.listening)
+		if all([self.database_host, self.database_username, self.database_password, self.database_database]) :
+			self.connection = pymysql.connect(host='kppmp.heliohost.org',
+				user=self.database_username,
+				password=self.database_password,
+				db=self.database_database,
+				charset='utf8mb4',
+				cursorclass=pymysql.cursors.DictCursor)
 
 		await self.change_presence(status=discord.Status.online, activity=game)
-
-		#if all([self.database_host, self.database_username, self.database_password, self.database_database]) :
-			# try:
-			#mariadb_connection = mariadb.connect(host=self.database_host, user=self.database_username, passwd=self.database_password, db=self.database_database)
-			# except mariadb.connector.Error as err:
-			# 	if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-			# 		print("Something is wrong with your user name or password")
-			# 	elif err.errno == errorcode.ER_BAD_DB_ERROR:
-			# 		print("Database does not exist")
-			# 	else:
-			# 		print(err)
-			# else:
-			#print("Connected to Database")
-			#cursor = mariadb_connection.cursor()
-
 
 	def run_bot(self) :
 		super().run(self.token)
 
-	async def on_command(self, ctx):
+	async def on_command(self, ctx) :
+		if ctx.command.sql == (self.connection != None) :
+			ee = embed_em(ctx, self.stringstack["NoMySQLAvailable"])
+			ee.color = 0xff0000
+			await ctx.send(embed=ee)
+			return
 		e = discord.Embed(title=f"Command : `{self.command_prefix}{ctx.command.name}`")
 		e.description = f"Called to `{self.std}`"
 		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)
