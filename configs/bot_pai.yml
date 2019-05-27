@@ -34,6 +34,7 @@ cogs :
   - cogs.Nuke
   - cogs.MagickBomb
   - cogs.Request
+  - cogs.Thai
   - cogs.Experimental
 auth :
   imgur :

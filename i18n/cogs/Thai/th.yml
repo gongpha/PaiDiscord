@@ -1,0 +1,38 @@
+cog :
+    name                    : ภาษาไทย
+    description             : คำสั่งเกี่ยวกับภาษาไทย
+    icon_emoji              : flag_th
+    author                  : gongpha
+    translated              : gongpha
+command :
+    longdo :
+        description         : พจนานุกรมจาก Longdo Dict
+        usage               : <คำที่จะค้นหา>
+        aliases             :
+    word_tokenize :
+        description         : ตัดคำไทย
+        usage               : <ประโยค>
+        aliases             :
+            - wordtokenize
+            - wtkz
+    romanization :
+        description         : แปลงให้เป็นโรมัน
+        usage               : <ประโยค>
+        aliases             :
+            - romanize
+            - romanz
+            - rmz
+    spell_check :
+        description         : ตรวจสอบการสะกดคำ อาจจะมีผลลัพธ์อื่นมาร่วมด้วย
+        usage               : <ประโยค>
+        aliases             :
+            - spellcheck
+            - splchk
+    spell_correct :
+        description         : ตรวจสอบการสะกดคำให้ถูกต้อง
+        usage               : <ประโยค>
+        aliases             :
+            - spellcorrect
+            - splcrt
+
+Thai__WordCount             : "{} คำ"

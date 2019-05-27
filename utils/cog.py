@@ -10,9 +10,12 @@ class Cog(commands.Cog) :
 		self.session = aiohttp.ClientSession(loop=bot.loop)
 		with open('i18n/cogs/{}/{}.yml'.format(self.__class__.__name__, bot.lang), encoding="utf8") as json_file:
 			self.stringstack = yaml.safe_load(json_file)
-		self.cog_name = self.stringstack["cog"]["name"]
-		self.cog_desc = self.stringstack["cog"]["description"]
-		self.cog_emoji = [self.stringstack["cog"]["icon_emoji"]] if not isinstance(self.stringstack["cog"]["icon_emoji"],(list, tuple)) else [item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]
+		try :
+			self.cog_name = self.stringstack["cog"]["name"]
+			self.cog_desc = self.stringstack["cog"]["description"]
+			self.cog_emoji = [self.stringstack["cog"]["icon_emoji"]] if not isinstance(self.stringstack["cog"]["icon_emoji"],(list, tuple)) else [item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]
+		except KeyError :
+			print("Load Cog for {} failed".format(self.__class__.__name__))
 		# [item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]
 		self.cog_hidden = False
 
@@ -27,12 +30,15 @@ class Cog(commands.Cog) :
     # 	bot.add_cog(cg)
 def loadInformation(cog) :
 	for c in cog.get_commands() :
-		c.description = cog.stringstack["command"][c.name]["description"]
-		c.usage = cog.stringstack["command"][c.name]["usage"]
-		if cog.stringstack["command"][c.name]["aliases"] :
-			c.aliases = cog.stringstack["command"][c.name]["aliases"]
 		try :
-			c.sql = cog.stringstack["command"][c.name]["sql"]
+			c.description = cog.stringstack["command"][c.name]["description"]
+			c.usage = cog.stringstack["command"][c.name]["usage"]
+			if cog.stringstack["command"][c.name]["aliases"] :
+				c.aliases = cog.stringstack["command"][c.name]["aliases"]
+				try :
+					c.sql = cog.stringstack["command"][c.name]["sql"]
+				except KeyError :
+					c.sql = False
 		except KeyError :
-			c.sql = False
+			print("Load Information for {} failed".format(c.name))
 	return cog

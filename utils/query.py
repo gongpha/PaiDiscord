@@ -8,14 +8,14 @@ def fetchone(connection, sql, list = None) :
 			cursor.execute(sql, list)
 			s = time()
 		used = s - f
-		print('Query Executed "{}"'.format(sql))
+		print('Query Executed "{}"'.format(sql % (list)))
 		return {
 			"result" : cursor.fetchone(),
 			"time" : used,
 			"rows" : cursor.rowcount
 		}
-	except pymysql.err.Error :
-		print('Query Failed to execute "{}"'.format(sql))
+	except pymysql.err.Error as e:
+		print('Query Failed to execute "{}" :\n{}'.format(sql % (list),e))
 		return None
 
 def commit(connection, sql, list = None) :
@@ -29,5 +29,5 @@ def commit(connection, sql, list = None) :
 		connection.commit()
 		return used
 	except pymysql.err.Error as e:
-		print('Query Failed to execute "{}" :\n{}'.format(sql,e))
+		print('Query Failed to execute "{}" :\n{}'.format(sql % (list),e))
 		return None

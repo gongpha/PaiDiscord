@@ -25,7 +25,7 @@ class Info(Cog) :
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
-		h = embed_t(ctx, ":{}: {}".format(cog.cog_emoji, cog.cog_name), cog.cog_desc)
+		h = embed_t(ctx, ":{}: {}".format(": :".join(cog.cog_emoji), cog.cog_name), cog.cog_desc)
 		if not cog.get_commands() :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.stringstack["NoCommand"]))
 		for c in cog.get_commands() :
@@ -218,7 +218,8 @@ class Info(Cog) :
 			err.set_footer(text="{} : {} : {}".format(result.status, result.code, passed))
 			await ctx.send(embed=err)
 		else :
-			ee = await self.profile_information(ctx,result)
-			await ctx.send(embed=ee)
+			async with ctx.message.channel.typing() :
+				ee = await self.profile_information(ctx,result)
+				await ctx.send(embed=ee)
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))

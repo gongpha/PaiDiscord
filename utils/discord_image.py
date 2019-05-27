@@ -43,5 +43,6 @@ async def getLastImage(ctx) :
 							if e.url != discord.Embed.Empty :
 								return Image.open(BytesIO(requests.get(e.url).content))
 							if e.image != discord.Embed.Empty :
-								return Image.open(BytesIO(requests.get(e.image.url).content))
+								if e.image.url != discord.Embed.Empty :
+									return Image.open(BytesIO(requests.get(e.image.url).content))
 	return Image.open(BytesIO(requests.get(ctx.author.avatar_url).content))
