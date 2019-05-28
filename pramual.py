@@ -31,7 +31,7 @@ class Pramual(commands.Bot) :
 		self.cog_list = kwargs.pop('cog_list', None)
 		self.owner_list = kwargs.pop('owner', None)
 		self.waitForMessage = {}
-		self.connection = None
+		# self.connection = None
 		self.session = aiohttp.ClientSession()
 		self.game = kwargs.pop('game', None)
 		self.database_host = kwargs.pop('databaseHost', None)
@@ -47,6 +47,15 @@ class Pramual(commands.Bot) :
 		super().__init__(command_prefix=command_prefix, *args, **kwargs)
 		self.remove_command('help')
 		pbot = self
+
+	def connect_db(self) :
+		if all([self.database_host, self.database_username, self.database_password, self.database_database]) :
+			return pymysql.connect(host='kppmp.heliohost.org',
+				user=self.database_username,
+				password=self.database_password,
+				db=self.database_database,
+				charset='utf8mb4',
+				cursorclass=pymysql.cursors.DictCursor)
 
 	async def on_ready(self) :
 		print(f'>> Login As "{self.user.name}" ({self.user.id})')
@@ -67,13 +76,7 @@ class Pramual(commands.Bot) :
 
 		if self.game :
 			game = discord.Game(name=self.game, type=discord.ActivityType.listening)
-		if all([self.database_host, self.database_username, self.database_password, self.database_database]) :
-			self.connection = pymysql.connect(host='kppmp.heliohost.org',
-				user=self.database_username,
-				password=self.database_password,
-				db=self.database_database,
-				charset='utf8mb4',
-				cursorclass=pymysql.cursors.DictCursor)
+
 
 		await self.change_presence(status=discord.Status.online, activity=game)
 
@@ -81,11 +84,7 @@ class Pramual(commands.Bot) :
 		super().run(self.token)
 
 	async def on_command(self, ctx) :
-		if ctx.command.sql == (self.connection != None) :
-			ee = embed_em(ctx, self.stringstack["NoMySQLAvailable"])
-			ee.color = 0xff0000
-			await ctx.send(embed=ee)
-			return
+
 		e = discord.Embed(title=f"Command : `{self.command_prefix}{ctx.command.name}`")
 		e.description = f"Called to `{self.std}`"
 		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)

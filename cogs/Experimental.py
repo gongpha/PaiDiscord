@@ -6,6 +6,7 @@ from utils.cog import loadInformation
 from utils.template import *
 from utils.check import *
 import json
+from utils.query import fetchone, commit
 
 class Experimental(Cog) :
 	pbot = None
@@ -27,7 +28,6 @@ class Experimental(Cog) :
 		e = discord.Embed(title="Client was shutdowned by {0} ({1}) from{4} {2} ({3})".format(u, u.id, g, g.id, "" if isinstance(ctx.message.channel, DMChannel) else " guild"))
 		e.color = 0xDD0000
 		await self.bot.log_channel.send(embed=e)
-		self.bot.connection.close()
 		await self.bot.session.close()
 		self.bot.loop.stop()
 		await self.bot.close()
@@ -37,6 +37,12 @@ class Experimental(Cog) :
 	async def _send(self, ctx, id, *, text : str) :
 		channel = self.bot.get_channel(int(id)) or ctx.message.channel
 		await channel.send(text)
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _set_credits(self, ctx, id, credits : int) :
+		commit(self.bot, "UPDATE `pai_discord_profile` SET credits=%s WHERE snowflake=%s", (credits, id))
+		await ctx.send(":ok_hand:")
 
 	# @commands.command()
 	# @IsOwnerBot()

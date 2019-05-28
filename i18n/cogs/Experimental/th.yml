@@ -21,6 +21,10 @@ command :
             - _ส่ง
             - _snd
             - _chat
+    _set_credits :
+        description         : ตั้งเครดิต
+        usage               : <ID ของผู้ใช้> <จำนวน>
+        aliases             :
     # _send_embed :
     #     description         : ส่งฝังผ่านช่องด้วย ID
     #     usage               : <ID ของช่อง> <JSON ของฝัง...>

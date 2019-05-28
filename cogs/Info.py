@@ -33,7 +33,7 @@ class Info(Cog) :
 		return h
 
 	async def profile_information(self, ctx, object) :
-		r = fetchone(self.bot.connection, "SELECT profile_name, profile_description, credits FROM pai_discord_profile WHERE snowflake = %s", object.id)
+		r = fetchone(self.bot, "SELECT profile_name, profile_description, credits FROM pai_discord_profile WHERE snowflake = %s", object.id)
 
 		if object.bot :
 			e = embed_wm(ctx, ctx.bot.stringstack["CannotUseWithBot"])
@@ -46,7 +46,7 @@ class Info(Cog) :
 					fromid = ctx.message.guild.id
 				except AttributeError :
 					fromid = ctx.message.channel.id
-				t = commit(self.bot.connection, "INSERT INTO `pai_discord_profile` (`snowflake`, `profile_name`, `profile_description`, `first_seen`, `first_seen_in_guild`, `credits`, `owner`, `badges`, `level`, `exp`) VALUES (%s, '', '', %s, %s, 0, 0, '{}', 1, 0)", (object.id, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), fromid))
+				t = commit(self.bot, "INSERT INTO `pai_discord_profile` (`snowflake`, `profile_name`, `profile_description`, `first_seen`, `first_seen_in_guild`, `credits`, `owner`, `badges`, `level`, `exp`) VALUES (%s, '', '', %s, %s, 0, 0, '{}', 1, 0)", (object.id, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), fromid))
 				r = {
 					"result" : {
 						"profile_name" : object.display_name + " *",
