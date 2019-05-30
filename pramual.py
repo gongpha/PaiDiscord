@@ -130,7 +130,7 @@ class Pramual(commands.Bot) :
 	async def on_member_remove(self, member) :
 		e = discord.Embed(title=self.stringstack["UserWasLeftTheGuild"].format(member, member.guild))
 		e.description = "*{}*".format(self.stringstack["NowGuildHadNoMembersLeft"].format(len(member.guild.members)))
-		e.color = 0xDD0000
+		e.color = 0xCE3232
 		e.set_thumbnail(url=member.avatar_url)
 		e.set_footer(text=member.id)
 		await member.guild.system_channel.send(embed=e)

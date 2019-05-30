@@ -35,10 +35,10 @@ def loadInformation(cog) :
 			c.usage = cog.stringstack["command"][c.name]["usage"]
 			if cog.stringstack["command"][c.name]["aliases"] :
 				c.aliases = cog.stringstack["command"][c.name]["aliases"]
-				try :
-					c.sql = cog.stringstack["command"][c.name]["sql"]
-				except KeyError :
-					c.sql = False
+			try :
+				c.sql = cog.stringstack["command"][c.name]["sql"]
+			except KeyError :
+				c.sql = False
 		except KeyError :
 			print("Load Information for {} failed".format(c.name))
 	return cog

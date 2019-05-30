@@ -29,7 +29,13 @@ class Info(Cog) :
 		if not cog.get_commands() :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.stringstack["NoCommand"]))
 		for c in cog.get_commands() :
-			h.add_field(name=f"`{self.bot.command_prefix}{c.name}`",value=c.description.format(ctx.bot) or ctx.bot.stringstack["Empty"],inline=True)
+			h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.stringstack["Empty"],inline=True)
+		return h
+
+	def help_command_embed(self, ctx, command, cog) :
+		h = embed_t(ctx, "{}**{}**    (:{}: {})".format(self.bot.command_prefix, command.name, ": :".join(cog.cog_emoji), cog.cog_name), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.command_prefix, command.name, command.usage or "")))
+		if command.sql :
+			h.description += "\n📡 **{}**".format(self.bot.stringstack["CommandNeedQuery"])
 		return h
 
 	async def profile_information(self, ctx, object) :
@@ -138,6 +144,14 @@ class Info(Cog) :
 			for n, c in self.bot.cogs.items() :
 				if n.lower() == sect[0].lower() :
 					h = self.help_specific_embed(ctx, c)
+			if h == None :
+				for n, cg in self.bot.cogs.items() :
+					for c in cg.get_commands() :
+						c_a = c.aliases.copy()
+						c_a.insert(0, c.name)
+						if sect[0] in c_a :
+							h = self.help_command_embed(ctx, c, cg)
+							break
 
 		#msgh.set_thumbnail(url=ctx.author.avatar_url)
 		if e != None :
@@ -221,5 +235,9 @@ class Info(Cog) :
 			async with ctx.message.channel.typing() :
 				ee = await self.profile_information(ctx,result)
 				await ctx.send(embed=ee)
+
+	@commands.command()
+	async def ping(self, ctx) :
+		await ctx.send(self.bot.stringstack["PingReturnedSec"].format(ctx.bot.latency))
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))
