@@ -6,6 +6,15 @@ import discord
 
 standalone_image_ext = ("png", "jpeg", "jpg", "webp", "tiff")
 
+async def im_avatar(ctx, u) :
+	uu = u or ctx.author
+	url = uu.avatar_url_as(format="png")
+	#print(url)
+	r = await ctx.bot.session.get(str(url))
+	if r.status != 200:
+		return None
+	return Image.open(BytesIO(await r.read()))
+
 def avatar_image_circle(user) :
     url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(user)
     im = Image.open(BytesIO(requests.get(url).content))

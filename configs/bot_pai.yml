@@ -35,6 +35,7 @@ cogs :
   - cogs.MagickBomb
   - cogs.Request
   - cogs.Thai
+  - cogs.ImageGenerate
   - cogs.Experimental
 auth :
   imgur :

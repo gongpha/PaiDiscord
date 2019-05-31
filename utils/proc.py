@@ -7,12 +7,26 @@ import aiohttp
 class Proc(commands.Cog) :
 	def __init__(self, bot):
 		self.bot = bot
-		self.session = aiohttp.ClientSession(loop=bot.loop)
-		with open('i18n/cogs/{}/{}.yml'.format(self.__class__.__name__, bot.lang), encoding="utf8") as json_file:
-			self.stringstack = yaml.safe_load(json_file)
-		self.cog_name = self.stringstack["cog"]["name"]
-		self.cog_desc = self.stringstack["cog"]["description"]
-		self.cog_emoji = self.stringstack["cog"]["icon_emoji"]
-		self.cog_hidden = False
-
+		#self.session = aiohttp.ClientSession(loop=bot.loop)
+		# [item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]
+		self.cog_hidden = True
 		super().__init__()
+		self.cog_name = self.qualified_name
+		self.cog_desc = self.description
+		self.cog_emoji = ["gear"]
+
+
+
+    # @classmethod
+    # def setup(c, bot) :
+    # 	cg = c(bot)
+    # 	for c in cg.get_commands():
+    # 		c.description = cg.stringstack["command_{}_desc".format(c.name)]
+    #
+    # 	bot.add_cog(cg)
+def loadInformation(cog) :
+	for c in cog.get_commands() :
+		c.description = cog.desc.get(cog.bot.lang, {}).get(c.name, cog.bot.stringstack["Empty"])
+		c.usage = cog.usag.get(cog.bot.lang, {}).get(c.name, cog.bot.stringstack["Empty"])
+		c.sql = False
+	return cog

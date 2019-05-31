@@ -8,15 +8,24 @@ from utils.template import embed_t
 from importlib import import_module
 
 proc_list = [
-	"proc.triggered"
+	"proc.Triggered"
 ]
+
+stack = []
 
 class ImageGenerate(Cog) :
 	def __init__(self, bot) :
 		for c in proc_list :
-			imported_module = import_module(c)
+			#try:
+			lib = import_module(c)
+			# except ImportError as e:
+			# 	raise errors.ExtensionNotFound(c, e) from e
+			#else :
+			bot._load_from_module_spec(lib, c)
+			stack.append(lib.name)
 
-				traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+
+				#traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 		super().__init__(bot)
 
 	@commands.command()
@@ -24,7 +33,7 @@ class ImageGenerate(Cog) :
 		if end is None:
 			end = start + 20
 		stri = "```\n"
-		stri += "\n".join([n for n, v in self.stack.items()])
+		stri += "\n".join(stack)
 		stri += '```'
 		e = embed_t(ctx, "", "")
 		e.add_field(name=f"{start} - {end}", value=stri)

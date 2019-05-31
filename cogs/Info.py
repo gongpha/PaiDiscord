@@ -10,6 +10,7 @@ from pythainlp.util import thai_strftime
 from dateutil.relativedelta import relativedelta
 from utils.anyuser import AnyUser
 from utils.query import fetchone, commit
+from utils.check import *
 import datetime
 
 class Info(Cog) :
@@ -142,7 +143,7 @@ class Info(Cog) :
 			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
 		else :
 			for n, c in self.bot.cogs.items() :
-				if n.lower() == sect[0].lower() :
+				if n == sect[0] :
 					h = self.help_specific_embed(ctx, c)
 			if h == None :
 				for n, cg in self.bot.cogs.items() :
@@ -176,6 +177,7 @@ class Info(Cog) :
 		if h != None :
 			await ctx.send(embed=h)
 
+	@IsNotDM()
 	@commands.command()
 	async def guild(self, ctx) :
 		#print(self.bot.name)

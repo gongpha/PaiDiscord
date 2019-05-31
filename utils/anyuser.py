@@ -25,3 +25,19 @@ class AnyUser :
 					except discord.HTTPException as e:
 						return (e, -2)
 		return (result, passed)
+
+async def anyuser_check(ctx, object) :
+	r, passed = await AnyUser.convert(ctx,object)
+	if passed < 0 :
+		err = embed_em(ctx, ctx.bot.stringstack["ObjectNotFoundFromObject"].format(ctx.bot.stringstack["Model"]["User"], str(object)))
+		#err.description = "```{}```".format(result.text)
+		err.set_footer(text="{} : {} : {}".format(r.status, r.code, passed))
+		await ctx.send(embed=err)
+		return None
+	return r
+
+async def anyuser_safecheck(ctx, object) :
+	r, passed = await AnyUser.convert(ctx,object)
+	if passed < 0 :
+		return ctx.author
+	return r
