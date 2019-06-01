@@ -23,7 +23,7 @@ databasePassword = os.environ.get((config["info"]["database_password"])[1:], Non
 databaseDatabase = os.environ.get((config["info"]["database_database"])[1:], None) if config["info"]["database_database"].startswith('?') else config["info"]["database_database"]
 token = os.environ.get((config["info"]["token"])[1:], None) if config["info"]["token"].startswith('?') else config["info"]["token"]
 
-bot_dev = Pramual(name=config["info"]["name"], description=config["info"]["description"], command_prefix=config["info"]["command_prefix"], std=config["info"]["std"], token=token, loop=loop, timezone=config["info"]["timezone"], lang=config["info"]["lang"],log_ch=config["info"]["log_ch"], err_ch=config["info"]["err_ch"], theme=config["info"]["theme"], cog_list=config["cogs"], owner=config["info"]["owner"], databaseHost=databaseHost, databaseUsername=databaseUsername, databasePassword=databasePassword, databaseDatabase=databaseDatabase, game=config["info"]["game"], auth=config["auth"])
+bot_dev = Pramual(name=config["info"]["name"], description=config["info"]["description"], command_prefix=config["info"]["command_prefix"], std=config["info"]["std"], token=token, loop=loop, timezone=config["info"]["timezone"], lang=config["info"]["lang"],log_ch=config["info"]["log_ch"], err_ch=config["info"]["err_ch"], qur_ch=config["info"]["qur_ch"], theme=config["info"]["theme"], cog_list=config["cogs"], owner=config["info"]["owner"], databaseHost=databaseHost, databaseUsername=databaseUsername, databasePassword=databasePassword, databaseDatabase=databaseDatabase, game=config["info"]["game"], auth=config["auth"])
 
 print("Starting a Task... (Experimental)")
 loop.create_task(bot_dev.run_bot())

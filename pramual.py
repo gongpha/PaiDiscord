@@ -9,6 +9,7 @@ from utils.template import embed_em
 import pymysql.cursors
 import aiohttp
 import datetime
+from utils.query import commit
 
 class NoToken(Exception):
 	"""No Token was found or invalid token"""
@@ -25,6 +26,7 @@ class Pramual(commands.Bot) :
 		self.token = kwargs.pop('token', None)
 		self.log_channel_id = kwargs.pop('log_ch', None)
 		self.error_channel_id = kwargs.pop('err_ch', None)
+		self.query_channel_id = kwargs.pop('qur_ch', None)
 		self.timezone = kwargs.pop('timezone', None)
 		self.theme = kwargs.pop('theme', [0x9B59B6])
 		self.lang = kwargs.pop('lang', None)
@@ -64,6 +66,7 @@ class Pramual(commands.Bot) :
 
 		self.log_channel = super().get_channel(self.log_channel_id)
 		self.error_channel = super().get_channel(self.error_channel_id)
+		self.query_channel = super().get_channel(self.query_channel_id)
 
 		for c in self.cog_list :
 			try :
@@ -128,12 +131,34 @@ class Pramual(commands.Bot) :
 		await member.guild.system_channel.send(embed=e)
 
 	async def on_member_remove(self, member) :
+		if self.id == member.id :
+			return
 		e = discord.Embed(title=self.stringstack["UserWasLeftTheGuild"].format(member, member.guild))
 		e.description = "*{}*".format(self.stringstack["NowGuildHadNoMembersLeft"].format(len(member.guild.members)))
 		e.color = 0xCE3232
 		e.set_thumbnail(url=member.avatar_url)
 		e.set_footer(text=member.id)
 		await member.guild.system_channel.send(embed=e)
+
+	async def on_guild_join(self, guild) :
+		t = commit(self, "INSERT INTO `pai_discord_guild` (`snowflake`, `prefix`, `c_member_join`, `c_join_message`, `c_member_leave`, `c_leave_message`, `support`, `c_levelup_notice`, `first_seen`, `lang`) VALUES (%s, '', '1', '', '1', '', '0', '1', %s, '')", (guild.id, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+		if t != None :
+			e = discord.Embed(title="New Guild : {}".format(guild.name))
+			#e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
+			e.color = 0x00AA80
+			e.set_thumbnail(url=str(guild.icon_url))
+			e.set_footer(text="{} : {}".format(guild.id, t))
+			await self.query_channel.send(embed=e)
+
+	async def on_guild_remove(self, guild) :
+		t = commit(self, "DELETE FROM `pai_discord_guild` WHERE `snowflake` = %s", guild.id)
+		if t != None :
+			e = discord.Embed(title="Removed Guild : {}".format(guild.name))
+			#e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
+			e.color = 0xCE3232
+			e.set_thumbnail(url=str(guild.icon_url))
+			e.set_footer(text="{} : {}".format(guild.id, t))
+			await self.query_channel.send(embed=e)
 
 	async def on_message(self, message) :
 		#print(self.waitForMessage)

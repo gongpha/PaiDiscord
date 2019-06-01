@@ -8,7 +8,8 @@ from utils.template import embed_t
 from importlib import import_module
 
 proc_list = [
-	"proc.Triggered"
+	"proc.Triggered",
+	"proc._กูรู้หมดแล้ว"
 ]
 
 stack = []

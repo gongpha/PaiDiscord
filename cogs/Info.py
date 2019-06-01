@@ -143,6 +143,7 @@ class Info(Cog) :
 			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
 		else :
 			for n, c in self.bot.cogs.items() :
+				#print(n)
 				if n == sect[0] :
 					h = self.help_specific_embed(ctx, c)
 			if h == None :

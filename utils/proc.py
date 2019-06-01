@@ -30,3 +30,5 @@ def loadInformation(cog) :
 		c.usage = cog.usag.get(cog.bot.lang, {}).get(c.name, cog.bot.stringstack["Empty"])
 		c.sql = False
 	return cog
+
+#def cfgParse(cfg) :
