@@ -1,6 +1,5 @@
 discord.py
 pillow
-requests
 numpy
 pythainlp
 python-dateutil

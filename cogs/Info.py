@@ -99,9 +99,9 @@ class Info(Cog) :
 		e.add_field(name=ctx.bot.stringstack["Model"]["Name"], value=object, inline=True)
 		if isinstance(object, discord.Member) :
 			e.add_field(name=ctx.bot.stringstack["Model"]["Nickname"], value=object.nick or ctx.bot.stringstack["None"], inline=True)
-		e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(object.created_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
+		e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, object.created_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
 		if isinstance(object, discord.Member) :
-			e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(ctx.message.guild),value=thai_strftime(object.joined_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(object.joined_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
+			e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(ctx.message.guild),value=thai_strftime(object.joined_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, object.joined_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
 		e.set_author(name=object.display_name, icon_url=object.avatar_url)
 
 		if isinstance(object, discord.Member) :

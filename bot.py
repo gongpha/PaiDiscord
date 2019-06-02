@@ -11,11 +11,11 @@ loop = asyncio.get_event_loop()
 import yaml
 
 with open('configs/proc.yml') as f:
-    proclist = yaml.safe_load(f)
+	proclist = yaml.safe_load(f)
 
 for p in proclist["proc_pai" if len(sys.argv) <= 1 else sys.argv[1]] :
-    with open('configs/{}.yml'.format(p), encoding="utf8") as f:
-        config = yaml.safe_load(f)
+	with open('configs/{}.yml'.format(p), encoding="utf8") as f:
+		config = yaml.safe_load(f)
 
 databaseHost = os.environ.get((config["info"]["database_host"])[1:], None) if config["info"]["database_host"].startswith('?') else config["info"]["database_host"]
 databaseUsername = os.environ.get((config["info"]["database_username"])[1:], None) if config["info"]["database_username"].startswith('?') else config["info"]["database_username"]
