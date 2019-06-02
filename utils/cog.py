@@ -13,7 +13,7 @@ class Cog(commands.Cog) :
 		try :
 			self.cog_name = self.stringstack["cog"]["name"]
 			self.cog_desc = self.stringstack["cog"]["description"]
-			self.cog_emoji = [self.stringstack["cog"]["icon_emoji"]] if not isinstance(self.stringstack["cog"]["icon_emoji"],(list, tuple)) else self.stringstack["cog"]["icon_emoji"] #[item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]
+			self.cog_emoji = [str(self.stringstack["cog"]["icon_emoji"])] if not isinstance(self.stringstack["cog"]["icon_emoji"],(list, tuple)) else self.stringstack["cog"]["icon_emoji"] #[item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]
 		except KeyError :
 			print("Load Cog for {} failed".format(self.__class__.__name__))
 		# [item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]

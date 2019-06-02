@@ -1,4 +1,5 @@
 import discord
+import platform
 from discord.ext import commands
 import typing
 from utils.cog import Cog
@@ -12,6 +13,23 @@ from utils.anyuser import AnyUser
 from utils.query import fetchone, commit
 from utils.check import *
 import datetime
+import math
+import psutil
+
+
+def convert_size(size_bytes):
+	if size_bytes == 0:
+		return "0 B"
+	size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+	i = int(math.floor(math.log(size_bytes, 1024)))
+	p = math.pow(1024, i)
+	s = round(size_bytes / p, 2)
+	return "%s %s" % (s, size_name[i])
+
+def progressbar(iteration, total, length = 10):
+	filledLength = int(length * iteration // total)
+	bar = '●' * filledLength + '○' * (length - filledLength)
+	return bar
 
 class Info(Cog) :
 	def __init__(self, bot) :
@@ -141,6 +159,7 @@ class Info(Cog) :
 			e.color = self.bot.theme[0] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
 			e.description = self.bot.bot_description
 			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
+			e.set_footer(text=self.bot.stringstack["Powered"])
 		else :
 			for n, c in self.bot.cogs.items() :
 				#print(n)
@@ -160,6 +179,72 @@ class Info(Cog) :
 			await ctx.send(embed=e)
 		if h != None :
 			await ctx.send(embed=h)
+
+	@commands.command()
+	async def stats(self, ctx) :
+
+		e = embed_t(ctx, self.bot.stringstack["StatsOf"].format(ctx.bot.bot_name))
+		e.set_author(name=ctx.bot.bot_name, icon_url=self.bot.user.avatar_url)
+		e.set_thumbnail(url=(await ctx.bot.application_info()).icon_url)
+		e.add_field(name=self.bot.stringstack["Model"]["Name"], value=ctx.bot.user, inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["BotName"], value=ctx.bot.bot_name, inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["ID"], value=ctx.bot.user.id, inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["Discriminator"], value=ctx.bot.user.discriminator, inline=True)
+		m_t = psutil.virtual_memory()[3]
+		m_a = psutil.virtual_memory()[0]
+		mm_t = convert_size(m_t)
+		mm_a = convert_size(m_a)
+		e.add_field(name=self.bot.stringstack["Model"]["Memory"], value=self.bot.stringstack["PercentUsagedFrom"].format(str(psutil.virtual_memory()[2]), "[{} / {}]\n{}".format(mm_t, mm_a, progressbar(m_t, m_a))), inline=True)
+		cpu = psutil.cpu_percent()
+		e.add_field(name=self.bot.stringstack["Model"]["CPU"], value=self.bot.stringstack["PercentUsagedNewLine"].format(str(cpu), progressbar(cpu, 100)), inline=True)
+		#print(self.bot.start_time.astimezone(timezone(self.bot.timezone)))
+		e.add_field(name=self.bot.stringstack["SystemUpTime"], value=th_format_date_diff(ctx, self.bot.start_time.astimezone(timezone(self.bot.timezone))), inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["Ping"], value=str(round(ctx.bot.ws.latency * 1000)) + " ms", inline=True)
+
+
+
+
+
+
+
+
+
+
+		# SET YOUR STATE HERE
+		#public_now = False
+
+		#if ctx.author.id in ctx.bot.owner_list :
+		#	public_now = True
+		mm = 0
+		tc = 0
+		vc = 0
+		ca = 0
+		rr = 0
+		for guild in ctx.bot.guilds :
+			mm += len(guild.members)
+			tc += len(guild.text_channels)
+			vc += len(guild.voice_channels)
+			ca += len(guild.categories)
+			rr += len(guild.roles)
+		#pe = e.copy()
+		e.add_field(name=self.bot.stringstack["Model"]["Emoji"], value=len(ctx.bot.emojis), inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["CacheMessage"], value=len(ctx.bot.cached_messages), inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["VoiceClient"], value=len(ctx.bot.voice_clients), inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["User"], value=len(ctx.bot.users), inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["Member"], value=mm, inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["Channel"], value=tc + vc, inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["TextChannel"], value=tc, inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["VoiceChannel"], value=vc, inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["CategoryChannel"], value=ca, inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["Role"], value=rr, inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["Guild"], value=len(ctx.bot.guilds), inline=True)
+
+		e.add_field(name=self.bot.stringstack["Model"]["Invite"], value="[{}](https://discordapp.com/api/oauth2/authorize?client_id={}&permissions=470019184&scope=bot)".format(self.bot.stringstack["ClickHere"], self.bot.user.id), inline=True)
+
+		e.set_footer(text="Python {} • discord.py {}".format(platform.python_version(), discord.__version__))
+		await ctx.send(embed=e)
+		#e.set_footer(text=)
+		#th_format_date_diff(guild.created_at.astimezone(timezone(self.bot.timezone)))
 
 	@commands.command()
 	async def alias(self, ctx, *, sect : str) :
@@ -189,7 +274,7 @@ class Info(Cog) :
 		s.add_field(name=self.bot.stringstack["Model"]["ID"],value=guild.id, inline=True)
 		s.add_field(name=self.bot.stringstack["Model"]["Region"],value=self.bot.stringstack["VoiceRegion"][guild.region.name], inline=True)
 		s.add_field(name=self.bot.stringstack["Model"]["Owner"],value=guild.owner.mention, inline=True)
-		s.add_field(name=self.bot.stringstack["CreatedAt"],value=thai_strftime(guild.created_at, self.bot.stringstack["DateTimeText"].format(th_format_date_diff(guild.created_at.astimezone(timezone(self.bot.timezone))))), inline=True)
+		s.add_field(name=self.bot.stringstack["CreatedAt"],value=thai_strftime(guild.created_at, self.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, guild.created_at.astimezone(timezone(self.bot.timezone))))), inline=True)
 		s.add_field(name=self.bot.stringstack["Model"]["Member"],value=len(guild.members), inline=True)
 		s.add_field(name=self.bot.stringstack["Model"]["Channel"],value=len(guild.channels), inline=True)
 		s.add_field(name=self.bot.stringstack["Model"]["Role"],value=len(guild.roles), inline=True)

@@ -1,4 +1,4 @@
-def th_format_date_diff(time=False):
+def th_format_date_diff(ctx, time=False):
     # from https://stackoverflow.com/questions/1551382/user-friendly-time-format-in-python/1551394#1551394
     """
     Get a datetime object or a int() Epoch timestamp and return a
@@ -7,7 +7,7 @@ def th_format_date_diff(time=False):
     """
     from datetime import datetime
     from pytz import timezone
-    now = datetime.utcnow().astimezone(timezone("Asia/Bangkok"))
+    now = datetime.now().astimezone(timezone(ctx.bot.timezone))
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
     elif isinstance(time,datetime):

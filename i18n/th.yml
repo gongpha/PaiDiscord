@@ -2,6 +2,7 @@ RequestBy                   : ร้องขอโดย {}
 Empty                       : ว่างเปล่า
 None                        : ไม่มี
 NoCommand                   : ไม่มีคำสั่ง
+Powered                     : โดย Pramual Pai
 
 VoiceRegion :
     amsterdam               : อัมสเตอร์ดัม
@@ -29,12 +30,14 @@ Model :
     Member                  : สมาชิก
     User                    : ผู้ใช้
     Message                 : ข้อความ
+    CacheMessage            : แคชข้อความ
     ID                      : ID
     Embed                   : ฝัง
     Attachment              : แนบ
     Channel                 : ช่อง
     TextChannel             : ช่องข้อความ
     VoiceChannel            : ช่องเสียง
+    VoiceClient             : ไคลเอนต์เสียง
     CategoryChannel         : หมวดหมู่
     DMChannel               : ข้อความส่วนตัว
     Reaction                : รีแอคชัน
@@ -46,6 +49,7 @@ Model :
     Alias                   : แฝง
     Text                    : ข้อความ
     Name                    : ชื่อ
+    BotName                 : ชื่อบอท
     Nickname                : ชื่อเล่น
     Status                  : สถานะ
     Desktop                 : เดสก์ทอป
@@ -54,6 +58,12 @@ Model :
     Profile                 : โปรไฟล์
     Credit                  : เครดิต
     Source                  : แหล่ง
+    Stats                   : สถิติ
+    Discriminator           : ตัวแบ่งเกณฑ์
+    Memory                  : หน่วยความจำ
+    CPU                     : CPU
+    Ping                    : ความล่าช้า
+    Invite                  : คำเชิญ
 Status :
     Online                  : ออนไลน์
     Idle                    : ไม่อยู่
@@ -106,3 +116,9 @@ OpenOriginal                : เปิดต้นฉบับ
 OpenLink                    : เปิดลิงค์
 PingReturnedSec             : "ค่าความล่าช้า : **{}** วินาที"
 CommandNeedQuery            : มีการเรียกข้อมูลจากฐานข้อมูล
+StatsOf                     : สถิติของ {}
+PercentUsagedFrom           : "ใช้งานไปแล้ว {} %\nจาก {}"
+PercentUsagedNewLine        : "ใช้งานไปแล้ว {} %\n{}"
+SystemUpTime                : ช่วงเวลาในการทำงาน
+ClickHere                   : คลิกที่นี่
+Forbidden                   : ไม่มีสิทธิ์ในการเข้าถึง

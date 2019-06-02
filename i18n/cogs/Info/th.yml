@@ -74,6 +74,13 @@ command :
         usage               :
         aliases             :
             - ปิง
+    stats :
+        description         : สถิติของ {0.bot_name}
+        usage               :
+        aliases             :
+            - stat
+            - สถิติ
+            - สติถิ
 AliasFor                    : นามแฝงของคำสั่ง
 Help                        : แผงช่วยเหลือ
 InfoOfUser                  : ข้อมูลผู้ใช้ {}
