@@ -21,10 +21,38 @@ command :
             - _ส่ง
             - _snd
             - _chat
+    _send_dm :
+        description         : ส่งข้อความผ่านช่องข้อความส่วนตัวด้วย ID ของผู้ใช้
+        usage               : <ID ของผู้ใช้> <ข้อความ...>
+        aliases             :
+            - _send_direct_message
+            - _snddm
+            - _chat_dm
     _set_credits :
         description         : ตั้งเครดิต
         usage               : <ID ของผู้ใช้> <จำนวน>
         aliases             :
+
+    _send_embed :
+        description         : ส่งฝังในรูปแบบ JSON ผ่านช่องด้วย ID
+        usage               : <ID ของผู้ใช้> <JSON ของ Embed>
+        aliases             :
+            - _ส่งฝัง
+            - _sndembd
+            - _chat_embed
+    _set_status :
+        description         : |-
+            ตั้งสถานะของบอท
+
+            `online`, 0 : ออนไลน์
+            `idle`, 1 : ไม่อยู่
+            `dnd`, 2 : ห้ามรบกวน
+            `offline`, 3 : ออฟไลน์
+            `invisible`, 4 : ล่องหน
+        usage               : <สถานะ>
+        aliases             :
+            - _ตั้งสถานะ
+            - _sst
     # _send_embed :
     #     description         : ส่งฝังผ่านช่องด้วย ID
     #     usage               : <ID ของช่อง> <JSON ของฝัง...>

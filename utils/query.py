@@ -1,39 +1,45 @@
-import pymysql.cursors
+#import pymysql.cursors
 from time import time
 
-def fetchone(bot, sql, list = None) :
-	connection = bot.connect_db()
+async def fetchone(bot, sql, list = None) :
+	connection = await bot.connect_db()
+	if not connection :
+		return
 	try :
-		with connection.cursor() as cursor :
+		async with connection.cursor() as cursor :
 			f = time()
-			cursor.execute(sql, list)
+			await cursor.execute(sql, list)
 			s = time()
-		used = s - f
-		print('Query Executed "{}"'.format(sql % (list)))
-		return {
-			"result" : cursor.fetchone(),
-			"time" : used,
-			"rows" : cursor.rowcount
-		}
+			used = s - f
+			print('[MySQL Query] Query Executed "{}"'.format(sql % (list)))
+			return {
+				"result" : await cursor.fetchone(),
+				"time" : used,
+				"rows" : cursor.rowcount
+			}
 	except pymysql.err.Error as e:
-		print('Query Failed to execute "{}" :\n{}'.format(sql % (list),e))
+		print('[MySQL Query] Query Failed to execute "{}" :\n{}'.format(sql % (list),e))
 		return None
 	finally :
 		connection.close()
+		print('[MySQL Query] Query Connection Closed')
 
-def commit(bot, sql, list = None) :
-	connection = bot.connect_db()
+async def commit(bot, sql, list = None) :
+	connection = await bot.connect_db()
+	if not connection :
+		return
 	try :
-		with connection.cursor() as cursor :
+		async with connection.cursor() as cursor :
 			f = time()
-			cursor.execute(sql, list)
+			await cursor.execute(sql, list)
 			s = time()
 		used = s - f
-		print('Query Executed "{}"'.format(sql % (list)))
-		connection.commit()
+		print('[MySQL Query] Query Executed "{}"'.format(sql % (list)))
+		await connection.commit()
 		return used
 	except pymysql.err.Error as e:
-		print('Query Failed to execute "{}" :\n{}'.format(sql % (list),e))
+		print('[MySQL Query] Query Failed to execute "{}" :\n{}'.format(sql % (list),e))
 		return None
 	finally :
 		connection.close()
+		print('[MySQL Query] Query Connection Closed')

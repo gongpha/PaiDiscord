@@ -23,11 +23,14 @@ info :
       - 524907194852966410 # Kengkat2#1787      TESTER'S SMURF
       - 359621664641908736 # Monochrome#0378    TESTER
       - 359616528041246723 # Unallocated#5609	TESTER
+  mysql : True
   database_host : ?PramualDatabaseHost
   database_username : ?PramualDatabaseUsername
   database_password : ?PramualDatabasePassword
   database_database : ?PramualDatabaseDatabase
-  game : OwO
+  game_default : OwO
+  game_static : ?PramualPaiGame
+  where : # leave it empty
 cogs :
   - cogs.Info
   - cogs.Image

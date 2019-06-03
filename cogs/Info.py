@@ -48,17 +48,18 @@ class Info(Cog) :
 		if not cog.get_commands() :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.stringstack["NoCommand"]))
 		for c in cog.get_commands() :
-			h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.stringstack["Empty"],inline=True)
+			#h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.stringstack["Empty"],inline=True)
+			h.add_field(name="`{}{}`".format(self.bot.command_prefix, c.name),value=c.description.format(ctx.bot) or ctx.bot.stringstack["Empty"],inline=True)
 		return h
 
 	def help_command_embed(self, ctx, command, cog) :
 		h = embed_t(ctx, "{}**{}**    (:{}: {})".format(self.bot.command_prefix, command.name, ": :".join(cog.cog_emoji), cog.cog_name), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.command_prefix, command.name, command.usage or "")))
-		if command.sql :
-			h.description += "\n📡 **{}**".format(self.bot.stringstack["CommandNeedQuery"])
+		#if command.sql :
+		#	h.description += "\n📡 **{}**".format(self.bot.stringstack["CommandNeedQuery"])
 		return h
 
 	async def profile_information(self, ctx, object) :
-		r = fetchone(self.bot, "SELECT profile_name, profile_description, credits FROM pai_discord_profile WHERE snowflake = %s", object.id)
+		r = await fetchone(self.bot, "SELECT profile_name, profile_description, credits, commands FROM pai_discord_profile WHERE snowflake = %s", object.id)
 
 		if object.bot :
 			e = embed_wm(ctx, ctx.bot.stringstack["CannotUseWithBot"])
@@ -71,7 +72,7 @@ class Info(Cog) :
 					fromid = ctx.message.guild.id
 				except AttributeError :
 					fromid = ctx.message.channel.id
-				t = commit(self.bot, "INSERT INTO `pai_discord_profile` (`snowflake`, `profile_name`, `profile_description`, `first_seen`, `first_seen_in_guild`, `credits`, `owner`, `badges`, `level`, `exp`) VALUES (%s, '', '', %s, %s, 0, 0, '{}', 1, 0)", (object.id, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), fromid))
+				t = await commit(self.bot, "INSERT INTO `pai_discord_profile` (`snowflake`, `profile_name`, `profile_description`, `first_seen`, `first_seen_in_guild`, `credits`, `owner`, `badges`, `level`, `exp`) VALUES (%s, '', '', %s, %s, 0, 0, '{}', 1, 0)", (object.id, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), fromid))
 				r = {
 					"result" : {
 						"profile_name" : object.display_name + " *",
@@ -83,6 +84,7 @@ class Info(Cog) :
 			e.color = object.color if object.color.value != 0 else discord.Embed.Empty
 
 			e.add_field(name=":credit_card: " + ctx.bot.stringstack["Model"]["Credit"], value=r["result"]["credits"], inline=True)
+			e.add_field(name=":arrow_upper_left: " + ctx.bot.stringstack["CommandUsedCount"], value=r["result"]["commands"], inline=True)
 			e.set_author(name=r["result"]["profile_name"] or object, icon_url=object.avatar_url)
 			e.set_footer(text="🆔 {} : ⏲ {}".format(object.id, ctx.bot.stringstack["QueryExecuteTime"].format(r["time"] if not new else t)))
 

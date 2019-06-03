@@ -4,5 +4,6 @@ numpy
 pythainlp
 python-dateutil
 pyyaml
+aiomysql
 pymysql
 psutil

@@ -12,6 +12,8 @@ command :
             แหล่งที่ใช้ได้ ให้ใช้คำสั่ง `{0.command_prefix}request_list`
         usage               : <ชื่อของแหล่ง>
         aliases             :
+            - r
+            - "%"
     request_list :
         description         : แหล่งทั้งหมด
         usage               :

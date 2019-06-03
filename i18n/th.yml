@@ -1,3 +1,7 @@
+LanguageName                : ภาษาไทย
+lang                        : th
+author                      : gongpha
+author_id                   : 269418798975680513
 RequestBy                   : ร้องขอโดย {}
 Empty                       : ว่างเปล่า
 None                        : ไม่มี
@@ -95,10 +99,12 @@ Warning                     : คำเตือน !
 ActionCannotUndo            : การกระทำดังกล่าวไม่สามารถคืนค่าได้
 PleaseReactionAllCommander  : โปรดเพิ่มรีแอคชันด้านล่างนี้ทั้งหมด เพื่อดำเนินการ (ผู้ใช้ที่ส่งคำสั่งเท่านั้น)
 NoPermissionWith            : ไม่มีสิทธิ์ *{}*
+CannotSendTo                : ไม่สามารถส่งไปที่ `{}`
 ObjectNotFoundFromObject    : ไม่พบ{} `{}`
 YouAreNotBotOwner           : คุณไม่ใช่เจ้าของบอทนี้ คุณจึงไม่มีสิทธิ์ใช้งานคำสั่งนี้ได้
 YouAreNotGuildOwner         : คุณไม่ใช่เจ้าของเซิร์ฟเวอร์นี้ คุณจึงไม่มีสิทธิ์ใช้งานคำสั่งนี้ได้
 CommandInDMNotAvailable     : ไม่สามารถใช้คำสั่งในข้อความส่วนตัวได้
+DMWithUser                  : ข้อความส่วนตัวกับ {}
 WelcomeUserToGuild          : ยินดีต้อนรับ {} เข้าสู่ {} !
 UserWasJoinedGuildNo        : "{} ได้เข้าร่วมเซิร์ฟเวอร์เป็นคนที่ {}"
 UserWasLeftTheGuild         : "{} ได้ออกจาก {}"
@@ -122,3 +128,5 @@ PercentUsagedNewLine        : "ใช้งานไปแล้ว {} %\n{}"
 SystemUpTime                : ช่วงเวลาในการทำงาน
 ClickHere                   : คลิกที่นี่
 Forbidden                   : ไม่มีสิทธิ์ในการเข้าถึง
+CommandUsedCount            : จำนวนการใช้คำสั่ง
+SetItTo                     : ตั้งเป็น **{}** แล้ว

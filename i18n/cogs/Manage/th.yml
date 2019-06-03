@@ -2,7 +2,14 @@
 cog :
     name                    : การจัดการ
     description             : การตั้งค่า จัดการ ผู้ใช้ ช่อง บทบาท เซิร์ฟเวอร์
-    icon_emoji              : wrench
+    icon_emoji              : gear
     author                  : gongpha
     translated              : gongpha
 command :
+    language :
+        description         : เปลี่ยนภาษา
+        usage               :
+        aliases             :
+            - lang
+            - เปลี่ยนภาษา
+            - ภาษา

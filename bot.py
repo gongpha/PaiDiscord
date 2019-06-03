@@ -17,15 +17,27 @@ for p in proclist["proc_pai" if len(sys.argv) <= 1 else sys.argv[1]] :
 	with open('configs/{}.yml'.format(p), encoding="utf8") as f:
 		config = yaml.safe_load(f)
 
+def load_env(env, default = None) :
+	if env == None :
+		env = ""
+	return os.environ.get(env[1:], default) if env.startswith('?') else env
+
 databaseHost = os.environ.get((config["info"]["database_host"])[1:], None) if config["info"]["database_host"].startswith('?') else config["info"]["database_host"]
 databaseUsername = os.environ.get((config["info"]["database_username"])[1:], None) if config["info"]["database_username"].startswith('?') else config["info"]["database_username"]
 databasePassword = os.environ.get((config["info"]["database_password"])[1:], None) if config["info"]["database_password"].startswith('?') else config["info"]["database_password"]
 databaseDatabase = os.environ.get((config["info"]["database_database"])[1:], None) if config["info"]["database_database"].startswith('?') else config["info"]["database_database"]
 token = os.environ.get((config["info"]["token"])[1:], None) if config["info"]["token"].startswith('?') else config["info"]["token"]
 
-bot_dev = Pramual(name=config["info"]["name"], description=config["info"]["description"], command_prefix=config["info"]["command_prefix"], std=config["info"]["std"], token=token, loop=loop, timezone=config["info"]["timezone"], lang=config["info"]["lang"],log_ch=config["info"]["log_ch"], err_ch=config["info"]["err_ch"], qur_ch=config["info"]["qur_ch"], theme=config["info"]["theme"], cog_list=config["cogs"], owner=config["info"]["owner"], databaseHost=databaseHost, databaseUsername=databaseUsername, databasePassword=databasePassword, databaseDatabase=databaseDatabase, game=config["info"]["game"], auth=config["auth"])
+w = os.environ.get("where",None)
+
+if w == None :
+	w = load_env("?KONGPHA_WHERE", "root")
+else :
+	w = load_env(config["info"]["where"], "root")
+
+bot_dev = Pramual(name=config["info"]["name"], description=config["info"]["description"], command_prefix=config["info"]["command_prefix"], std=config["info"]["std"], token=token, loop=loop, timezone=config["info"]["timezone"], lang=config["info"]["lang"],log_ch=config["info"]["log_ch"], err_ch=config["info"]["err_ch"], qur_ch=config["info"]["qur_ch"], theme=config["info"]["theme"], cog_list=config["cogs"], owner=config["info"]["owner"], databaseHost=databaseHost, databaseUsername=databaseUsername, databasePassword=databasePassword, databaseDatabase=databaseDatabase, auth=config["auth"], game_default=load_env(config["info"]["game_default"]), game_static=load_env(config["info"]["game_static"]), mysql=config["info"]["mysql"], where=w)
 
 print("Starting a Task... (Experimental)")
 loop.create_task(bot_dev.run_bot())
 loop.run_until_complete(loop)
-loop.run_forever()
+#loop.run_forever()

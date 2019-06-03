@@ -6,7 +6,8 @@ import traceback
 import random
 from discord.ext import commands
 from utils.template import embed_em
-import pymysql.cursors
+#import pymysql.cursors
+import aiomysql.cursors
 import aiohttp
 import datetime
 from utils.query import commit
@@ -34,12 +35,18 @@ class Pramual(commands.Bot) :
 		self.owner_list = kwargs.pop('owner', None)
 		self.waitForMessage = {}
 		# self.connection = None
-		self.session = aiohttp.ClientSession()
-		self.game = kwargs.pop('game', None)
+		self.where = kwargs.pop('where', None)
+		self.session = aiohttp.ClientSession(loop=self.loop)
 		self.database_host = kwargs.pop('databaseHost', None)
 		self.database_username = kwargs.pop('databaseUsername', None)
 		self.database_password = kwargs.pop('databasePassword', None)
 		self.database_database = kwargs.pop('databaseDatabase', None)
+		self.mysql = kwargs.pop('mysql', False)
+		g = kwargs.pop('game_static', None)
+		gd = kwargs.pop('game_default', None)
+		if not g :
+			g = gd
+		self.game = [g] if not isinstance(g, (list, tuple)) else g
 		self.auth = kwargs.pop('auth', None)
 		self.start_time = datetime.datetime.now()
 		with open('i18n/{}.yml'.format(self.lang), encoding="utf8") as json_file :
@@ -50,14 +57,27 @@ class Pramual(commands.Bot) :
 		self.remove_command('help')
 		pbot = self
 
-	def connect_db(self) :
-		if all([self.database_host, self.database_username, self.database_password, self.database_database]) :
-			return pymysql.connect(host='kppmp.heliohost.org',
+	async def connect_db(self) :
+		# all([self.database_host, self.database_username, self.database_password, self.database_database])
+		if self.mysql :
+			return await aiomysql.connect(host=self.database_host,
 				user=self.database_username,
 				password=self.database_password,
 				db=self.database_database,
 				charset='utf8mb4',
-				cursorclass=pymysql.cursors.DictCursor)
+				cursorclass=aiomysql.cursors.DictCursor,
+				loop=self.loop)
+		else :
+			return None
+
+	def ss(self, *keylist) :
+		dct = self.stringstack.copy()
+		for key in keylist:
+			try:
+				dct = dct[key]
+			except KeyError:
+				return "@@@[string_not_found/ไม่-พบ-ข้อความ]"
+		return dct
 
 	async def on_ready(self) :
 		print(f'>> Login As "{self.user.name}" ({self.user.id})')
@@ -78,7 +98,7 @@ class Pramual(commands.Bot) :
 				traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 		if self.game :
-			game = discord.Game(name=self.game, type=discord.ActivityType.listening)
+			game = discord.Game(name=self.game[0].format(self), type=discord.ActivityType.listening)
 
 
 		await self.change_presence(status=discord.Status.online, activity=game)
@@ -86,8 +106,14 @@ class Pramual(commands.Bot) :
 	def run_bot(self) :
 		super().run(self.token)
 
-	async def on_command(self, ctx) :
+	# @after_invoke
+	# async def after_command(self, ctx):
+	# 	await ctx.send("Hello from after_invoke")
 
+	async def on_command_completion(self, ctx) :
+		await commit(self, "UPDATE `pai_discord_profile` SET commands=commands + 1, user_name=%s WHERE snowflake=%s", (ctx.author.name, ctx.author.id))
+
+	async def on_command(self, ctx) :
 		e = discord.Embed(title=f"Command : `{self.command_prefix}{ctx.command.name}`")
 		e.description = f"Called to `{self.std}`"
 		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)
@@ -167,6 +193,7 @@ class Pramual(commands.Bot) :
 				if self.waitForMessage[message.channel.id][message.author.id] == 1 :
 					await message.channel.send(":thinking:")
 					del self.waitForMessage[message.channel.id][message.author.id]
+					await self.process_commands(message)
 					return
 		if message.activity :
 			if message.activity["type"] == 3 :

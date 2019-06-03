@@ -29,8 +29,8 @@ class Experimental(Cog) :
 		e.color = 0xDD0000
 		await self.bot.log_channel.send(embed=e)
 		await self.bot.session.close()
-		self.bot.loop.stop()
 		await self.bot.close()
+		self.bot.loop.stop()
 
 	@commands.command()
 	@IsOwnerBot()
@@ -40,7 +40,64 @@ class Experimental(Cog) :
 
 	@commands.command()
 	@IsOwnerBot()
-	async def _set_credits(self, ctx, id, credits : int) :
+	async def _send_dm(self, ctx, id, *, text : str) :
+		user = await self.bot.fetch_user(id) or ctx.author.id
+		channel = user.dm_channel
+		if not channel :
+			await user.create_dm()
+			channel = user.dm_channel
+		try :
+			await channel.send(text)
+		except discord.Forbidden :
+			await ctx.send(embed=embed_em(ctx, self.bot.ss("CannotSendTo").format(self.bot.ss("DMWithUser").format(channel.recipient.name)), self.bot.ss("Forbidden")))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _send_embed(self, ctx, id, *, jsonembed : str) :
+		try :
+			channel = self.bot.get_channel(int(id)) or ctx.message.channel
+		except :
+			await channel.send(embed=embed_em(ctx, "a"))
+		else :
+			await channel.send(embed=discord.Embed.from_dict(json.loads(jsonembed)))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _set_status(self, ctx, status) :
+		reverse_status_indicator_int = [discord.Status.online,
+			discord.Status.idle,
+			discord.Status.dnd,
+			discord.Status.offline,
+			discord.Status.invisible,
+		]
+		reverse_status_indicator_str = {
+			"online" : discord.Status.online,
+			"idle" : discord.Status.idle,
+			"dnd" : discord.Status.dnd,
+			"offline" : discord.Status.offline,
+			"invisible" : discord.Status.invisible,
+		}
+
+		status_indicator = {
+			discord.Status.online : [ctx.bot.stringstack["Status"]["Online"], "📗"],
+			discord.Status.idle : [ctx.bot.stringstack["Status"]["Idle"], "📒"],
+			discord.Status.dnd : [ctx.bot.stringstack["Status"]["DoNotDisturb"], "📕"],
+			discord.Status.offline : [ctx.bot.stringstack["Status"]["Offline"], "📓"],
+			discord.Status.invisible : [ctx.bot.stringstack["Status"]["Invisible"], "📓"],
+		}
+
+		if isinstance(status, int) :
+			st = reverse_status_indicator_int[status]
+		if isinstance(status, str) :
+			st = reverse_status_indicator_str.get(status, discord.Status.online)
+
+		await self.bot.change_presence(status=st)
+		sst = status_indicator[st]
+		await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(sst[1], sst[0])))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _set_credits(self, ctx, id, credits) :
 		commit(self.bot, "UPDATE `pai_discord_profile` SET credits=%s WHERE snowflake=%s", (credits, id))
 		await ctx.send(":ok_hand:")
 

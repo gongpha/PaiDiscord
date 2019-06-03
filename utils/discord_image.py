@@ -33,7 +33,7 @@ async def getLastImage(ctx) :
 		if ctx.message.embeds :
 			for e in reversed(ctx.message.embeds) :
 				if e.url != discord.Embed.Empty :
-					return Image.open(BytesIO(requests.get(e.url).content))
+					return Image.open(BytesIO(await (await ctx.bot.session.get(str(e.url))).read()))
 				if e.image != discord.Embed.Empty :
 					return Image.open(BytesIO(await (await ctx.bot.session.get(str(e.image.url))).read()))
 		else :
@@ -49,8 +49,8 @@ async def getLastImage(ctx) :
 					if msg.embeds :
 						for e in reversed(msg.embeds) :
 							if e.url != discord.Embed.Empty :
-								return Image.open(BytesIO(requests.get(e.url).content))
+								return Image.open(BytesIO(await (await ctx.bot.session.get(str(e.url))).read()))
 							if e.image != discord.Embed.Empty :
 								if e.image.url != discord.Embed.Empty :
-									return Image.open(BytesIO(requests.get(e.image.url).content))
+									return Image.open(BytesIO(await (await ctx.bot.session.get(str(e.image.url))).read()))
 	return Image.open(BytesIO(await (await ctx.bot.session.get(str(ctx.author.avatar_url))).read()))
