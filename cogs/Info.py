@@ -15,6 +15,7 @@ from utils.check import *
 import datetime
 import math
 import psutil
+from utils.defined import d_status_icon
 
 
 def convert_size(size_bytes):
@@ -49,7 +50,7 @@ class Info(Cog) :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.stringstack["NoCommand"]))
 		for c in cog.get_commands() :
 			#h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.stringstack["Empty"],inline=True)
-			h.add_field(name="`{}{}`".format(self.bot.command_prefix, c.name),value=c.description.format(ctx.bot) or ctx.bot.stringstack["Empty"],inline=True)
+			h.add_field(name="`{}{}`".format(self.bot.command_prefix, c.name),value=(c.description or "").format(ctx.bot) or ctx.bot.stringstack["Empty"],inline=True)
 		return h
 
 	def help_command_embed(self, ctx, command, cog) :
@@ -107,26 +108,27 @@ class Info(Cog) :
 		e.set_author(name=object.display_name, icon_url=object.avatar_url)
 
 		if isinstance(object, discord.Member) :
-			status_indicator = {
-				discord.Status.online : [ctx.bot.stringstack["Status"]["Online"], "📗"],
-				discord.Status.idle : [ctx.bot.stringstack["Status"]["Idle"], "📒"],
-				discord.Status.dnd : [ctx.bot.stringstack["Status"]["DoNotDisturb"], "📕"],
-				discord.Status.offline : [ctx.bot.stringstack["Status"]["Offline"], "📓"],
-				discord.Status.invisible : [ctx.bot.stringstack["Status"]["Invisible"], "📓"],
-			}
-
+			# status_indicator = {
+			# 	discord.Status.online : [ctx.bot.stringstack["Status"]["online"], "📗"],
+			# 	discord.Status.idle : [ctx.bot.stringstack["Status"]["idle"], "📒"],
+			# 	discord.Status.dnd : [ctx.bot.stringstack["Status"]["dnd"], "📕"],
+			# 	discord.Status.offline : [ctx.bot.stringstack["Status"]["offline"], "📓"],
+			# 	discord.Status.invisible : [ctx.bot.stringstack["Status"]["invisible"], "📓"],
+			# }
+			def sss(SSS) :
+				return [self.bot.ss("Status", SSS),d_status_icon[SSS]]
 			if not object.bot :
 				status_all = "\n\n{1} **{2}** : {0}\n{4} **{5}** : {3}\n{7} **{8}** : {6}".format(
 					"🖥️ " + ctx.bot.stringstack["Model"]["Desktop"],
-					status_indicator[object.desktop_status][1], status_indicator[object.desktop_status][0],
+					status_indicator[sss(object.desktop_status)][1], status_indicator[sss(object.desktop_status)][0],
 					"🌐 " + ctx.bot.stringstack["Model"]["Web"],
-					status_indicator[object.web_status][1], status_indicator[object.web_status][0],
+					status_indicator[sss(object.web_status)][1], status_indicator[sss(object.web_status)][0],
 					"📱 " + ctx.bot.stringstack["Model"]["Mobile"],
-					status_indicator[object.mobile_status][1], status_indicator[object.mobile_status][0],
+					status_indicator[sss(object.mobile_status)][1], status_indicator[sss(object.mobile_status)][0],
 				)
 			else :
 				status_all = ""
-			status_one = "{0} **{1}**{2}".format(status_indicator[object.status][1], status_indicator[object.status][0],status_all)
+			status_one = "{0} **{1}**{2}".format(status_indicator[1], status_indicator[0],status_all)
 			e.add_field(name=ctx.bot.stringstack["Model"]["Status"], value=status_one, inline=True)
 		e.set_thumbnail(url=object.avatar_url)
 		# if not object.bot :

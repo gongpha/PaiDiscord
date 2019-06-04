@@ -3,6 +3,7 @@ from discord.ext import commands
 import json
 import yaml
 import aiohttp
+from utils.dict import safeget
 
 class Cog(commands.Cog) :
 	def __init__(self, bot):
@@ -31,10 +32,15 @@ class Cog(commands.Cog) :
 def loadInformation(cog) :
 	for c in cog.get_commands() :
 		try :
-			c.description = cog.stringstack["command"][c.name]["description"]
-			c.usage = cog.stringstack["command"][c.name]["usage"]
-			if cog.stringstack["command"][c.name]["aliases"] :
-				c.aliases = cog.stringstack["command"][c.name]["aliases"]
+			c.description = safeget(cog.stringstack, "command", c.name, "description")
+			#c.description = cog.stringstack.get("command", {}).get(c.name, {}).get("description", STRFF)
+			c.usage = safeget(cog.stringstack, "command", c.name, "usage")
+			d = safeget(cog.stringstack, "command", c.name, "aliases")
+			if d :
+				if not isinstance(d, (list, tuple)) :
+					c.aliases = [d]
+				else :
+					c.aliases = d
 			# try :
 			# 	c.sql = cog.stringstack["command"][c.name]["sql"]
 			# except KeyError :

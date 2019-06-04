@@ -42,8 +42,7 @@ command :
             - _chat_embed
     _set_status :
         description         : |-
-            ตั้งสถานะของบอท
-
+            ตั้งสถานะของบอท :
             `online`, 0 : ออนไลน์
             `idle`, 1 : ไม่อยู่
             `dnd`, 2 : ห้ามรบกวน
@@ -53,6 +52,25 @@ command :
         aliases             :
             - _ตั้งสถานะ
             - _sst
+    _set_game :
+        description         : |-
+            ตั้งชื่อเกม
+            สถานะการเล่น :
+            `playing`, 1 : กำลังเล่น
+            `streaming`, 1 : กำลังถ่ายทอดสด
+            `listening`, 2 : กำลังฟัง
+            `watching`, 3 : กำลังดู
+        usage               : <สถานะการเล่น> <ชื่อเกม...>
+        aliases             :
+            - _ตั้งเกม
+            - _sgm
+    _set_game_playing :
+        description         : ตั้งชื่อเกม โดยให้สถานะเป็น กำลังเล่น
+        usage               : <สถานะการเล่น> <ชื่อเกม...>
+        aliases             :
+            - _ตั้งเกมเล่น
+            - _set_gamep
+            - _sgmp
     # _send_embed :
     #     description         : ส่งฝังผ่านช่องด้วย ID
     #     usage               : <ID ของช่อง> <JSON ของฝัง...>

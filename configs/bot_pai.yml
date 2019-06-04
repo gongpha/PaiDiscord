@@ -10,9 +10,6 @@ info :
   command_prefix : "_"
   timezone : Asia/Bangkok
   lang : th
-  log_ch : 530055377249894421
-  err_ch : 568682030817345556
-  qur_ch : 584348191365922828
   theme :
       - 0xff7f00
       - 0x007fff
@@ -31,6 +28,11 @@ info :
   game_default : OwO
   game_static : ?PramualPaiGame
   where : # leave it empty
+channels :
+    log   : 530055377249894421
+    error : 568682030817345556
+    query : 585420046877065216
+    guild : 584348191365922828
 cogs :
   - cogs.Info
   - cogs.Image

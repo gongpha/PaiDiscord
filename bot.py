@@ -35,9 +35,11 @@ if w == None :
 else :
 	w = load_env(config["info"]["where"], "root")
 
-bot_dev = Pramual(name=config["info"]["name"], description=config["info"]["description"], command_prefix=config["info"]["command_prefix"], std=config["info"]["std"], token=token, loop=loop, timezone=config["info"]["timezone"], lang=config["info"]["lang"],log_ch=config["info"]["log_ch"], err_ch=config["info"]["err_ch"], qur_ch=config["info"]["qur_ch"], theme=config["info"]["theme"], cog_list=config["cogs"], owner=config["info"]["owner"], databaseHost=databaseHost, databaseUsername=databaseUsername, databasePassword=databasePassword, databaseDatabase=databaseDatabase, auth=config["auth"], game_default=load_env(config["info"]["game_default"]), game_static=load_env(config["info"]["game_static"]), mysql=config["info"]["mysql"], where=w)
+bot = Pramual(name=config["info"]["name"], description=config["info"]["description"], command_prefix=config["info"]["command_prefix"], std=config["info"]["std"], token=token, loop=loop, timezone=config["info"]["timezone"], lang=config["info"]["lang"], theme=config["info"]["theme"], cog_list=config["cogs"], owner=config["info"]["owner"], databaseHost=databaseHost, databaseUsername=databaseUsername, databasePassword=databasePassword, databaseDatabase=databaseDatabase, auth=config["auth"], game_default=load_env(config["info"]["game_default"]), game_static=load_env(config["info"]["game_static"]), mysql=config["info"]["mysql"], where=w)
+
+bot.add_channel_by_dict(config["channels"])
 
 print("Starting a Task... (Experimental)")
-loop.create_task(bot_dev.run_bot())
+loop.create_task(bot.run_bot())
 loop.run_until_complete(loop)
 #loop.run_forever()

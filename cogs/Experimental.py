@@ -7,6 +7,8 @@ from utils.template import *
 from utils.check import *
 import json
 from utils.query import fetchone, commit
+from utils.defined import d_status_icon
+import inspect
 
 class Experimental(Cog) :
 	pbot = None
@@ -27,7 +29,7 @@ class Experimental(Cog) :
 			g = ctx.message.guild
 		e = discord.Embed(title="Client was shutdowned by {0} ({1}) from{4} {2} ({3})".format(u, u.id, g, g.id, "" if isinstance(ctx.message.channel, DMChannel) else " guild"))
 		e.color = 0xDD0000
-		await self.bot.log_channel.send(embed=e)
+		await self.bot.get_my_channel("log").send(embed=e)
 		await self.bot.session.close()
 		await self.bot.close()
 		self.bot.loop.stop()
@@ -63,43 +65,79 @@ class Experimental(Cog) :
 
 	@commands.command()
 	@IsOwnerBot()
-	async def _set_status(self, ctx, status) :
-		reverse_status_indicator_int = [discord.Status.online,
-			discord.Status.idle,
-			discord.Status.dnd,
-			discord.Status.offline,
-			discord.Status.invisible,
-		]
-		reverse_status_indicator_str = {
-			"online" : discord.Status.online,
-			"idle" : discord.Status.idle,
-			"dnd" : discord.Status.dnd,
-			"offline" : discord.Status.offline,
-			"invisible" : discord.Status.invisible,
-		}
+	async def _set_status(self, ctx, st) :
+		# reverse_status_indicator_int = [discord.Status.online,
+		# 	discord.Status.idle,
+		# 	discord.Status.dnd,
+		# 	discord.Status.offline,
+		# 	discord.Status.invisible,
+		# ]
+		# reverse_status_indicator_str = {
+		# 	"online" : discord.Status.online,
+		# 	"idle" : discord.Status.idle,
+		# 	"dnd" : discord.Status.dnd,
+		# 	"offline" : discord.Status.offline,
+		# 	"invisible" : discord.Status.invisible,
+		# }
 
-		status_indicator = {
-			discord.Status.online : [ctx.bot.stringstack["Status"]["Online"], "📗"],
-			discord.Status.idle : [ctx.bot.stringstack["Status"]["Idle"], "📒"],
-			discord.Status.dnd : [ctx.bot.stringstack["Status"]["DoNotDisturb"], "📕"],
-			discord.Status.offline : [ctx.bot.stringstack["Status"]["Offline"], "📓"],
-			discord.Status.invisible : [ctx.bot.stringstack["Status"]["Invisible"], "📓"],
-		}
+		sti = d_status_icon[st]
 
-		if isinstance(status, int) :
-			st = reverse_status_indicator_int[status]
-		if isinstance(status, str) :
-			st = reverse_status_indicator_str.get(status, discord.Status.online)
+
+		# if isinstance(status, int) :
+		# 	st = reverse_status_indicator_int[status]
+		# if isinstance(status, str) :
+		# 	st = reverse_status_indicator_str.get(status, discord.Status.online)
 
 		await self.bot.change_presence(status=st)
-		sst = status_indicator[st]
-		await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(sst[1], sst[0])))
+		await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(sti, self.bot.ss("Status", "dnd"))))
 
 	@commands.command()
 	@IsOwnerBot()
 	async def _set_credits(self, ctx, id, credits) :
-		commit(self.bot, "UPDATE `pai_discord_profile` SET credits=%s WHERE snowflake=%s", (credits, id))
+		await commit(self.bot, "UPDATE `pai_discord_profile` SET credits=%s WHERE snowflake=%s", (credits, id))
 		await ctx.send(":ok_hand:")
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _set_game(self, ctx, type, *, name) :
+		g = discord.Game(name=name, type=type)
+		await self.bot.change_presence(activity=g)
+		await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(self.bot.ss("ActivityType", type), name)))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _set_game_playing(self, ctx, *, name) :
+		g = discord.Game(name=name)
+		await self.bot.change_presence(activity=g)
+		await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(self.bot.ss("ActivityType", "playing"), name)))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _process(self, ctx, *, code : str) :
+		code = code.strip('` ')
+		python = '```py\n{}\n```'
+		result = None
+
+		env = {
+			'bot': self.bot,
+			'ctx': ctx,
+			'message': ctx.message,
+			'guild': ctx.message.guild,
+			'channel': ctx.message.channel,
+			'author': ctx.message.author
+		}
+
+		env.update(globals())
+
+		try:
+			result = eval(code, env)
+			if inspect.isawaitable(result):
+				result = await result
+		except Exception as e:
+			await ctx.send(python.format(type(e).__name__ + ': ' + str(e)))
+			return
+
+		await ctx.send(python.format(result))
 
 	# @commands.command()
 	# @IsOwnerBot()

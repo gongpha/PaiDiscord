@@ -68,12 +68,20 @@ Model :
     CPU                     : CPU
     Ping                    : ความล่าช้า
     Invite                  : คำเชิญ
+
 Status :
-    Online                  : ออนไลน์
-    Idle                    : ไม่อยู่
-    DoNotDisturb            : ห้ามรบกวน
-    Offline                 : ออฟไลน์
-    Invisible               : ล่องหน
+    online                  : ออนไลน์
+    idle                    : ไม่อยู่
+    dnd                     : ห้ามรบกวน
+    offline                 : ออฟไลน์
+    invisible               : ล่องหน
+
+ActivityType :
+    unknown                 : ไม่รู้จัก
+    playing                 : กำลังเล่น
+    streaming               : กำลังถ่ายทอดสด
+    listening               : กำลังฟัง
+    watching                : กำลังดู
 
 Permission :
     ManageChannels          : จัดการช่อง

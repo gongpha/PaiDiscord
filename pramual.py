@@ -10,7 +10,7 @@ from utils.template import embed_em
 import aiomysql.cursors
 import aiohttp
 import datetime
-from utils.query import commit
+from utils.query import *
 
 class NoToken(Exception):
 	"""No Token was found or invalid token"""
@@ -25,15 +25,16 @@ class Pramual(commands.Bot) :
 		self.loop = kwargs.pop('loop', asyncio.get_event_loop())
 		self.std = kwargs.pop('std', None)
 		self.token = kwargs.pop('token', None)
-		self.log_channel_id = kwargs.pop('log_ch', None)
-		self.error_channel_id = kwargs.pop('err_ch', None)
-		self.query_channel_id = kwargs.pop('qur_ch', None)
+		#self.log_channel_id = kwargs.pop('log_ch', None)
+		#self.error_channel_id = kwargs.pop('err_ch', None)
+		#self.query_channel_id = kwargs.pop('qur_ch', None)
 		self.timezone = kwargs.pop('timezone', None)
 		self.theme = kwargs.pop('theme', [0x9B59B6])
 		self.lang = kwargs.pop('lang', None)
 		self.cog_list = kwargs.pop('cog_list', None)
 		self.owner_list = kwargs.pop('owner', None)
 		self.waitForMessage = {}
+		self.channels_id = {}
 		# self.connection = None
 		self.where = kwargs.pop('where', None)
 		self.session = aiohttp.ClientSession(loop=self.loop)
@@ -70,6 +71,24 @@ class Pramual(commands.Bot) :
 		else :
 			return None
 
+	def add_channel_by_dict(self, dictch) :
+		for n, id in dictch.items() :
+			self.add_my_channel(n, id)
+
+	def add_my_channel(self, name, id) :
+		print(f">> Added Channel {name} : {id}")
+		self.channels_id[name] = id
+
+	def get_my_channel(self, name) :
+		return self._channels.get(name, None)
+
+	async def use_query(self, sql, time) :
+		e = discord.Embed(title=f"Query Report")
+		e.description = "```\n" + sql + "```"
+		e.color = 0xFFFF00
+		e.set_footer(text=time)
+		await self.get_my_channel("query").send(embed=e)
+
 	def ss(self, *keylist) :
 		dct = self.stringstack.copy()
 		for key in keylist:
@@ -84,9 +103,14 @@ class Pramual(commands.Bot) :
 		print(f'>> Mode   : "{self.std}"')
 		print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 
-		self.log_channel = super().get_channel(self.log_channel_id)
-		self.error_channel = super().get_channel(self.error_channel_id)
-		self.query_channel = super().get_channel(self.query_channel_id)
+		# self.log_channel = super().get_channel(self.log_channel_id)
+		# self.error_channel = super().get_channel(self.error_channel_id)
+		# self.query_channel = super().get_channel(self.query_channel_id)
+
+		self._channels = {}
+		for n, id in self.channels_id.items() :
+			c = super().get_channel(id)
+			self._channels[n] = c
 
 		for c in self.cog_list :
 			try :
@@ -122,7 +146,7 @@ class Pramual(commands.Bot) :
 		e.add_field(name='Message', value="("+str(ctx.message.id) + ")\n```" + ctx.message.clean_content + "```", inline=False)
 		e.color = int(random.choice(self.theme))
 		e.timestamp = ctx.message.created_at
-		await self.log_channel.send(embed=e)
+		await self.get_my_channel("log").send(embed=e)
 
 	async def on_command_error(self, ctx, error) :
 		e = discord.Embed(title="Command Error : `{}{}`".format(self.command_prefix if ctx.command.name != None else "",ctx.command.name if ctx.command.name != None else "UNKNOWN"))
@@ -146,7 +170,7 @@ class Pramual(commands.Bot) :
 		e.add_field(name='Expection', value="("+str(ctx.message.id) + ")\n```" + str(getattr(error, 'original', error)) + "```", inline=False)
 		e.add_field(name='Filename', value=filename, inline=True)
 		e.add_field(name='Line No.', value=lineno, inline=True)
-		await self.error_channel.send(embed=e)
+		await self.get_my_channel("error").send(embed=e)
 
 	async def on_member_join(self, member) :
 		e = discord.Embed(title=self.stringstack["WelcomeUserToGuild"].format(member, member.guild))
@@ -167,14 +191,14 @@ class Pramual(commands.Bot) :
 		await member.guild.system_channel.send(embed=e)
 
 	async def on_guild_join(self, guild) :
-		t = commit(self, "INSERT INTO `pai_discord_guild` (`snowflake`, `prefix`, `c_member_join`, `c_join_message`, `c_member_leave`, `c_leave_message`, `support`, `c_levelup_notice`, `first_seen`, `lang`) VALUES (%s, '', '1', '', '1', '', '0', '1', %s, '')", (guild.id, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+		t = qinsert_guild(self, guild)
 		if t != None :
 			e = discord.Embed(title="New Guild : {}".format(guild.name))
 			#e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
 			e.color = 0x00AA80
 			e.set_thumbnail(url=str(guild.icon_url))
 			e.set_footer(text="{} : {}".format(guild.id, t))
-			await self.query_channel.send(embed=e)
+			await self.get_my_channel("guild").send(embed=e)
 
 	async def on_guild_remove(self, guild) :
 		t = commit(self, "DELETE FROM `pai_discord_guild` WHERE `snowflake` = %s", guild.id)
@@ -184,7 +208,7 @@ class Pramual(commands.Bot) :
 			e.color = 0xCE3232
 			e.set_thumbnail(url=str(guild.icon_url))
 			e.set_footer(text="{} : {}".format(guild.id, t))
-			await self.query_channel.send(embed=e)
+			await self.get_my_channel("guild").send(embed=e)
 
 	async def on_message(self, message) :
 		#print(self.waitForMessage)
