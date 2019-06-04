@@ -18,3 +18,8 @@ command :
         description         : แหล่งทั้งหมด
         usage               :
         aliases             :
+    image_search :
+        description         : ค้นรูป
+        usage               : <ข้อความ...>
+        aliases             :
+            - i
