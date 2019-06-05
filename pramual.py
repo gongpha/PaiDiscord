@@ -181,7 +181,7 @@ class Pramual(commands.Bot) :
 		await member.guild.system_channel.send(embed=e)
 
 	async def on_member_remove(self, member) :
-		if self.id == member.id :
+		if self.user.id == member.id :
 			return
 		e = discord.Embed(title=self.stringstack["UserWasLeftTheGuild"].format(member, member.guild))
 		e.description = "*{}*".format(self.stringstack["NowGuildHadNoMembersLeft"].format(len(member.guild.members)))
@@ -191,7 +191,7 @@ class Pramual(commands.Bot) :
 		await member.guild.system_channel.send(embed=e)
 
 	async def on_guild_join(self, guild) :
-		t = qinsert_guild(self, guild)
+		t = await qinsert_guild(self, guild)
 		if t != None :
 			e = discord.Embed(title="New Guild : {}".format(guild.name))
 			#e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
@@ -201,7 +201,7 @@ class Pramual(commands.Bot) :
 			await self.get_my_channel("guild").send(embed=e)
 
 	async def on_guild_remove(self, guild) :
-		t = commit(self, "DELETE FROM `pai_discord_guild` WHERE `snowflake` = %s", guild.id)
+		t = await commit(self, "DELETE FROM `pai_discord_guild` WHERE `snowflake` = %s", guild.id)
 		if t != None :
 			e = discord.Embed(title="Removed Guild : {}".format(guild.name))
 			#e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))

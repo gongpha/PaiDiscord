@@ -131,8 +131,8 @@ OpenLink                    : เปิดลิงค์
 PingReturnedSec             : "ค่าความล่าช้า : **{}** วินาที"
 CommandNeedQuery            : มีการเรียกข้อมูลจากฐานข้อมูล
 StatsOf                     : สถิติของ {}
-PercentUsagedFrom           : "ใช้งานไปแล้ว {} %\nจาก {}"
-PercentUsagedNewLine        : "ใช้งานไปแล้ว {} %\n{}"
+PercentUsagedFrom           : "ใช้งานไปแล้ว {} % | จาก {}"
+PercentUsagedNewLine        : "ใช้งานไปแล้ว {} % | {}"
 SystemUpTime                : ช่วงเวลาในการทำงาน
 ClickHere                   : คลิกที่นี่
 Forbidden                   : ไม่มีสิทธิ์ในการเข้าถึง

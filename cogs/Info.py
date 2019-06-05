@@ -186,24 +186,23 @@ class Info(Cog) :
 
 	@commands.command()
 	async def stats(self, ctx) :
-
 		e = embed_t(ctx, self.bot.stringstack["StatsOf"].format(ctx.bot.bot_name))
 		e.set_author(name=ctx.bot.bot_name, icon_url=self.bot.user.avatar_url)
 		e.set_thumbnail(url=(await ctx.bot.application_info()).icon_url)
-		e.add_field(name=self.bot.stringstack["Model"]["Name"], value=ctx.bot.user, inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["BotName"], value=ctx.bot.bot_name, inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["ID"], value=ctx.bot.user.id, inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["Discriminator"], value=ctx.bot.user.discriminator, inline=True)
+		s = "**{}** : {}\n"
+		e.description += s.format(self.bot.stringstack["Model"]["Name"], ctx.bot.user)
+		e.description += s.format(self.bot.stringstack["Model"]["BotName"], ctx.bot.bot_name)
+		e.description += s.format(self.bot.stringstack["Model"]["ID"], ctx.bot.user.id)
+		e.description += s.format(self.bot.stringstack["Model"]["Discriminator"], ctx.bot.user.discriminator)
 		m_t = psutil.virtual_memory()[3]
 		m_a = psutil.virtual_memory()[0]
 		mm_t = convert_size(m_t)
 		mm_a = convert_size(m_a)
-		e.add_field(name=self.bot.stringstack["Model"]["Memory"], value=self.bot.stringstack["PercentUsagedFrom"].format(str(psutil.virtual_memory()[2]), "[{} / {}]\n{}".format(mm_t, mm_a, progressbar(m_t, m_a))), inline=True)
+		e.description += s.format(self.bot.stringstack["Model"]["Memory"], self.bot.stringstack["PercentUsagedFrom"].format(str(psutil.virtual_memory()[2]), "[{} / {}] | {}".format(mm_t, mm_a, progressbar(m_t, m_a))))
 		cpu = psutil.cpu_percent()
-		e.add_field(name=self.bot.stringstack["Model"]["CPU"], value=self.bot.stringstack["PercentUsagedNewLine"].format(str(cpu), progressbar(cpu, 100)), inline=True)
-		#print(self.bot.start_time.astimezone(timezone(self.bot.timezone)))
-		e.add_field(name=self.bot.stringstack["SystemUpTime"], value=th_format_date_diff(ctx, self.bot.start_time.astimezone(timezone(self.bot.timezone))), inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["Ping"], value=str(round(ctx.bot.ws.latency * 1000)) + " ms", inline=True)
+		e.description += s.format(self.bot.stringstack["Model"]["CPU"], self.bot.stringstack["PercentUsagedNewLine"].format(str(cpu), progressbar(cpu, 100)))
+		e.description += s.format(self.bot.stringstack["SystemUpTime"], th_format_date_diff(ctx, self.bot.start_time.astimezone(timezone(self.bot.timezone))))
+		e.description += s.format(self.bot.stringstack["Model"]["Ping"], str(round(ctx.bot.ws.latency * 1000)) + " ms")
 
 
 
@@ -231,17 +230,18 @@ class Info(Cog) :
 			ca += len(guild.categories)
 			rr += len(guild.roles)
 		#pe = e.copy()
-		e.add_field(name=self.bot.stringstack["Model"]["Emoji"], value=len(ctx.bot.emojis), inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["CacheMessage"], value=len(ctx.bot.cached_messages), inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["VoiceClient"], value=len(ctx.bot.voice_clients), inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["User"], value=len(ctx.bot.users), inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["Member"], value=mm, inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["Channel"], value=tc + vc, inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["TextChannel"], value=tc, inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["VoiceChannel"], value=vc, inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["CategoryChannel"], value=ca, inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["Role"], value=rr, inline=True)
-		e.add_field(name=self.bot.stringstack["Model"]["Guild"], value=len(ctx.bot.guilds), inline=True)
+		e.description += "\n"
+		e.description += s.format(self.bot.stringstack["Model"]["Emoji"], len(ctx.bot.emojis))
+		e.description += s.format(self.bot.stringstack["Model"]["CacheMessage"], len(ctx.bot.cached_messages))
+		e.description += s.format(self.bot.stringstack["Model"]["VoiceClient"], len(ctx.bot.voice_clients))
+		e.description += s.format(self.bot.stringstack["Model"]["User"], len(ctx.bot.users))
+		e.description += s.format(self.bot.stringstack["Model"]["Member"], mm)
+		e.description += s.format(self.bot.stringstack["Model"]["Channel"], tc + vc)
+		e.description += s.format(self.bot.stringstack["Model"]["TextChannel"], tc)
+		e.description += s.format(self.bot.stringstack["Model"]["VoiceChannel"], vc)
+		e.description += s.format(self.bot.stringstack["Model"]["CategoryChannel"], ca)
+		e.description += s.format(self.bot.stringstack["Model"]["Role"], rr)
+		e.description += s.format(self.bot.stringstack["Model"]["Guild"], len(ctx.bot.guilds))
 
 		e.add_field(name=self.bot.stringstack["Model"]["Invite"], value="[{}](https://discordapp.com/api/oauth2/authorize?client_id={}&permissions=470019184&scope=bot)".format(self.bot.stringstack["ClickHere"], self.bot.user.id), inline=True)
 

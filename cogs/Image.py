@@ -21,7 +21,10 @@ class Image(Cog) :
 			w = width
 
 		if height == "asWidth" :
-			h = w
+			if width.endswith("%") :
+				h = int((int(width.replace('%', '')) / 100) * im.height)
+			else :
+				h = w
 		else :
 			if height.endswith("%") :
 				h = int((int(height.replace('%', '')) / 100) * im.height)
