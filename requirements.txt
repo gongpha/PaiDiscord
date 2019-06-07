@@ -1,7 +1,7 @@
 discord.py
 pillow
 numpy
-pythainlp
+pythainlp[icu]
 python-dateutil
 pyyaml
 aiomysql

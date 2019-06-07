@@ -25,6 +25,11 @@ class Thai(Cog) :
 		await ctx.send("```" + ", ".join(l) + "```\n{}".format(self.stringstack["Thai__WordCount"].format(len(l))))
 
 	@commands.command()
+	async def word_tokenize_ext(self, ctx, engine, *, text : str) :
+		l = list(filter(lambda a: a != " ", wt(text,engine=engine)))
+		await ctx.send("```" + ", ".join(l) + "```\n{}".format(self.stringstack["Thai__WordCount"].format(len(l))))
+
+	@commands.command()
 	async def romanization(self, ctx, *, text : str) :
 		await ctx.send("```\n" + rmz(text) + "```")
 

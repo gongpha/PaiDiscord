@@ -116,19 +116,19 @@ class Info(Cog) :
 			# 	discord.Status.invisible : [ctx.bot.stringstack["Status"]["invisible"], "📓"],
 			# }
 			def sss(SSS) :
-				return [self.bot.ss("Status", SSS),d_status_icon[SSS]]
+				return [self.bot.ss("Status", SSS.name),d_status_icon[SSS.name]]
 			if not object.bot :
 				status_all = "\n\n{1} **{2}** : {0}\n{4} **{5}** : {3}\n{7} **{8}** : {6}".format(
 					"🖥️ " + ctx.bot.stringstack["Model"]["Desktop"],
-					status_indicator[sss(object.desktop_status)][1], status_indicator[sss(object.desktop_status)][0],
+					sss(object.desktop_status)[1], sss(object.desktop_status)[0],
 					"🌐 " + ctx.bot.stringstack["Model"]["Web"],
-					status_indicator[sss(object.web_status)][1], status_indicator[sss(object.web_status)][0],
+					sss(object.web_status)[1], sss(object.web_status)[0],
 					"📱 " + ctx.bot.stringstack["Model"]["Mobile"],
-					status_indicator[sss(object.mobile_status)][1], status_indicator[sss(object.mobile_status)][0],
+					sss(object.mobile_status)[1], sss(object.mobile_status)[0],
 				)
 			else :
 				status_all = ""
-			status_one = "{0} **{1}**{2}".format(status_indicator[1], status_indicator[0],status_all)
+			status_one = "{0} **{1}**{2}".format(sss(object.status)[1], sss(object.status)[0], status_all)
 			e.add_field(name=ctx.bot.stringstack["Model"]["Status"], value=status_one, inline=True)
 		e.set_thumbnail(url=object.avatar_url)
 		# if not object.bot :

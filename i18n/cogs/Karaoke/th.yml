@@ -7,7 +7,7 @@ cog :
 command :
     wanbuaban :
         description         : "คาราโอเกะ : วังบัวบาน\nนำรูปแบบของค่ายเพลงส่วนใหญ่มาใช้โดยใช้ฟอนต์ Angsana UPC และไม่มีตัวหนังสือภาษาอังกฤษ"
-        usage               : <ข้อความ>
+        usage               : <ข้อความ...>
         aliases             :
             - วังบัวบาน
             - _wbb
@@ -15,10 +15,9 @@ command :
             - wangbuaban
             - wangbuabankaraoke
             - karaokewanbuaban
-        karaoke_name        : วังบัวบาน
     topline :
         description         : "คาราโอเกะ : ท็อปไลน์\nนำรูปแบบของค่ายท็อปไลน์ - ไดมอนด์ ปี พ.ศ. 2533 มาใช้"
-        usage               : <ข้อความ>
+        usage               : <ข้อความ...>
         aliases             :
             - ท็อปไลน์
             - _tpln
@@ -29,4 +28,21 @@ command :
             - topline_poompuang
             - topline_2533
             - topline_1990
-        karaoke_name        : วังบัวบาน
+    grammy_e :
+        description         : "คาราโอเกะ : แกรมมี่คาราโอเกะ (คุ้นเคยที่สุด)"
+        usage               : <ข้อความภาษาอังกฤษโดยไม่เว้นวรรค> <ข้อความ...>
+        aliases             :
+            - gmme
+            - gmmgrammy_e
+            - gmmgrammykaraoke_e
+            - grammykaraoke_e
+            - _gmmkare
+    grammy :
+        description         : "คาราโอเกะ : แกรมมี่คาราโอเกะ (คุ้นเคยที่สุด)"
+        usage               : <ข้อความ...>|<ข้อความภาษาอังกฤษ...>
+        aliases             :
+            - gmm
+            - gmmgrammy
+            - gmmgrammykaraoke
+            - grammykaraoke
+            - _gmmkar

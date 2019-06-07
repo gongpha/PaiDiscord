@@ -7,30 +7,36 @@ cog :
 command :
     longdo :
         description         : พจนานุกรมจาก Longdo Dict
-        usage               : <คำที่จะค้นหา>
+        usage               : <คำที่จะค้นหา...>
         aliases             :
     word_tokenize :
         description         : ตัดคำไทย
-        usage               : <ประโยค>
+        usage               : <ประโยค...>
         aliases             :
             - wordtokenize
             - wtkz
+    word_tokenize_ext :
+        description         : ตัดคำไทย (การตั้งค่าเพิ่มเติม)
+        usage               : <รูปแบบ, ประโยค...>
+        aliases             :
+            - wordtokenizeext
+            - wtkze
     romanization :
         description         : แปลงให้เป็นโรมัน
-        usage               : <ประโยค>
+        usage               : <ประโยค...>
         aliases             :
             - romanize
             - romanz
             - rmz
     spell_check :
         description         : ตรวจสอบการสะกดคำ อาจจะมีผลลัพธ์อื่นมาร่วมด้วย
-        usage               : <ประโยค>
+        usage               : <ประโยค...>
         aliases             :
             - spellcheck
             - splchk
     spell_correct :
         description         : ตรวจสอบการสะกดคำให้ถูกต้อง
-        usage               : <ประโยค>
+        usage               : <ประโยค...>
         aliases             :
             - spellcorrect
             - splcrt
