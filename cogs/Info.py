@@ -2,6 +2,7 @@ import discord
 import platform
 from discord.ext import commands
 import typing
+from io import BytesIO
 from utils.cog import Cog
 from utils.cog import loadInformation
 from utils.template import embed_t, embed_em, embed_wm
@@ -9,7 +10,8 @@ from pytz import timezone
 from utils.thai_format import th_format_date_diff
 from pythainlp.util import thai_strftime
 from dateutil.relativedelta import relativedelta
-from utils.anyuser import AnyUser
+from utils.anyuser import anyuser_safecheck, anyuser_convert
+from utils.anyemoji import anyemoji_convert
 from utils.query import fetchone, commit
 from utils.check import *
 import datetime
@@ -38,7 +40,7 @@ class Info(Cog) :
 
 	def help_overview_embed(self, ctx) :
 		h = embed_t(ctx, "❔ {}".format(self.stringstack["Help"]), "")
-		h.color = self.bot.theme[1] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
+		h.color = (self.bot.theme[1] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme) if len(self.bot.theme) > 1 else self.bot.theme[0]
 		for n, c in self.bot.cogs.items() :
 			if not c.cog_hidden :
 				h.add_field(name=":{}: {}".format(": :".join(c.cog_emoji), c.cog_name),value=f"`{self.bot.command_prefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
@@ -98,13 +100,14 @@ class Info(Cog) :
 			nof.append("🤖")
 		e = embed_t(ctx, "", " : ".join(nof))
 		e.color = object.color if object.color.value != 0 else discord.Embed.Empty
-
-		e.add_field(name=ctx.bot.stringstack["Model"]["Name"], value=object, inline=True)
+		cc = discord.ext.commands.clean_content()
+		e.add_field(name=ctx.bot.stringstack["Model"]["Name"], value=await cc.convert(ctx, object.name), inline=True)
 		if isinstance(object, discord.Member) :
-			e.add_field(name=ctx.bot.stringstack["Model"]["Nickname"], value=object.nick or ctx.bot.stringstack["None"], inline=True)
+			e.description += "\n" + ctx.bot.ss('InformationFromServer').format(str(object.guild))
+			e.add_field(name=ctx.bot.stringstack["Model"]["Nickname"], value=await cc.convert(ctx, object.nick) or ctx.bot.stringstack["None"], inline=True)
 		e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, object.created_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
 		if isinstance(object, discord.Member) :
-			e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(ctx.message.guild),value=thai_strftime(object.joined_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, object.joined_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
+			e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(object.guild),value=thai_strftime(object.joined_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, object.joined_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
 		e.set_author(name=object.display_name, icon_url=object.avatar_url)
 
 		if isinstance(object, discord.Member) :
@@ -267,12 +270,13 @@ class Info(Cog) :
 		if h != None :
 			await ctx.send(embed=h)
 
-	@IsNotDM()
 	@commands.command()
-	async def guild(self, ctx) :
+	async def guild(self, ctx, guild_id) :
 		#print(self.bot.name)
 		#print(self.bot.description)
-		guild = ctx.message.guild
+		guild = self.bot.get_guild(int(guild_id)) or (ctx.message.guild if isinstance(ctx.message.channel, discord.TextChannel) else None)
+		if not guild :
+			return
 		s = embed_t(ctx, guild.name, "")
 		s.set_thumbnail(url=guild.icon_url)
 		s.add_field(name=self.bot.stringstack["Model"]["ID"],value=guild.id, inline=True)
@@ -287,24 +291,16 @@ class Info(Cog) :
 
 	@commands.command()
 	async def avatar(self, ctx, *, obj = None) :
-		member, passed = await AnyUser.convert(ctx,obj)
-		if passed < 0 :
-			err = embed_em(ctx, self.bot.stringstack["ObjectNotFoundFromObject"].format(self.bot.stringstack["Model"]["User"], str(obj)))
-			#err.description = "```{}```".format(result.text)
-			err.set_footer(text="{} : {} : {}".format(member.status, member.code, passed))
-			await ctx.send(embed=err)
+		member = await anyuser_safecheck(ctx,obj)
 		#async with ctx.typing() :
-		await ctx.send("`{}` : {}".format(member, member.avatar_url_as(format="png")))
+		if member :
+			file = discord.File(fp=BytesIO(await (member.avatar_url_as(static_format="png")).read()), filename="pai__avatar_{}-168d{}".format(member.display_name, member.id))
+			await ctx.send("`{}`".format(member), file=file)
 
 	@commands.command()
 	async def anyuser(self, ctx, *, obj = None) :
-		result, passed = await AnyUser.convert(ctx,obj)
-		if passed < 0 :
-			err = embed_em(ctx, self.bot.stringstack["ObjectNotFoundFromObject"].format(self.bot.stringstack["Model"]["User"], str(obj)))
-			#err.description = "```{}```".format(result.text)
-			err.set_footer(text="{} : {} : {}".format(result.status, result.code, passed))
-			await ctx.send(embed=err)
-		else :
+		result, passed = (await anyuser_safecheck(ctx,obj,True))
+		if passed >= 0 :
 			ee = await self.user_information(ctx,result)
 			enum_pass = {
 				0 : self.bot.stringstack["Empty"],
@@ -317,19 +313,36 @@ class Info(Cog) :
 			await ctx.send(embed=ee)
 	@commands.command()
 	async def profile(self, ctx, *, obj = None) :
-		result, passed = await AnyUser.convert(ctx,obj)
-		if passed < 0 :
-			err = embed_em(ctx, self.bot.stringstack["ObjectNotFoundFromObject"].format(self.bot.stringstack["Model"]["User"], str(obj)))
-			#err.description = "```{}```".format(result.text)
-			err.set_footer(text="{} : {} : {}".format(result.status, result.code, passed))
-			await ctx.send(embed=err)
-		else :
-			async with ctx.message.channel.typing() :
-				ee = await self.profile_information(ctx,result)
-				await ctx.send(embed=ee)
+		result = await anyuser_safecheck(ctx,obj)
+		async with ctx.message.channel.typing() :
+			ee = await self.profile_information(ctx,result)
+			await ctx.send(embed=ee)
 
 	@commands.command()
 	async def ping(self, ctx) :
 		await ctx.send(self.bot.stringstack["PingReturnedSec"].format(ctx.bot.latency))
+
+	@commands.command()
+	async def emoji(self, ctx, emoji_text) :
+		emoji, passed = await anyemoji_convert(ctx, emoji_text)
+		print(dir(emoji))
+		print(passed)
+		b = BytesIO(await (emoji.url).read())
+
+		if passed == 4 :
+			f = "pai__emoticon_{}{}-174d{}.{}".format("animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
+		elif passed < 4 :
+			try :
+				u = emoji.user
+				uid = emoji.user.id
+				f = "pai__emoticon_{}{}-174d{}_{}-168d{}_{}-169d{}.{}".format("animated_" if emoji.animated else "", emoji.name, emoji.id, u, uid, emoji.guild_id, emoji.guild.name, "gif" if emoji.animated else "png")
+			except :
+				f = "pai__emoticon_{}{}-174d{}.{}".format("animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
+		else :
+			f = "pai__emoticon"
+
+
+		file = discord.File(fp=b, filename=f)
+		await ctx.send(file=file)
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))

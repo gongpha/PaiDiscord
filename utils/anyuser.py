@@ -1,33 +1,32 @@
 import discord
 from discord.ext.commands import *
 
-class AnyUser :
-	async def convert(ctx, obj) :
-		passed = 1
-		result = None
-		if not obj :
-			return (ctx.author, 0)
+async def anyuser_convert(ctx, obj) :
+	passed = 1
+	result = None
+	if not obj :
+		return (ctx.author, 0)
+	try :
+		result = await MemberConverter().convert(ctx, obj)
+	except BadArgument :
+		passed += 1
 		try :
-			result = await MemberConverter().convert(ctx, obj)
+			result = await UserConverter().convert(ctx, obj)
 		except BadArgument :
 			passed += 1
-			try :
-				result = await UserConverter().convert(ctx, obj)
-			except BadArgument :
+			result = ctx.bot.get_user(obj)
+			if result == None :
 				passed += 1
-				result = ctx.bot.get_user(obj)
-				if result == None :
-					passed += 1
-					try :
-						result = await ctx.bot.fetch_user(obj)
-					except discord.NotFound as e :
-						return (e, -1)
-					except discord.HTTPException as e:
-						return (e, -2)
-		return (result, passed)
+				try :
+					result = await ctx.bot.fetch_user(obj)
+				except discord.NotFound as e :
+					return (e, -1)
+				except discord.HTTPException as e:
+					return (e, -2)
+	return (result, passed)
 
 async def anyuser_check(ctx, object) :
-	r, passed = await AnyUser.convert(ctx,object)
+	r, passed = await anyuser_convert(ctx,object)
 	if passed < 0 :
 		err = embed_em(ctx, ctx.bot.stringstack["ObjectNotFoundFromObject"].format(ctx.bot.stringstack["Model"]["User"], str(object)))
 		#err.description = "```{}```".format(result.text)
@@ -36,8 +35,15 @@ async def anyuser_check(ctx, object) :
 		return None
 	return r
 
-async def anyuser_safecheck(ctx, object) :
-	r, passed = await AnyUser.convert(ctx,object)
+async def anyuser_safecheck(ctx, object, get_passed=False) :
+	r, passed = await anyuser_convert(ctx,object)
 	if passed < 0 :
 		return ctx.author
-	return r
+		if not get_passed :
+			return ctx.author
+		else :
+			return (0, ctx.author)
+	if not get_passed :
+		return r
+	else :
+		return (r, passed)

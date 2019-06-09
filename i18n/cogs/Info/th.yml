@@ -16,7 +16,7 @@ command :
             - cmd
     guild :
         description         : ข้อมูลของเซิร์ฟเวอร์
-        usage               :
+        usage               : "<ID ของเซิร์ฟเวอร์>"
         aliases             :
             - server
             - เซิร์ฟเวอร์
@@ -80,6 +80,15 @@ command :
             - stat
             - สถิติ
             - สติถิ
+    emoji :
+        description         : แสดงภาพแท้ของอิโมจินั้น
+        usage               : "<ชื่อของอิโมจิ>"
+        aliases             :
+            - e
+            - อิโมจิ
+            - อีโมจิ
+            - อิโมจี
+            - อีโมจี
 AliasFor                    : นามแฝงของคำสั่ง
 Help                        : แผงช่วยเหลือ
 InfoOfUser                  : ข้อมูลผู้ใช้ {}

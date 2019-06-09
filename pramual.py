@@ -154,7 +154,7 @@ class Pramual(commands.Bot) :
 		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)
 		e.add_field(name='Guild', value='`{0.name}` ({0.id})'.format(ctx.message.guild) if ctx.message.guild else 'Direct Message')
 		e.add_field(name='Channel', value='`{0.name}` ({0.id})'.format(ctx.message.channel) if ctx.message.guild else 'DM with `{0.recipient}` ({0.id})'.format(ctx.message.channel))
-		e.add_field(name='Message', value="("+str(ctx.message.id) + ")\n```" + ctx.message.clean_content + "```", inline=False)
+		e.add_field(name='Message', value="("+str(ctx.message.id) + ")\n```" + ctx.message.content + "```", inline=False)
 		e.color = 0xff0000
 		e.timestamp = ctx.message.created_at
 

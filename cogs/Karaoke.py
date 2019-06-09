@@ -3,7 +3,7 @@ from discord.ext import commands
 import typing
 from utils.cog import Cog
 from utils.cog import loadInformation
-from utils.template import embed_t
+from utils.template import embed_t, extract_str
 from utils.discord_image import getLastImage
 from utils.text import textimage
 from utils.procimg import rgbToTuple
@@ -38,8 +38,8 @@ class Karaoke(Cog) :
 		esize = int(12 * (image.width / 250) * _size)
 
 
-		img_text = textimage(text, "font/upceb.ttf", size, (255,255,255), (0,0,0), None, 2)
-		img_text_scored = textimage(text, "font/upceb.ttf", size, (0,50,255), (255,255,255), None, 2)
+		img_text = textimage(text, "font/grammy.ttf", size, (255,255,255), (0,0,0), None, 2)
+		img_text_scored = textimage(text, "font/grammy.ttf", size, (0,50,255), (255,255,255), None, 2)
 
 		eimg_text = textimage(eng.upper(), "font/futura.ttf", esize, (230,100,35), (0,0,0), None, 2)
 		eimg_text_scored = textimage(eng.upper(), "font/futura.ttf", esize, (0,50,255), (255,255,255), None, 2)
@@ -102,7 +102,9 @@ class Karaoke(Cog) :
 	async def grammy(self, ctx, *, text : str) :
 		#print(self.bot.name)
 		#print(self.bot.description)
-		t = text.split('|')
+		t = await extract_str(ctx, text, 2)
+		if not t :
+			return
 		self.k_grammy(t[0], t[1], await getLastImage(ctx), randint(0, 100), 1).save('cache/grammy-karaoke.png')
 		file = discord.File("cache/grammy-karaoke.png", filename="grammy-karaoke.png")
 		await ctx.send("{} : `{}` | `{}`".format(self.bot.stringstack["Model"]["Text"], t[0], t[1]),file=file)

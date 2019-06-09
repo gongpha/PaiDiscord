@@ -1,16 +1,14 @@
 info :
-  name : Pai
+  name : Koync
   description :
   description_long : ""
 
-  std : PramualPai
-  token : ?PramualTokenPai
-  command_prefix : "_"
+  std : PramualPaiKoync
+  token : ?PramualTokenKoync
+  command_prefix : "::"
   timezone : Asia/Bangkok
   lang : th
-  theme :
-      - 0xff7f00
-      - 0x007fff
+  theme : 0x904ADB
   owner :
       - 269418798975680513 # gongpha#0238       DEVELOPER
       - 338475895285088257 # gongpha#0394       DEVELOPER'S SMURF
@@ -23,15 +21,18 @@ info :
   database_username : ?PramualDatabaseUsername
   database_password : ?PramualDatabasePassword
   database_database : ?PramualDatabaseDatabase
-  game_default : OwO
+  game_default : UwU
   game_static : ?PramualPaiGame
   where : # leave it empty
+configs :
+    no_record_command_using_count : True
 channels :
     log   : 530055377249894421
     error : 568682030817345556
     query : 585420046877065216
     guild : 584348191365922828
 cogs :
+  - cogs.Experimental
   - cogs.Info
   - cogs.Image
   - cogs.Karaoke
@@ -40,7 +41,6 @@ cogs :
   - cogs.Request
   - cogs.Thai
   - cogs.ImageGenerate
-  - cogs.Experimental
 auth :
   imgur :
       refresh_token : d434e83984e3e9463989ad236e9d9739ba5785ce

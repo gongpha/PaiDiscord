@@ -55,3 +55,13 @@ async def waitReactionRequired(ctx, bot, give, ruser, embed) :
 			if set(added) == set(give) :
 				return True
 			await msg.edit(embed=e)
+
+async def extract_str(ctx, string, count = None, char = '|') :
+	t = string.split('|')
+	if count == None :
+		return t
+	if len(t) != count :
+		em = embed_em(ctx, ctx.bot.ss('TooManyInput'), ctx.bot.ss('ThereAreInputsButWant').format(count, len(t)))
+		await ctx.send(embed=em)
+		return None
+	return t

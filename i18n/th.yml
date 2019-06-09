@@ -138,3 +138,6 @@ ClickHere                   : คลิกที่นี่
 Forbidden                   : ไม่มีสิทธิ์ในการเข้าถึง
 CommandUsedCount            : จำนวนการใช้คำสั่ง
 SetItTo                     : ตั้งเป็น **{}** แล้ว
+TooManyInput                : ข้อมูลขาเข้าเยอะมากเกินไป
+ThereAreInputsButWant       : ต้องการข้อมูลขาเข้าแค่ `{}` แต่ข้อมูลขาเข้าที่ได้รับมี `{}`
+InformationFromServer       : ข้อมูลจากเซิร์ฟเวอร์ `{}`
