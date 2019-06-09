@@ -1,7 +1,7 @@
 name : Pai
 description :
 description_long :
-token : ?PramualTokenKoync
+token : ?PramualTokenPai
 command_prefix : "_"
 default_timezone : Asia/Bangkok
 default_language : th
