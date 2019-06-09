@@ -37,8 +37,43 @@ class Experimental(Cog) :
 	@commands.command()
 	@IsOwnerBot()
 	async def _send(self, ctx, id, *, text : str) :
-		channel = self.bot.get_channel(int(id)) or ctx.message.channel
-		await channel.send(text)
+		channel = self.bot.get_channel(int(id))
+		if not channel :
+			await ctx.send(text)
+			return
+		try :
+			await channel.send(text)
+		except discord.Forbidden :
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), self.bot.ss('Forbidden')))
+			return
+		except discord.HTTPException :
+			await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotSend').format(id)))
+			return
+	@commands.command()
+	@IsOwnerBot()
+	async def _edit(self, ctx, id, *, text : str) :
+		u = await self.bot.fetch_user(self.bot.user.id)
+		print(u)
+		try :
+
+
+			message = await u.fetch_message(int(id))
+		except discord.NotFound :
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('MessageNotFound')))
+			return
+		except discord.Forbidden:
+			#await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden') + "\n" + self.bot.ss('UserIDOwnedThisObjectNotMe').format(message.author.name, message.author.id)))
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden')))
+			return
+		except discord.HTTPException as e:
+			await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id)))
+			return
+
+		try :
+			await message.edit(text)
+		except :
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id)))
+			return
 
 	@commands.command()
 	@IsOwnerBot()

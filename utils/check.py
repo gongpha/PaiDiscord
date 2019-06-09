@@ -1,13 +1,12 @@
 from discord.ext import commands
 from discord import DMChannel
-from utils.template import embed_em
-from utils.template import embed_wm
+from utils.template import embed_em, embed_wm
 
 def IsOwnerBot() :
 	async def predicate(ctx) :
-		if ctx.author.id not in ctx.bot.owner_list :
+		if ctx.author.id not in ctx.bot.owners :
 			await ctx.send(embed=embed_em(ctx, ctx.bot.stringstack["YouAreNotBotOwner"]))
-		return ctx.author.id in ctx.bot.owner_list
+		return ctx.author.id in ctx.bot.owners
 	return commands.check(predicate)
 
 def IsOwnerGuild() :

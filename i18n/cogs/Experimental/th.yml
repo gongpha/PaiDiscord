@@ -21,6 +21,17 @@ command :
             - _ส่ง
             - _snd
             - _chat
+    _edit :
+        description         : แก้ไขข้อความด้วย ID
+        usage               : <ID ของข้อความ> <ข้อความ...>
+        aliases             :
+            - _แก้
+            - _แก้ไข
+            - _แก้ไขข้อความ
+            - _แก้ข้อความ
+            - _edit_message
+            - _edt
+            - _edtmsg
     _send_dm :
         description         : ส่งข้อความผ่านช่องข้อความส่วนตัวด้วย ID ของผู้ใช้
         usage               : <ID ของผู้ใช้> <ข้อความ...>

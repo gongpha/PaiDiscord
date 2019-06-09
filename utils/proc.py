@@ -26,8 +26,8 @@ class Proc(commands.Cog) :
     # 	bot.add_cog(cg)
 def loadInformation(cog) :
 	for c in cog.get_commands() :
-		c.description = cog.desc.get(cog.bot.lang, {}).get(c.name, cog.bot.stringstack["Empty"])
-		c.usage = cog.usag.get(cog.bot.lang, {}).get(c.name, cog.bot.stringstack["Empty"])
+		c.description = cog.desc.get(cog.bot.default_language, {}).get(c.name, cog.bot.stringstack["Empty"])
+		c.usage = cog.usag.get(cog.bot.default_language, {}).get(c.name, cog.bot.stringstack["Empty"])
 		c.sql = False
 	return cog
 

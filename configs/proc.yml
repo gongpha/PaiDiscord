@@ -1,8 +1,0 @@
-proc_dev :
-    - bot_dev
-proc_release_th :
-    - bot_th
-proc_pai :
-    - bot_pai
-proc_koync :
-    - bot_koync

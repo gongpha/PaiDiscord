@@ -9,7 +9,7 @@ class Cog(commands.Cog) :
 	def __init__(self, bot):
 		self.bot = bot
 		#self.session = aiohttp.ClientSession(loop=bot.loop)
-		with open('i18n/cogs/{}/{}.yml'.format(self.__class__.__name__, bot.lang), encoding="utf8") as json_file:
+		with open('i18n/cogs/{}/{}.yml'.format(self.__class__.__name__, bot.default_language), encoding="utf8") as json_file:
 			self.stringstack = yaml.safe_load(json_file)
 		try :
 			self.cog_name = self.stringstack["cog"]["name"]

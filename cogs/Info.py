@@ -325,8 +325,6 @@ class Info(Cog) :
 	@commands.command()
 	async def emoji(self, ctx, emoji_text) :
 		emoji, passed = await anyemoji_convert(ctx, emoji_text)
-		print(dir(emoji))
-		print(passed)
 		b = BytesIO(await (emoji.url).read())
 
 		if passed == 4 :
