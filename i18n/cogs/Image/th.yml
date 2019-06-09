@@ -1,0 +1,21 @@
+cog :
+    name                    : รูปภาพ
+    description             : แก้ไข, กรองรูปภาพ
+    icon_emoji              : frame_photo
+    author                  : gongpha
+    translated              : gongpha
+command :
+    resize :
+        description         : |-
+            ย่อ / ขยายรูปภาพ
+
+            สำหรับการคำนวณตัวอย่าง ให้ใช้การตั้งค่าต่อไปนี้
+            `nearest` : เพื่อนบ้านใกล้สุด (คุณภาพต่ำ, เร็ว)
+            `bilinear` : เชิงเส้น (คุณภาพกลาง, เร็วน้อยกว่า)
+            `bicubic` : เส้นโค้ง (คุณภาพสูง, ช้า)
+            `lanczos` : Lanczos (คุณภาพสูงกว่า, ช้ามากกว่า)
+        usage               : <กว้าง> <ยาว = กว้าง> <คำนวณ = bilinear (เชิงเส้น)> <ภาพ = จากภาพล่าสุดหรือจากภาพโปรไฟล์ของตัวเอง>
+        aliases             :
+            - _ปรับขนาดรูป
+            - _resizeimg
+            - _reimg

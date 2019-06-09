@@ -1,8 +1,9 @@
--e git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py[voice]
+discord.py
 pillow
-requests
 numpy
 pythainlp
 python-dateutil
-yaml
-aiohttp
+pyyaml
+aiomysql
+pymysql
+psutil

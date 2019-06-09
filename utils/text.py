@@ -7,11 +7,9 @@ def textimage(text : str = 'null', font : str = '../font/tahoma.ttf', size : int
 
 	if outline == None :
 		outline = tuple((int(0.25 * c)) for c in fill)
-	if shadow == None :
-		shadow = (0,0,0)
-	else :
-		if shadow == "asOutline" :
-			shadow = outline
+
+	if shadow == "asOutline" :
+		shadow = outline
 
 	ascent, descent = f.getmetrics()
 	(width, baseline), (offset_x, offset_y) = f.font.getsize(text)
@@ -19,27 +17,29 @@ def textimage(text : str = 'null', font : str = '../font/tahoma.ttf', size : int
 	textY = (2 - offset_y) if outline != None else -offset_y
 	img_text = Image.new('RGBA', (width + (stroke*((2 if outline != None else 0) + (2 if shadow != None else 0))), baseline + (stroke*((2 if outline != None else 0) + (2 if shadow != None else 0))) + 2), (0,0,0,0))
 	draw_txt = ImageDraw.Draw(img_text)
-	# platform.system() != "Windows"
+
+	# This will help extending string if the last character's width is zero
+	texts = text + " "
 
 	if shadow != None and stroke > 0 :
-		draw_txt.text((textX-stroke+(stroke*2), textY-stroke+(stroke*2)), text,shadow,f)
-		draw_txt.text((textX+stroke+(stroke*2), textY-stroke+(stroke*2)), text,shadow,f)
-		draw_txt.text((textX+stroke+(stroke*2), textY+stroke+(stroke*2)), text,shadow,f)
-		draw_txt.text((textX-stroke+(stroke*2), textY+stroke+(stroke*2)), text,shadow,f)
-		draw_txt.text((textX-stroke+(stroke*2), textY+(stroke*2)), text,shadow,f)
-		draw_txt.text((textX+stroke+(stroke*2), textY+(stroke*2)), text,shadow,f)
-		draw_txt.text((textX+(stroke*2), textY+stroke+(stroke*2)), text,shadow,f)
-		draw_txt.text((textX+(stroke*2), textY-stroke+(stroke*2)), text,shadow,f)
+		draw_txt.text((textX-stroke+(stroke*2), textY-stroke+(stroke*2)), texts,shadow,f)
+		draw_txt.text((textX+stroke+(stroke*2), textY-stroke+(stroke*2)), texts,shadow,f)
+		draw_txt.text((textX+stroke+(stroke*2), textY+stroke+(stroke*2)), texts,shadow,f)
+		draw_txt.text((textX-stroke+(stroke*2), textY+stroke+(stroke*2)), texts,shadow,f)
+		draw_txt.text((textX-stroke+(stroke*2), textY+(stroke*2)), texts,shadow,f)
+		draw_txt.text((textX+stroke+(stroke*2), textY+(stroke*2)), texts,shadow,f)
+		draw_txt.text((textX+(stroke*2), textY+stroke+(stroke*2)), texts,shadow,f)
+		draw_txt.text((textX+(stroke*2), textY-stroke+(stroke*2)), texts,shadow,f)
 
 	if outline != None and stroke > 0 :
-		draw_txt.text((textX-stroke, textY-stroke), text,outline,f)
-		draw_txt.text((textX+stroke, textY-stroke), text,outline,f)
-		draw_txt.text((textX+stroke, textY+stroke), text,outline,f)
-		draw_txt.text((textX-stroke, textY+stroke), text,outline,f)
-		draw_txt.text((textX-stroke, textY), text,outline,f)
-		draw_txt.text((textX+stroke, textY), text,outline,f)
-		draw_txt.text((textX, textY+stroke), text,outline,f)
-		draw_txt.text((textX, textY-stroke), text,outline,f)
+		draw_txt.text((textX-stroke, textY-stroke), texts,outline,f)
+		draw_txt.text((textX+stroke, textY-stroke), texts,outline,f)
+		draw_txt.text((textX+stroke, textY+stroke), texts,outline,f)
+		draw_txt.text((textX-stroke, textY+stroke), texts,outline,f)
+		draw_txt.text((textX-stroke, textY), texts,outline,f)
+		draw_txt.text((textX+stroke, textY), texts,outline,f)
+		draw_txt.text((textX, textY+stroke), texts,outline,f)
+		draw_txt.text((textX, textY-stroke), texts,outline,f)
 
-	draw_txt.text((textX, textY), text, fill, f)
+	draw_txt.text((textX, textY), texts, fill, f)
 	return img_text

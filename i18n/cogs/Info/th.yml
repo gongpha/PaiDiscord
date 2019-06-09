@@ -1,0 +1,96 @@
+cog :
+    name                    : ข้อมูล
+    description             : หาข้อมูลเกี่ยวกับผู้ใช้ ช่อง เซิร์ฟเวอร์ และอีกมากมาย
+    icon_emoji              : information_source
+    author                  : gongpha
+    translated              : gongpha
+command :
+    help :
+        description         : ส่งข้อความช่วยเหลือ
+        usage               : "<ส่วน, คำสั่ง>"
+        aliases             :
+            - ช่วย
+            - ช่วยเหลือ
+            - command
+            - commands
+            - cmd
+    guild :
+        description         : ข้อมูลของเซิร์ฟเวอร์
+        usage               : "<ID ของเซิร์ฟเวอร์>"
+        aliases             :
+            - server
+            - เซิร์ฟเวอร์
+            - สมาคม
+            - เซิฟ
+            - sv
+            - กลุ่ม
+    alias :
+        description         : ชื่อแฝงของคำสั่งนั้น
+        usage               : "<คำสั่ง>"
+        aliases             :
+            - aliases
+            - คำสั่งแฝง
+            - คำสั่งอื่น
+            - คำสั่งชื่ออื่น
+            - คำสั่งชื่อที่คล้ายกัน
+            - คำสั่งชื่อที่เหมือนกัน
+            - othercommand
+            - othercmd
+            - othercommands
+            - othercmds
+    avatar :
+        description         : ส่งภาพประจำตัวของผู้ใช้คนนั้น
+        usage               : "<สมาชิก = ตัวเอง>"
+        aliases             :
+            - profile_picture
+            - profilepic
+            - profileavatar
+            - profilepicture
+    anyuser :
+        description         : |-
+            แสดงข้อมูลของผู้ใช้ที่ถูกแปลงจากชื่อผู้ใช้, ชื่อผู้ใช้ติดแท็ก, ID ของผู้ใช้, การกล่าวถึง และชื่อเล่นของผู้ใช้
+            ระบบจะทำการค้นหาในเซิร์ฟเวอร์ -> DM -> ผู้ใช้ที่บอทมองเห็น -> ผ่าน ID (หากข้อมูลที่เข้ามาเป็น ID) ตามลำดับ
+            **หมายเหตุ** : ระบบนี้ไม่ได้ค้นหาผู้ใช้ทั่วโลก เพียงแค่ค้นหาผู้ใช้ที่บอทสามารถมองเห็นได้เท่านั้น หากต้องการข้อมูลของผู้ใช้รายอื่นที่บอทไม่สามารถมองเห็นได้ ให้ใช้ ID ของผู้ใช้นั้น ๆ
+        usage               : "<ชื่อผู้ใช้, ชื่อผู้ใช้ติดแท็ก, ID ของผู้ใช้, การกล่าวถึง, ชื่อเล่นของผู้ใช้>"
+        aliases             :
+            - คนใด
+            - คนใดๆ
+            - คนใด ๆ
+            - หาคน
+            - หาผู้ใช้
+            - หาสมาชิก
+            - anyu
+            - anymember
+            - anyhuman
+    profile :
+        description         : แสดงโปรไฟล์ของผู้ใช้
+        usage               : "<สมาชิก = ตัวเอง>"
+        aliases             :
+            - โปรไฟล์
+            - pro
+    ping :
+        description         : แสดงค่าความล่าช้าในวินาที
+        usage               :
+        aliases             :
+            - ปิง
+    stats :
+        description         : สถิติของ {0.bot_name}
+        usage               :
+        aliases             :
+            - stat
+            - สถิติ
+            - สติถิ
+    emoji :
+        description         : แสดงภาพแท้ของอิโมจินั้น
+        usage               : "<ชื่อของอิโมจิ>"
+        aliases             :
+            - e
+            - อิโมจิ
+            - อีโมจิ
+            - อิโมจี
+            - อีโมจี
+AliasFor                    : นามแฝงของคำสั่ง
+Help                        : แผงช่วยเหลือ
+InfoOfUser                  : ข้อมูลผู้ใช้ {}
+InfoOfGuild                 : ข้อมูลเซิร์ฟเวอร์ {}
+AnyUser__pass               : ระดับการผ่านตัวกรอง

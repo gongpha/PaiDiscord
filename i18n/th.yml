@@ -1,0 +1,143 @@
+LanguageName                : ภาษาไทย
+lang                        : th
+author                      : gongpha
+author_id                   : 269418798975680513
+RequestBy                   : ร้องขอโดย {}
+Empty                       : ว่างเปล่า
+None                        : ไม่มี
+NoCommand                   : ไม่มีคำสั่ง
+Powered                     : โดย Pramual Pai
+
+VoiceRegion :
+    amsterdam               : อัมสเตอร์ดัม
+    brazil                  : บราซิล
+    eu_central              : ยุโรปกลาง
+    eu_west                 : ยุโรปตะวันตก
+    frankfurt               : แฟรงก์เฟิร์ต
+    hongkong                : ฮ่องกง
+    japan                   : ญี่ปุ่น
+    london                  : ลอนดอน
+    russia                  : รัสเซีย
+    singapore               : สิงคโปร์
+    southafrica             : แอฟริกาใต้
+    sydney                  : ซิดนีย์
+    us_central              : อเมริกากลาง
+    us_east                 : อเมริกาตะวันออก
+    us_south                : อเมริกาใต้
+    us_west                 : อเมริกาตะวันตก
+    vip_amsterdam           : อัมสเตอร์ดัม (VIP)
+    vip_us_east             : อเมริกาใต้ (VIP)
+    vip_us_west             : อเมริกาตะวันตก (VIP)
+
+Model :
+    Guild                   : เซิร์ฟเวอร์
+    Member                  : สมาชิก
+    User                    : ผู้ใช้
+    Message                 : ข้อความ
+    CacheMessage            : แคชข้อความ
+    ID                      : ID
+    Embed                   : ฝัง
+    Attachment              : แนบ
+    Channel                 : ช่อง
+    TextChannel             : ช่องข้อความ
+    VoiceChannel            : ช่องเสียง
+    VoiceClient             : ไคลเอนต์เสียง
+    CategoryChannel         : หมวดหมู่
+    DMChannel               : ข้อความส่วนตัว
+    Reaction                : รีแอคชัน
+    Emoji                   : อีโมจิ
+    Role                    : บทบาท
+    Region                  : ภูมิภาค
+    Owner                   : เจ้าของ
+    Command                 : คำสั่ง
+    Alias                   : แฝง
+    Text                    : ข้อความ
+    Name                    : ชื่อ
+    BotName                 : ชื่อบอท
+    Nickname                : ชื่อเล่น
+    Status                  : สถานะ
+    Desktop                 : เดสก์ทอป
+    Mobile                  : อุปกรณ์พกพา
+    Web                     : เว็บ
+    Profile                 : โปรไฟล์
+    Credit                  : เครดิต
+    Source                  : แหล่ง
+    Stats                   : สถิติ
+    Discriminator           : ตัวแบ่งเกณฑ์
+    Memory                  : หน่วยความจำ
+    CPU                     : CPU
+    Ping                    : ความล่าช้า
+    Invite                  : คำเชิญ
+
+Status :
+    online                  : ออนไลน์
+    idle                    : ไม่อยู่
+    dnd                     : ห้ามรบกวน
+    offline                 : ออฟไลน์
+    invisible               : ล่องหน
+
+ActivityType :
+    unknown                 : ไม่รู้จัก
+    playing                 : กำลังเล่น
+    streaming               : กำลังถ่ายทอดสด
+    listening               : กำลังฟัง
+    watching                : กำลังดู
+
+Permission :
+    ManageChannels          : จัดการช่อง
+    ManageMessages          : จัดการข้อความ
+    ManageNicknames         : จัดการชื่อเล่น
+    ManageRoles             : จัดการบทบาท
+
+Reason :
+    CommandBy               : ถูดจัดการโดย {}
+
+Response :
+    UserSentActivitiesSpotify   : ฟังไม่เป็นอ่ะ
+    UserSentEveryone            : มีอะไรเกิดขึ้น ?
+    UserSentBot                 : มีอะไรเหรอ ? {}
+    BotSentItself               : นี่เราจะกล่าวถึงตัวเองทำไมเนี่ย ? =w=
+
+CreatedAt                   : สร้างเมื่อ
+JoinedAt                    : เข้าร่วมเมื่อ
+JoinedGuildAt               : เข้าร่วม {} เมื่อ
+DateTimeText                : "%d %B พ.ศ. %Y เวลา %H:%M:%S + (%f)\nเมื่อ {}"
+TimeoutWaitingReaction      : หมดเวลาการรอรีแอคชัน โปรดส่งคำสั่งมาใหม่หากต้องการดำเนินการอีกครั้ง
+Warning                     : คำเตือน !
+ActionCannotUndo            : การกระทำดังกล่าวไม่สามารถคืนค่าได้
+PleaseReactionAllCommander  : โปรดเพิ่มรีแอคชันด้านล่างนี้ทั้งหมด เพื่อดำเนินการ (ผู้ใช้ที่ส่งคำสั่งเท่านั้น)
+NoPermissionWith            : ไม่มีสิทธิ์ *{}*
+CannotSendTo                : ไม่สามารถส่งไปที่ `{}`
+ObjectNotFoundFromObject    : ไม่พบ{} `{}`
+YouAreNotBotOwner           : คุณไม่ใช่เจ้าของบอทนี้ คุณจึงไม่มีสิทธิ์ใช้งานคำสั่งนี้ได้
+YouAreNotGuildOwner         : คุณไม่ใช่เจ้าของเซิร์ฟเวอร์นี้ คุณจึงไม่มีสิทธิ์ใช้งานคำสั่งนี้ได้
+CommandInDMNotAvailable     : ไม่สามารถใช้คำสั่งในข้อความส่วนตัวได้
+DMWithUser                  : ข้อความส่วนตัวกับ {}
+WelcomeUserToGuild          : ยินดีต้อนรับ {} เข้าสู่ {} !
+UserWasJoinedGuildNo        : "{} ได้เข้าร่วมเซิร์ฟเวอร์เป็นคนที่ {}"
+UserWasLeftTheGuild         : "{} ได้ออกจาก {}"
+NowGuildHadNoMembersLeft    : "ขณะนี้เหลือสมาชิกในเซิร์ฟเวอร์อยู่ {} คน"
+NoMySQLAvailable            : "บอทนี้ไม่สนับสนุนการเก็บข้อมูล MySQL"
+CannotUseWithBot            : ไม่สามารถเรียกใช้คำสั่งกับบอทได้
+CannotUseWithUser           : ไม่สามารถเรียกใช้คำสั่งกับผู้ใช้ได้
+ConnectionClosed            : การเชื่อมต่อถูกปิดการใช้งาน
+FirstSeenTheBot             : พบกับบอทครั้งแรก
+FirstSeenInGuild            : พบกับบอทครั้งแรกที่ {}
+QueryExecuteTime            : ใช้เวลาในการเรียกข้อมูล {} วินาที
+TypeCommandForShowAllOject  : กรุณาใช้คำสั่ง {} เพื่อแสดง{}ทั้งหมด
+NoResult                    : ไม่มีผลลัพธ์
+OpenOriginal                : เปิดต้นฉบับ
+OpenLink                    : เปิดลิงค์
+PingReturnedSec             : "ค่าความล่าช้า : **{}** วินาที"
+CommandNeedQuery            : มีการเรียกข้อมูลจากฐานข้อมูล
+StatsOf                     : สถิติของ {}
+PercentUsagedFrom           : "ใช้งานไปแล้ว {} % | จาก {}"
+PercentUsagedNewLine        : "ใช้งานไปแล้ว {} % | {}"
+SystemUpTime                : ช่วงเวลาในการทำงาน
+ClickHere                   : คลิกที่นี่
+Forbidden                   : ไม่มีสิทธิ์ในการเข้าถึง
+CommandUsedCount            : จำนวนการใช้คำสั่ง
+SetItTo                     : ตั้งเป็น **{}** แล้ว
+TooManyInput                : ข้อมูลขาเข้าเยอะมากเกินไป
+ThereAreInputsButWant       : ต้องการข้อมูลขาเข้าแค่ `{}` แต่ข้อมูลขาเข้าที่ได้รับมี `{}`
+InformationFromServer       : ข้อมูลจากเซิร์ฟเวอร์ `{}`
