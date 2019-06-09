@@ -23,7 +23,8 @@ bot = Pramual(	info=load_yml('configs/info.yml'),
 				channels=load_yml('configs/channels.yml'),
 				auths=load_yml('configs/auth.yml'),
 				configs=load_yml('configs/configs.yml'),
-				max_messages=13213)
+				max_messages=13213,
+				loop=loop)
 
 print("Pramual 2.1")
 print("Starting a Task...")
