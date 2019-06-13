@@ -33,7 +33,7 @@ class Experimental(Cog) :
 			g = ctx.message.guild
 		e = discord.Embed(title="Client was shutdowned by {0} ({1}) from{4} {2} ({3})".format(u, u.id, g, g.id, "" if isinstance(ctx.message.channel, DMChannel) else " guild"))
 		e.color = 0xDD0000
-		await self.bot.get_my_channel("log").send(embed=e)
+		await self.bot.get_bot_channel("log").send(embed=e)
 		await self.bot.session.close()
 		await self.bot.close()
 		self.bot.loop.stop()
