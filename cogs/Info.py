@@ -3,8 +3,7 @@ import platform
 from discord.ext import commands
 import typing
 from io import BytesIO
-from utils.cog import Cog
-from utils.cog import loadInformation
+from utils.cog import Cog, loadInformation
 from utils.template import embed_t, embed_em, embed_wm
 from pytz import timezone
 from utils.thai_format import th_format_date_diff
@@ -18,7 +17,6 @@ import datetime
 import math
 import psutil
 from utils.defined import d_status_icon
-
 
 def convert_size(size_bytes):
 	if size_bytes == 0:
@@ -105,9 +103,9 @@ class Info(Cog) :
 		if isinstance(object, discord.Member) :
 			e.description += "\n" + ctx.bot.ss('InformationFromServer').format(str(object.guild))
 			e.add_field(name=ctx.bot.stringstack["Model"]["Nickname"], value=await cc.convert(ctx, object.nick) or ctx.bot.stringstack["None"], inline=True)
-		e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, object.created_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
+		e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, get_time_format(ctx).format(th_format_date_diff(ctx, object.created_at))), inline=True)
 		if isinstance(object, discord.Member) :
-			e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(object.guild),value=thai_strftime(object.joined_at, ctx.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, object.joined_at.astimezone(timezone(ctx.bot.timezone))))), inline=True)
+			e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(object.guild),value=thai_strftime(object.joined_at, get_time_format(ctx).format(th_format_date_diff(ctx, object.joined_at))), inline=True)
 		e.set_author(name=object.display_name, icon_url=object.avatar_url)
 
 		if isinstance(object, discord.Member) :

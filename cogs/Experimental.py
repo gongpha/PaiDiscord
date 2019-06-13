@@ -6,9 +6,13 @@ from utils.cog import loadInformation
 from utils.template import *
 from utils.check import *
 import json
+from io import BytesIO
 from utils.query import fetchone, commit
 from utils.defined import d_status_icon
+
+#from discord.ext.commands import MessageConverter, TextChannelConverter
 import inspect
+import utils.anymodel as anymodel
 
 class Experimental(Cog) :
 	pbot = None
@@ -43,37 +47,82 @@ class Experimental(Cog) :
 			return
 		try :
 			await channel.send(text)
-		except discord.Forbidden :
-			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), self.bot.ss('Forbidden')))
+		except discord.Forbidden as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), self.bot.ss('Forbidden'), error=e))
 			return
-		except discord.HTTPException :
-			await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotSend').format(id)))
+		except discord.HTTPException as e :
+			await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), error=e))
 			return
+
 	@commands.command()
 	@IsOwnerBot()
-	async def _edit(self, ctx, id, *, text : str) :
-		u = await self.bot.fetch_user(self.bot.user.id)
-		print(u)
+	async def _edit(self, ctx, chid, id, *, text : str) :
+		#u = await self.bot.fetch_user(self.bot.user.id)
 		try :
-
-
-			message = await u.fetch_message(int(id))
+			channel = await ctx.bot.fetch_user(chid)
 		except discord.NotFound :
-			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('MessageNotFound')))
-			return
-		except discord.Forbidden:
-			#await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden') + "\n" + self.bot.ss('UserIDOwnedThisObjectNotMe').format(message.author.name, message.author.id)))
-			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden')))
+			channel = ctx.bot.get_channel(int(chid))
+		message = await channel.fetch_message(id)
+
+		# except anymodel.NotFound as e:
+		# 	await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('MessageNotFound'), error=e))
+		# 	return
+		# except anymodel.Forbidden as e:
+		# 	#await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden') + "\n" + self.bot.ss('UserIDOwnedThisObjectNotMe').format(message.author.name, message.author.id)))
+		# 	await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden'), error=e))
+		# 	return
+
+		# except discord.HTTPException as e:
+		# 	await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
+		# 	return
+
+		try :
+			await message.edit(content=text)
+		except discord.HTTPException as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _delete(self, ctx, chid, id) :
+		#u = await self.bot.fetch_user(self.bot.user.id)
+		try :
+			channel = await ctx.bot.fetch_user(chid)
+		except discord.NotFound :
+			channel = ctx.bot.get_channel(int(chid))
+		message = await channel.fetch_message(id)
+
+		# except anymodel.NotFound as e:
+		# 	await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('MessageNotFound'), error=e))
+		# 	return
+		# except anymodel.Forbidden as e:
+		# 	#await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden') + "\n" + self.bot.ss('UserIDOwnedThisObjectNotMe').format(message.author.name, message.author.id)))
+		# 	await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden'), error=e))
+		# 	return
+
+		# except discord.HTTPException as e:
+		# 	await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
+		# 	return
+
+		try :
+			await message.delete()
+		except discord.Forbidden as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), self.bot.ss('Forbidden'), error=e))
 			return
 		except discord.HTTPException as e:
-			await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id)))
-			return
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
 
+	@commands.command()
+	@IsOwnerBot()
+	async def _history(self, ctx, chid, limit=10) :
 		try :
-			await message.edit(text)
-		except :
-			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id)))
-			return
+			channel = await ctx.bot.fetch_user(chid)
+		except discord.NotFound :
+			channel = ctx.bot.get_channel(int(chid))
+		async for message in channel.history(limit=10) :
+			f = []
+			for a in message.attachments :
+				f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
+			await ctx.send(content=">>>==================================================\n**{0.author}** [{0.author.mention}] user({0.author.id}) message({0.id}) : \n{0.content}\n<<<==================================================".format(message), tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f)
 
 	@commands.command()
 	@IsOwnerBot()
@@ -145,6 +194,22 @@ class Experimental(Cog) :
 		g = discord.Game(name=name)
 		await self.bot.change_presence(activity=g)
 		await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(self.bot.ss("ActivityType", "playing"), name)))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _my_info_guild(self, ctx, gid : int = None) :
+		guild = ctx.bot.get_guild(int(gid)) or ctx.guild
+		if not guild :
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('ObjectNotFoundFromObject').format(self.bot.ss('Model', 'Guild'), gid)))
+
+		e = member_info(ctx, guild.me)
+		await ctx.send(embed=e)
+	# @commands.command()
+	# @IsOwnerBot()
+	# async def _id(self, ctx, id) :
+	# 	IDConverter
+	# 	await self.bot.change_presence(activity=g)
+	# 	await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(self.bot.ss("ActivityType", "playing"), name)))
 
 	@commands.command()
 	@IsOwnerBot()

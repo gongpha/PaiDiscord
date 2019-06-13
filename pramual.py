@@ -46,6 +46,14 @@ class Pramual(commands.Bot) :
 		self.auth = kwargs.pop('auths', {})
 		self.configs = kwargs.pop('configs', {})
 
+		self.dev = kwargs.pop('dev', None)
+		if self.dev == None :
+			self.dev = eget(self.configs, 'Dev', False)
+
+		if self.dev :
+			if 'IfDev' in self.configs :
+				self.dev_configs = self.configs['IfDev']
+
 		def infget(key, default) :
 			return eget(inf, key, default)
 
@@ -144,14 +152,16 @@ class Pramual(commands.Bot) :
 				return "@@@[string_not_found/ไม่-พบ-ข้อความ]"
 		return dct
 
-	def reactions_to_id(self, reactions) :
-		for r in reactions :
-			r.emoji
+	def get_dev_configs(self, key, default=None) :
+		if self.dev :
+			return None
+		return self.dev_configs.get(key, default)
 
 	async def on_ready(self) :
 		print(f'>> Login As "{self.user.name}" ({self.user.id})')
 		print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
-
+		if self.dev :
+			print('>> Developer Mode Enabled')
 		# self.log_channel = super().get_channel(self.log_channel_id)
 		# self.error_channel = super().get_channel(self.error_channel_id)
 		# self.query_channel = super().get_channel(self.query_channel_id)
@@ -183,7 +193,8 @@ class Pramual(commands.Bot) :
 	# 	await ctx.send("Hello from after_invoke")
 
 	async def on_command_completion(self, ctx) :
-		await commit(self, "UPDATE `pai_discord_profile` SET commands=commands + 1, user_name=%s WHERE snowflake=%s", (ctx.author.name, ctx.author.id))
+		if self.get_dev_configs("update_command_used_count", False) :
+			await commit(self, "UPDATE `pai_discord_profile` SET commands=commands + 1, user_name=%s WHERE snowflake=%s", (ctx.author.name, ctx.author.id))
 
 	async def on_command(self, ctx) :
 		e = discord.Embed(title=f"Command : `{self.command_prefix}{ctx.command.name}`")
@@ -221,22 +232,24 @@ class Pramual(commands.Bot) :
 		await self.get_bot_channel("system", "error").send(embed=e)
 
 	async def on_member_join(self, member) :
-		e = discord.Embed(title=self.stringstack["WelcomeUserToGuild"].format(member, member.guild))
-		e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
-		e.color = 0x00AA80
-		e.set_thumbnail(url=member.avatar_url)
-		e.set_footer(text=member.id)
-		await member.guild.system_channel.send(embed=e)
+		if self.get_dev_configs("member_join_message", True) :
+			e = discord.Embed(title=self.stringstack["WelcomeUserToGuild"].format(member, member.guild))
+			e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
+			e.color = 0x00AA80
+			e.set_thumbnail(url=member.avatar_url)
+			e.set_footer(text=member.id)
+			await member.guild.system_channel.send(embed=e)
 
 	async def on_member_remove(self, member) :
-		if self.user.id == member.id :
-			return
-		e = discord.Embed(title=self.stringstack["UserWasLeftTheGuild"].format(member, member.guild))
-		e.description = "*{}*".format(self.stringstack["NowGuildHadNoMembersLeft"].format(len(member.guild.members)))
-		e.color = 0xCE3232
-		e.set_thumbnail(url=member.avatar_url)
-		e.set_footer(text=member.id)
-		await member.guild.system_channel.send(embed=e)
+		if self.get_dev_configs("member_leave_message", True) :
+			if self.user.id == member.id :
+				return
+			e = discord.Embed(title=self.stringstack["UserWasLeftTheGuild"].format(member, member.guild))
+			e.description = "*{}*".format(self.stringstack["NowGuildHadNoMembersLeft"].format(len(member.guild.members)))
+			e.color = 0xCE3232
+			e.set_thumbnail(url=member.avatar_url)
+			e.set_footer(text=member.id)
+			await member.guild.system_channel.send(embed=e)
 
 	async def on_guild_join(self, guild) :
 		t = await qinsert_guild(self, guild)

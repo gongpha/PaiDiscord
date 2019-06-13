@@ -101,7 +101,10 @@ Response :
 CreatedAt                   : สร้างเมื่อ
 JoinedAt                    : เข้าร่วมเมื่อ
 JoinedGuildAt               : เข้าร่วม {} เมื่อ
-DateTimeText                : "%d %B พ.ศ. %Y เวลา %H:%M:%S + (%f)\nเมื่อ {}"
+DateTimeTextUnix            : "%-d %B พ.ศ. %Y เวลา %H:%M:%S"
+DateTimeTextWindows         : "%e %B พ.ศ. %Y เวลา %H:%M:%S"
+DateTimeTextUnixComplex     : "%-d %B พ.ศ. %Y เวลา %H:%M:%S + (%f)\nเมื่อ {}"
+DateTimeTextWindowsComplex  : "%e %B พ.ศ. %Y เวลา %H:%M:%S + (%f)\nเมื่อ {}"
 TimeoutWaitingReaction      : หมดเวลาการรอรีแอคชัน โปรดส่งคำสั่งมาใหม่หากต้องการดำเนินการอีกครั้ง
 Warning                     : คำเตือน !
 ActionCannotUndo            : การกระทำดังกล่าวไม่สามารถคืนค่าได้

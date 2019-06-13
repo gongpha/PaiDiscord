@@ -22,8 +22,8 @@ command :
             - _snd
             - _chat
     _edit :
-        description         : แก้ไขข้อความด้วย ID
-        usage               : <ID ของข้อความ> <ข้อความ...>
+        description         : แก้ไขข้อความด้วย ID และ ID ของช่อง
+        usage               : <ID ของช่อง> <ID ของข้อความ> <ข้อความ...>
         aliases             :
             - _แก้
             - _แก้ไข
@@ -32,6 +32,19 @@ command :
             - _edit_message
             - _edt
             - _edtmsg
+    _delete :
+        description         : ลบข้อความด้วย ID และ ID ของช่อง
+        usage               : <ID ของช่อง> <ID ของข้อความ>
+        aliases             :
+            - _ลบ
+            - _ลบข้อความ
+            - _del
+    _history :
+        description         : ดึงประวัติข้อความของช่องนั้น ๆ
+        usage               : <ID ของช่อง> <จำนวน=10>
+        aliases             :
+            - _ประวัติ
+            - _htr
     _send_dm :
         description         : ส่งข้อความผ่านช่องข้อความส่วนตัวด้วย ID ของผู้ใช้
         usage               : <ID ของผู้ใช้> <ข้อความ...>
@@ -82,6 +95,12 @@ command :
             - _ตั้งเกมเล่น
             - _set_gamep
             - _sgmp
+
+    _my_info_guild :
+        description         : ข้อมูลของบอทบนเซิร์ฟเวอร์
+        usage               : <ID ของเซิร์ฟเวอร์>
+        aliases             :
+            - _mig
     # _send_embed :
     #     description         : ส่งฝังผ่านช่องด้วย ID
     #     usage               : <ID ของช่อง> <JSON ของฝัง...>

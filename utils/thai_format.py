@@ -7,7 +7,8 @@ def th_format_date_diff(ctx, time=False):
     """
     from datetime import datetime
     from pytz import timezone
-    now = datetime.now().astimezone(timezone(ctx.bot.timezone))
+    now = datetime.now().astimezone(timezone(ctx.bot.default_timezone))
+    time = time.astimezone(timezone(ctx.bot.default_timezone))
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
     elif isinstance(time,datetime):
