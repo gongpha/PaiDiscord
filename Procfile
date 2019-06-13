@@ -1,1 +1,1 @@
-worker: python3 bot.py proc_pai
+worker: python3 bot.py
