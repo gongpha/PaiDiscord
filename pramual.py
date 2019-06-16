@@ -45,7 +45,7 @@ class Pramual(commands.Bot) :
 		self.bot_channels = kwargs.pop('channels', {})
 		self.auth = kwargs.pop('auths', {})
 		self.configs = kwargs.pop('configs', {})
-
+		self.dev_configs = {}
 		self.dev = kwargs.pop('dev', None)
 		if self.dev == None :
 			self.dev = eget(self.configs, 'Dev', False)
