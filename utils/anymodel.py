@@ -1,6 +1,7 @@
 # from anyuser import anyuser_convert
 import discord
 from discord.utils import *
+from utils.template import embed_em
 # # tob = {
 # # 	discord.User = 'user',
 # # 	discord.Member = 'member',
@@ -65,13 +66,12 @@ class AnyUser(AnyID) :
 
 			predicate = lambda u: u.name == arg
 			result = discord.utils.find(predicate, state._users.values())
-
 		if result is None :
 			if external :
 				try :
 					result = await ctx.bot.fetch_user(user_id)
 				except discord.NotFound :
-					raise NotFound('User "{}" not found'.format(object))
+					raise NotFound('User "{}" not found. While finding on external'.format(object))
 				except discord.Forbidden :
 					raise Forbidden('Cannot get info of "{}"'.format(object))
 			else :
@@ -84,7 +84,7 @@ class AnyMember(AnyID) :
 		bot = ctx.bot
 		match = self._get_id_match(object) or re.match(r'<@!?([0-9]+)>$', object)
 		result = None
-		if in_ctx_guild :
+		if in_ctx_guild and isinstance(ctx.message.channel, discord.TextChannel) :
 			guild = ctx.guild
 			if match is None :
 				# not a mention...
@@ -99,6 +99,8 @@ class AnyMember(AnyID) :
 				else :
 					result = _get_from_guilds(bot, 'get_member', user_id)
 		else :
+			if not isinstance(ctx.message.channel, discord.TextChannel) :
+				raise NotFound('No Guild in non-TextChannel')
 			if match is None:
 				# not a mention...
 				for guild in bot.guilds :
@@ -120,6 +122,35 @@ class AnyMember(AnyID) :
 
 		return result
 
+async def AnyModel__MemberOrUser(ctx, object, external=True, in_ctx_guild=True) :
+	if isinstance(object, (discord.Member, discord.User)) :
+		return object
+	if not object :
+		return None
+	try :
+		return await AnyMember().convert(ctx, object, in_ctx_guild)
+	except NotFound :
+		try :
+			return await AnyUser().convert(ctx, object, external)
+		except NotFound :
+			raise NotFound('Member or User "{}" not found'.format(object))
+		except Forbidden :
+			raise Forbidden('Cannot get info of "{}"'.format(object))
+
+async def AnyModel__MemberOrUser_Optional(ctx, object, external=True, in_ctx_guild=True) :
+	try :
+		return await AnyModel__MemberOrUser(ctx, object, external, in_ctx_guild)
+	except :
+		return None
+
+async def AnyModel_FindUserOrMember(ctx, object, external=True, in_ctx_guild=True) :
+	r = await AnyModel__MemberOrUser_Optional(ctx, object, external, in_ctx_guild)
+	if not r :
+		err = embed_em(ctx, ctx.bot.stringstack["ObjectNotFoundFromObject"].format(ctx.bot.stringstack["Model"]["User"], str(object)))
+		#err.description = "```{}```".format(result.text)
+		await ctx.send(embed=err)
+		return None
+	return r
 # class AnyMessage(AnyConverter) :
 # 	async def convert(self, ctx, object, destination) :
 #

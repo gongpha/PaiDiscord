@@ -296,7 +296,7 @@ class Pramual(commands.Bot) :
 									return
 		await self.process_commands(message)
 
-	async def on_message_delete(self, message) :
+	#async def on_message_delete(self, message) :
 		#print(self.waitForMessage)
 		# if self.interface :
 		# 	if message.author.id in self.owners :
@@ -337,4 +337,4 @@ class Pramual(commands.Bot) :
 		# 					self.waitForMessage[message.channel.id][message.author.id] = 1
 		# 			else :
 		# 				await message.channel.send(self.stringstack["Response"]["BotSentItself"])
-		await self.process_commands(message)
+		#await self.process_commands(message)

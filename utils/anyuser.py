@@ -7,7 +7,8 @@ async def anyuser_convert(ctx, obj) :
 	if not obj :
 		return (ctx.author, 0)
 	try :
-		result = await MemberConverter().convert(ctx, obj)
+		while True :
+			result = await MemberConverter().convert(ctx, obj)
 	except BadArgument :
 		passed += 1
 		try :

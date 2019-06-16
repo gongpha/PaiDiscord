@@ -4,12 +4,12 @@ from discord.ext import commands
 import typing
 from io import BytesIO
 from utils.cog import Cog, loadInformation
-from utils.template import embed_t, embed_em, embed_wm
+from utils.template import embed_t, embed_em, embed_wm, model_info, convert_size, format_date_timediff_short, format_date_timediff
 from pytz import timezone
-from utils.thai_format import th_format_date_diff
 from pythainlp.util import thai_strftime
 from dateutil.relativedelta import relativedelta
-from utils.anyuser import anyuser_safecheck, anyuser_convert
+#from utils.anyuser import anyuser_safecheck, anyuser_convert
+from utils.anymodel import AnyModel_FindUserOrMember
 from utils.anyemoji import anyemoji_convert
 from utils.query import fetchone, commit
 from utils.check import *
@@ -17,15 +17,6 @@ import datetime
 import math
 import psutil
 from utils.defined import d_status_icon
-
-def convert_size(size_bytes):
-	if size_bytes == 0:
-		return "0 B"
-	size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-	i = int(math.floor(math.log(size_bytes, 1024)))
-	p = math.pow(1024, i)
-	s = round(size_bytes / p, 2)
-	return "%s %s" % (s, size_name[i])
 
 def progressbar(iteration, total, length = 10):
 	filledLength = int(length * iteration // total)
@@ -92,60 +83,61 @@ class Info(Cog) :
 
 		return e
 
-	async def user_information(self, ctx, object) :
-		nof = [object.mention, str(object.id)]
-		if object.bot :
-			nof.append("🤖")
-		e = embed_t(ctx, "", " : ".join(nof))
-		e.color = object.color if object.color.value != 0 else discord.Embed.Empty
-		cc = discord.ext.commands.clean_content()
-		e.add_field(name=ctx.bot.stringstack["Model"]["Name"], value=await cc.convert(ctx, object.name), inline=True)
-		if isinstance(object, discord.Member) :
-			e.description += "\n" + ctx.bot.ss('InformationFromServer').format(str(object.guild))
-			e.add_field(name=ctx.bot.stringstack["Model"]["Nickname"], value=await cc.convert(ctx, object.nick) or ctx.bot.stringstack["None"], inline=True)
-		e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, get_time_format(ctx).format(th_format_date_diff(ctx, object.created_at))), inline=True)
-		if isinstance(object, discord.Member) :
-			e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(object.guild),value=thai_strftime(object.joined_at, get_time_format(ctx).format(th_format_date_diff(ctx, object.joined_at))), inline=True)
-		e.set_author(name=object.display_name, icon_url=object.avatar_url)
-
-		if isinstance(object, discord.Member) :
-			# status_indicator = {
-			# 	discord.Status.online : [ctx.bot.stringstack["Status"]["online"], "📗"],
-			# 	discord.Status.idle : [ctx.bot.stringstack["Status"]["idle"], "📒"],
-			# 	discord.Status.dnd : [ctx.bot.stringstack["Status"]["dnd"], "📕"],
-			# 	discord.Status.offline : [ctx.bot.stringstack["Status"]["offline"], "📓"],
-			# 	discord.Status.invisible : [ctx.bot.stringstack["Status"]["invisible"], "📓"],
-			# }
-			def sss(SSS) :
-				return [self.bot.ss("Status", SSS.name),d_status_icon[SSS.name]]
-			if not object.bot :
-				status_all = "\n\n{1} **{2}** : {0}\n{4} **{5}** : {3}\n{7} **{8}** : {6}".format(
-					"🖥️ " + ctx.bot.stringstack["Model"]["Desktop"],
-					sss(object.desktop_status)[1], sss(object.desktop_status)[0],
-					"🌐 " + ctx.bot.stringstack["Model"]["Web"],
-					sss(object.web_status)[1], sss(object.web_status)[0],
-					"📱 " + ctx.bot.stringstack["Model"]["Mobile"],
-					sss(object.mobile_status)[1], sss(object.mobile_status)[0],
-				)
-			else :
-				status_all = ""
-			status_one = "{0} **{1}**{2}".format(sss(object.status)[1], sss(object.status)[0], status_all)
-			e.add_field(name=ctx.bot.stringstack["Model"]["Status"], value=status_one, inline=True)
-		e.set_thumbnail(url=object.avatar_url)
-		# if not object.bot :
-		# 	ep = embed_t(ctx, ctx.bot.stringstack["Model"]["Profile"], object.mention)
-		#
-		# 	pro = await object.profile()
-		#
-		# 	hypesquad_indicator = {
-		# 		discord.HypeSquadHouse.bravery : 0x9C81F2,
-		# 		discord.HypeSquadHouse.brilliance : 0xF67B63,
-		# 		discord.HypeSquadHouse.balance : 0x3ADEC0
-		# 	}
-		#
-		# 	e.color = hypesquad_indicator[hypesquad_houses]
-
-		return e
+	# async def user_information(self, ctx, object) :
+	# 	nof = [object.mention, str(object.id)]
+	# 	if object.bot :
+	# 		nof.append("🤖")
+	# 	e = embed_t(ctx, "", " : ".join(nof))
+	# 	e.color = object.color if object.color.value != 0 else discord.Embed.Empty
+	# 	cc = discord.ext.commands.clean_content()
+	# 	e.add_field(name=ctx.bot.stringstack["Model"]["Name"], value=await cc.convert(ctx, object.name), inline=True)
+	# 	if isinstance(object, discord.Member) :
+	# 		e.description += "\n" + ctx.bot.ss('InformationFromServer').format(str(object.guild))
+	# 		e.add_field(name=ctx.bot.stringstack["Model"]["Nickname"], value=await cc.convert(ctx, object.nick) or ctx.bot.stringstack["None"], inline=True)
+	# 	e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, get_time_format(ctx).format(th_format_date_diff(ctx, object.created_at))), inline=True)
+	# 	if isinstance(object, discord.Member) :
+	# 		e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(object.guild),value=thai_strftime(object.joined_at, get_time_format(ctx).format(th_format_date_diff(ctx, object.joined_at))), inline=True)
+	# 	e.set_author(name=object.display_name, icon_url=object.avatar_url)
+	#
+	# 	if isinstance(object, discord.Member) :
+	# 		# status_indicator = {
+	# 		# 	discord.Status.online : [ctx.bot.stringstack["Status"]["online"], "📗"],
+	# 		# 	discord.Status.idle : [ctx.bot.stringstack["Status"]["idle"], "📒"],
+	# 		# 	discord.Status.dnd : [ctx.bot.stringstack["Status"]["dnd"], "📕"],
+	# 		# 	discord.Status.offline : [ctx.bot.stringstack["Status"]["offline"], "📓"],
+	# 		# 	discord.Status.invisible : [ctx.bot.stringstack["Status"]["invisible"], "📓"],
+	# 		# }
+	#
+	# 		def sss(SSS) :
+	# 			return [self.bot.ss("Status", SSS.name),d_status_icon[SSS.name]]
+	# 		if not object.bot :
+	# 			status_all = "\n\n{1} **{2}** : {0}\n{4} **{5}** : {3}\n{7} **{8}** : {6}".format(
+	# 				"🖥️ " + ctx.bot.stringstack["Model"]["Desktop"],
+	# 				sss(object.desktop_status)[1], sss(object.desktop_status)[0],
+	# 				"🌐 " + ctx.bot.stringstack["Model"]["Web"],
+	# 				sss(object.web_status)[1], sss(object.web_status)[0],
+	# 				"📱 " + ctx.bot.stringstack["Model"]["Mobile"],
+	# 				sss(object.mobile_status)[1], sss(object.mobile_status)[0],
+	# 			)
+	# 		else :
+	# 			status_all = ""
+	# 		status_one = "{0} **{1}**{2}".format(sss(object.status)[1], sss(object.status)[0], status_all)
+	# 		e.add_field(name=ctx.bot.stringstack["Model"]["Status"], value=status_one, inline=True)
+	# 	e.set_thumbnail(url=object.avatar_url)
+	# 	# if not object.bot :
+	# 	# 	ep = embed_t(ctx, ctx.bot.stringstack["Model"]["Profile"], object.mention)
+	# 	#
+	# 	# 	pro = await object.profile()
+	# 	#
+	# 	# 	hypesquad_indicator = {
+	# 	# 		discord.HypeSquadHouse.bravery : 0x9C81F2,
+	# 	# 		discord.HypeSquadHouse.brilliance : 0xF67B63,
+	# 	# 		discord.HypeSquadHouse.balance : 0x3ADEC0
+	# 	# 	}
+	# 	#
+	# 	# 	e.color = hypesquad_indicator[hypesquad_houses]
+	#
+	# 	return e
 
 	# async def user__avatar(self, user : [discord.User, discord.Member]) :
 	# 	async with self.session.get(user.avatar_url_as(format="png")) as r :
@@ -202,7 +194,7 @@ class Info(Cog) :
 		e.description += s.format(self.bot.stringstack["Model"]["Memory"], self.bot.stringstack["PercentUsagedFrom"].format(str(psutil.virtual_memory()[2]), "[{} / {}] | {}".format(mm_t, mm_a, progressbar(m_t, m_a))))
 		cpu = psutil.cpu_percent()
 		e.description += s.format(self.bot.stringstack["Model"]["CPU"], self.bot.stringstack["PercentUsagedNewLine"].format(str(cpu), progressbar(cpu, 100)))
-		e.description += s.format(self.bot.stringstack["SystemUpTime"], th_format_date_diff(ctx, self.bot.start_time.astimezone(timezone(self.bot.timezone))))
+		e.description += s.format(self.bot.stringstack["SystemUpTime"], format_date_timediff(ctx, self.bot.start_time))
 		e.description += s.format(self.bot.stringstack["Model"]["Ping"], str(round(ctx.bot.ws.latency * 1000)) + " ms")
 
 
@@ -240,7 +232,7 @@ class Info(Cog) :
 		e.description += s.format(self.bot.stringstack["Model"]["Channel"], tc + vc)
 		e.description += s.format(self.bot.stringstack["Model"]["TextChannel"], tc)
 		e.description += s.format(self.bot.stringstack["Model"]["VoiceChannel"], vc)
-		e.description += s.format(self.bot.stringstack["Model"]["CategoryChannel"], ca)
+		e.description += s.format(self.bot.stringstack["Model"]["Category"], ca)
 		e.description += s.format(self.bot.stringstack["Model"]["Role"], rr)
 		e.description += s.format(self.bot.stringstack["Model"]["Guild"], len(ctx.bot.guilds))
 
@@ -269,51 +261,50 @@ class Info(Cog) :
 			await ctx.send(embed=h)
 
 	@commands.command()
-	async def guild(self, ctx, guild_id) :
+	async def guild(self, ctx, guild_id = None) :
 		#print(self.bot.name)
 		#print(self.bot.description)
-		guild = self.bot.get_guild(int(guild_id)) or (ctx.message.guild if isinstance(ctx.message.channel, discord.TextChannel) else None)
+		guild = self.bot.get_guild(int(guild_id or 0)) or (ctx.message.guild if isinstance(ctx.message.channel, discord.TextChannel) else None)
+		# if not guild :
+		# 	return
+		# s = embed_t(ctx, guild.name, "")
+		# s.set_thumbnail(url=guild.icon_url)
+		# s.add_field(name=self.bot.stringstack["Model"]["ID"],value=guild.id, inline=True)
+		# s.add_field(name=self.bot.stringstack["Model"]["Region"],value=self.bot.stringstack["VoiceRegion"][guild.region.name], inline=True)
+		# s.add_field(name=self.bot.stringstack["Model"]["Owner"],value=guild.owner.mention, inline=True)
+		# s.add_field(name=self.bot.stringstack["CreatedAt"],value=thai_strftime(guild.created_at, self.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, guild.created_at.astimezone(timezone(self.bot.timezone))))), inline=True)
+		# s.add_field(name=self.bot.stringstack["Model"]["Member"],value=len(guild.members), inline=True)
+		# s.add_field(name=self.bot.stringstack["Model"]["Channel"],value=len(guild.channels), inline=True)
+		# s.add_field(name=self.bot.stringstack["Model"]["Role"],value=len(guild.roles), inline=True)
 		if not guild :
-			return
-		s = embed_t(ctx, guild.name, "")
-		s.set_thumbnail(url=guild.icon_url)
-		s.add_field(name=self.bot.stringstack["Model"]["ID"],value=guild.id, inline=True)
-		s.add_field(name=self.bot.stringstack["Model"]["Region"],value=self.bot.stringstack["VoiceRegion"][guild.region.name], inline=True)
-		s.add_field(name=self.bot.stringstack["Model"]["Owner"],value=guild.owner.mention, inline=True)
-		s.add_field(name=self.bot.stringstack["CreatedAt"],value=thai_strftime(guild.created_at, self.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, guild.created_at.astimezone(timezone(self.bot.timezone))))), inline=True)
-		s.add_field(name=self.bot.stringstack["Model"]["Member"],value=len(guild.members), inline=True)
-		s.add_field(name=self.bot.stringstack["Model"]["Channel"],value=len(guild.channels), inline=True)
-		s.add_field(name=self.bot.stringstack["Model"]["Role"],value=len(guild.roles), inline=True)
-
-		await ctx.send(embed=s)
+			if not isinstance(ctx.message.channel, discord.TextChannel) :
+				if guild_id == None :
+					err = embed_em(ctx, ctx.bot.stringstack["ObjectNotFoundInObject"].format(ctx.bot.ss('Model', 'Guild'), ctx.bot.ss('Model', 'DMChannel')))
+			else :
+				err = embed_em(ctx, ctx.bot.stringstack["ObjectNotFoundFromObject"].format(ctx.bot.ss("Model", "Guild"), str(guild_id)))
+			await ctx.send(embed=err)
+		else :
+			await ctx.send(embed=model_info(ctx, guild))
 
 	@commands.command()
 	async def avatar(self, ctx, *, obj = None) :
-		member = await anyuser_safecheck(ctx,obj)
+		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
 		#async with ctx.typing() :
 		if member :
-			file = discord.File(fp=BytesIO(await (member.avatar_url_as(static_format="png")).read()), filename="pai__avatar_{}-168d{}".format(member.display_name, member.id))
+			file = discord.File(fp=BytesIO(await (member.avatar_url_as(static_format="png")).read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.is_avatar_animated() else "png"))
 			await ctx.send("`{}`".format(member), file=file)
 
 	@commands.command()
 	async def anyuser(self, ctx, *, obj = None) :
-		result, passed = (await anyuser_safecheck(ctx,obj,True))
-		if passed >= 0 :
-			ee = await self.user_information(ctx,result)
-			enum_pass = {
-				0 : self.bot.stringstack["Empty"],
-				1 : self.bot.stringstack["Model"]["Member"],
-				2 : self.bot.stringstack["Model"]["User"],
-				3 : self.bot.stringstack["Model"]["User"] + "++", # RARE CASE TO GET THIS VALUE
-				4 : self.bot.stringstack["Model"]["ID"],
-			}
-			ee.add_field(name=self.stringstack["AnyUser__pass"], value="{} : {}".format(passed, enum_pass[passed]))
-			await ctx.send(embed=ee)
+		result = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
+		if result :
+			await ctx.send(embed=model_info(ctx, result))
+
 	@commands.command()
 	async def profile(self, ctx, *, obj = None) :
-		result = await anyuser_safecheck(ctx,obj)
+		result = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
 		async with ctx.message.channel.typing() :
-			ee = await self.profile_information(ctx,result)
+			ee = await self.profile_information(ctx,result or ctx.author)
 			await ctx.send(embed=ee)
 
 	@commands.command()
