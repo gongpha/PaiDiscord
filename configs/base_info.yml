@@ -65,3 +65,5 @@ cogs :
   - cogs.Thai
   - cogs.ImageGenerate
   - cogs.Experimental
+
+interface : True
