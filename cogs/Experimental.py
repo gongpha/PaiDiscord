@@ -118,11 +118,22 @@ class Experimental(Cog) :
 			channel = await ctx.bot.fetch_user(chid)
 		except discord.NotFound :
 			channel = ctx.bot.get_channel(int(chid))
-		async for message in channel.history(limit=10) :
-			f = []
-			for a in message.attachments :
-				f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
-			await ctx.send(content=">>>==================================================\n**{0.author}** [{0.author.mention}] user({0.author.id}) message({0.id}) : \n{0.content}\n<<<==================================================".format(message), tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f)
+		if ctx.me.guild_permissions.manage_webhooks :
+			wh = await ctx.channel.create_webhook(name="Pai's User Representer", avatar=ctx.bot.webhook_avatar)
+			async for message in channel.history(limit=10) :
+
+				f = []
+				for a in message.attachments :
+					f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
+				await wh.send(content=message.content or "*empty message*", tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f, username=message.author.name, avatar_url=message.author.avatar_url)
+			await wh.delete()
+
+		else :
+			async for message in channel.history(limit=10) :
+				f = []
+				for a in message.attachments :
+					f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
+				await ctx.send(content=">>>==================================================\n**{0.author}** [{0.author.mention}] user({0.author.id}) message({0.id}) : \n{0.content}\n<<<==================================================".format(message), tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f)
 
 	@commands.command()
 	@IsOwnerBot()
@@ -204,6 +215,12 @@ class Experimental(Cog) :
 
 		e = member_info(ctx, guild.me)
 		await ctx.send(embed=e)
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _refresh_configs(self, ctx) :
+		ctx.bot.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.loaded_dev)
+		await ctx.send(":ok_hand:")
 	# @commands.command()
 	# @IsOwnerBot()
 	# async def _id(self, ctx, id) :

@@ -1,13 +1,13 @@
-name : Pai
-description :
+name : Koync
+description : |-
+    บอทนี้เป็นบอททดลองของ gongpha#0238
+    ในระหว่างการพัฒนา ไม่ควรใช้งาน
 description_long :
 token : ?PramualLocalToken
-command_prefix : "_"
+command_prefix : "::"
 default_timezone : Asia/Bangkok
 default_language : th
-theme :
-    - 0xff7f00
-    - 0x007fff
+theme : 0x904ADB
 owners :
     - 269418798975680513 # gongpha#0238       DEVELOPER
     - 338475895285088257 # gongpha#0394       DEVELOPER'S SMURF
@@ -15,13 +15,13 @@ owners :
     - 524907194852966410 # Kengkat2#1787      TESTER'S SMURF
     - 359621664641908736 # Monochrome#0378    TESTER
     - 359616528041246723 # Unallocated#5609   TESTER
-mysql : True
-mysql_hostname : ?PramualDatabaseHost
+mysql : False
+mysql_hostname : ?PramualDatabaseHdost
 mysql_username : ?PramualDatabaseUsername
 mysql_password : ?PramualDatabasePassword
 mysql_database : ?PramualDatabaseDatabase
-game_default : OwO
-game_static : ?PramualPaiGame
+game_default : บอททดลอง | Testing Bot
+game_static :
 cogs :
   - cogs.Info
   - cogs.Image
@@ -32,4 +32,4 @@ cogs :
   - cogs.Thai
   - cogs.ImageGenerate
   - cogs.Experimental
-interface : ?PramualInterface
+interface : True

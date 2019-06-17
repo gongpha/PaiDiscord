@@ -1,0 +1,67 @@
+# You can use the token in environment variables by add '?' at the front of environment variables name
+# Ex. "?MyVariable"
+
+# Bot Name, Description
+# Show in help
+name : Pai
+description :
+description_long : # Do not implemented yet.
+
+# Bot Token
+token : ?PramualLocalToken
+
+# Bot Token
+# Leave it will be used by mention only
+command_prefix : "_"
+
+# Timezone (Default : Asia/Bangkok)
+# See all in https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568
+default_timezone : Asia/Bangkok
+
+# Bot Interface Language (Default : th)
+# All translation files are stored in i18n folder
+# Also, you can duplicate them and edit your own
+default_language : th
+
+# Bot Color
+# Used in embed
+theme :
+    - 0xff7f00
+    - 0x007fff
+
+# Bot Owner list
+# THIS DOESN'T INCLUDE BOT APPLICATION OWNER
+# YOU NEED TO ADD YOUR SNOWFLAKE HERE
+owners :
+    - 269418798975680513 # gongpha#0238       DEVELOPER
+    - 338475895285088257 # gongpha#0394       DEVELOPER'S SMURF
+    - 357099320069062666 # Kengkat1#4558      TESTER
+    - 524907194852966410 # Kengkat2#1787      TESTER'S SMURF
+    - 359621664641908736 # Monochrome#0378    TESTER
+    - 359616528041246723 # Unallocated#5609   TESTER
+
+# Is bot using MySQL ?
+mysql : True
+
+# If above is True, Enter your MySQL Connecting details here
+mysql_hostname : ?PramualDatabaseHost
+mysql_username : ?PramualDatabaseUsername
+mysql_password : ?PramualDatabasePassword
+mysql_database : ?PramualDatabaseDatabase
+
+# The text that will show at game stats
+# The default will show if 'game_static' wasn't found or Invalid
+game_default : OwO
+game_static : ?PramualPaiGame
+
+# Cogs (Extensions)
+cogs :
+  - cogs.Info
+  - cogs.Image
+  - cogs.Karaoke
+  - cogs.Nuke
+  - cogs.MagickBomb
+  - cogs.Request
+  - cogs.Thai
+  - cogs.ImageGenerate
+  - cogs.Experimental

@@ -42,3 +42,8 @@ def CanManageRoles() :
 	async def predicate(ctx) :
 		return await CheckPermission(ctx, ctx.message.guild.me.guild_permissions.manage_roles, "ManageRoles")
 	return commands.check(predicate)
+
+def CanManageWebhook() :
+	async def predicate(ctx) :
+		return await CheckPermission(ctx, ctx.message.guild.me.guild_permissions.manage_webhooks, "ManageWebhooks")
+	return commands.check(predicate)

@@ -3,13 +3,8 @@
 import asyncio
 import sys
 import os
-import yaml
 
-from pramual import Pramual
-
-def load_yml(filename) :
-	with open(filename, encoding="utf8") as f:
-		return yaml.safe_load(f)
+from pramual import Pramual, load_yml
 
 
 
@@ -19,10 +14,10 @@ def load_yml(filename) :
 
 loop = asyncio.get_event_loop()
 
-bot = Pramual(	info=load_yml('configs/info.yml'),
-				channels=load_yml('configs/channels.yml'),
-				auths=load_yml('configs/auth.yml'),
-				configs=load_yml('configs/configs.yml'),
+bot = Pramual(	info=load_yml('configs/info.yml', 'configs/base_info.yml'),
+				channels=load_yml('configs/channels.yml', 'configs/base_channels.yml'),
+				auths=load_yml('configs/auth.yml', 'configs/base_auth.yml'),
+				configs=load_yml('configs/configs.yml', 'configs/base_configs.yml'),
 				max_messages=13213,
 				loop=loop)
 

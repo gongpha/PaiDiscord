@@ -5,6 +5,7 @@ import sys
 import traceback
 import random
 import os
+from io import BytesIO
 from discord.ext import commands
 from utils.template import embed_em
 from utils.dict import safeget
@@ -30,6 +31,10 @@ class BotIsNotReady(Exception) :
 	"""API Function was called while the bot isn't ready"""
 	pass
 
+class ConfigsNotFound(Exception) :
+	"""Config and Base Config files are not found"""
+	pass
+
 
 def eget(dict, key, default) :
 	v = dict.get(key, '')
@@ -41,12 +46,36 @@ def eget(dict, key, default) :
 class Pramual(commands.Bot) :
 	pbot = None
 	def __init__(self, *args, **kwargs) :
-		inf = kwargs.pop('info', {})
-		self.bot_channels = kwargs.pop('channels', {})
-		self.auth = kwargs.pop('auths', {})
-		self.configs = kwargs.pop('configs', {})
+		self.info_fname = kwargs.pop('info', {})
+		self.channels_fname = kwargs.pop('channels', {})
+		self.auths_fname = kwargs.pop('auths', {})
+		self.configs_fname = kwargs.pop('configs', {})
+		self.loaded_dev = kwargs.pop('dev', False)
+		self.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.loaded_dev, kwargs.pop('loop', asyncio.get_event_loop()))
+		self.load_strings()
+		self.load_assets()
+		if self.token == None :
+			raise NoToken("Invalid Token")
+
+		super().__init__(command_prefix=self.cmd_prefix, *args, **kwargs)
+		self.remove_command('help')
+		pbot = self
+
+	def load_assets(self) :
+		with open("assets/webhook.png", "rb") as image :
+			self.webhook_avatar = image.read()
+
+	def load_strings(self) :
+		with open('i18n/{}.yml'.format(self.default_language), encoding="utf8") as json_file :
+			self.stringstack = yaml.safe_load(json_file)
+
+	def load_configs(self, info, channels, auths, configs, dev, loop) :
+		inf = info
+		self.bot_channels = channels
+		self.auth = auths
+		self.configs = configs
 		self.dev_configs = {}
-		self.dev = kwargs.pop('dev', None)
+		self.dev = dev
 		if self.dev == None :
 			self.dev = eget(self.configs, 'Dev', False)
 
@@ -61,7 +90,7 @@ class Pramual(commands.Bot) :
 		self.bot_description = infget('description', '')
 		self.bot_description_long = infget('description_long', '')
 		self.token = infget('token', None)
-		cmd_prefix = infget('command_prefix', commands.when_mentioned_or('_'))
+		self.cmd_prefix = infget('command_prefix', commands.when_mentioned_or('_'))
 		self.default_timezone = infget('default_timezone', 'UTC')
 		self.default_language = infget('default_language', 'th')
 		self.theme = infget('theme', (0xFF7F00, 0x007FFF))
@@ -71,9 +100,8 @@ class Pramual(commands.Bot) :
 		self.mysql_username = infget('mysql_username', None)
 		self.mysql_password = infget('mysql_password', None)
 		self.mysql_database = infget('mysql_database', None)
-		self.mysql_database = infget('mysql_database', None)
 
-		self.cache_interface = {}
+		#self.cache_interface = {}
 
 		g = infget('game_static', None)
 		gd = infget('game_default', None)
@@ -83,18 +111,10 @@ class Pramual(commands.Bot) :
 		self.cog_list = infget('cogs', ['cogs.Info', 'cogs.Experimental'])
 		self.interface = infget('interface', False)
 
-		self.loop = kwargs.pop('loop', asyncio.get_event_loop())
+		self.loop = loop
 		self.waitForMessage = {}
 		self.start_time = datetime.datetime.now()
 		self.session = aiohttp.ClientSession(loop=self.loop)
-		with open('i18n/{}.yml'.format(self.default_language), encoding="utf8") as json_file :
-			self.stringstack = yaml.safe_load(json_file)
-		if self.token == None :
-			raise NoToken("Invalid Token")
-
-		super().__init__(command_prefix=cmd_prefix, *args, **kwargs)
-		self.remove_command('help')
-		pbot = self
 
 	async def connect_db(self) :
 		# all([self.database_host, self.database_username, self.database_password, self.database_database])
@@ -203,7 +223,10 @@ class Pramual(commands.Bot) :
 		e.add_field(name='Guild', value='`{0.name}` ({0.id})'.format(ctx.message.guild) if ctx.message.guild else 'Direct Message')
 		e.add_field(name='Channel', value='`{0.name}` ({0.id})'.format(ctx.message.channel) if ctx.message.guild else 'DM with `{0.recipient}` ({0.id})'.format(ctx.message.channel))
 		e.add_field(name='Message', value="("+str(ctx.message.id) + ")\n```" + ctx.message.clean_content + "```", inline=False)
-		e.color = int(random.choice(self.theme))
+		if isinstance(self.theme, (list, tuple)) :
+			e.color = self.theme[1] if len(self.theme) > 1 else self.theme[0]
+		else :
+			e.color = self.theme
 		e.timestamp = ctx.message.created_at
 		await self.get_bot_channel("system", "log").send(embed=e)
 
@@ -280,7 +303,7 @@ class Pramual(commands.Bot) :
 					r = cc.topic
 					if r != None :
 						r = r.split(':')
-						if r[0].startswith('@@@pai__channel') :
+						if r[0].startswith('@@@{}__channel'.format(self.bot_name.lower())) :
 							if not r[1].isdigit() :
 								await message.add_reaction('\N{NEGATIVE SQUARED CROSS MARK}')
 								await message.add_reaction('\N{INPUT SYMBOL FOR NUMBERS}')
@@ -292,7 +315,7 @@ class Pramual(commands.Bot) :
 									return
 								else :
 									await message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
-									self.cache_interface[message.author.id][message.id] = await c.send(message.content)
+									await c.send(message.content)
 									return
 		await self.process_commands(message)
 
@@ -338,3 +361,13 @@ class Pramual(commands.Bot) :
 		# 			else :
 		# 				await message.channel.send(self.stringstack["Response"]["BotSentItself"])
 		#await self.process_commands(message)
+def load_yml(filename, deffilename) :
+	try :
+		with open(filename, 'r', encoding="utf8") as f:
+			return yaml.safe_load(f)
+	except FileNotFoundError :
+		try :
+			with open(deffilename, 'r', encoding="utf8") as f:
+				return yaml.safe_load(f)
+		except FileNotFoundError :
+			raise ConfigsNotFound('Config and Base Config files are not found')

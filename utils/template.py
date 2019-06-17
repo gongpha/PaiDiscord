@@ -13,7 +13,10 @@ import math
 def embed_t(ctx, title, description = "") :
 	e = discord.Embed()
 	#print(e.color)
-	e.color = int(random.choice(ctx.bot.theme))
+	if isinstance(ctx.bot.theme, (list, tuple)) :
+		e.color = ctx.bot.theme[1] if len(ctx.bot.theme) > 1 else ctx.bot.theme[0]
+	else :
+		e.color = ctx.bot.theme
 	e.description = description
 	e.title = title
 	if not isinstance(ctx.message.channel, discord.DMChannel) :

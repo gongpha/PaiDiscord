@@ -29,7 +29,10 @@ class Info(Cog) :
 
 	def help_overview_embed(self, ctx) :
 		h = embed_t(ctx, "❔ {}".format(self.stringstack["Help"]), "")
-		h.color = (self.bot.theme[1] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme) if len(self.bot.theme) > 1 else self.bot.theme[0]
+		if isinstance(self.bot.theme, (list, tuple)) :
+			h.color = self.bot.theme[1] if len(self.bot.theme) > 1 else self.bot.theme[0]
+		else :
+			h.color = self.bot.theme
 		for n, c in self.bot.cogs.items() :
 			if not c.cog_hidden :
 				h.add_field(name=":{}: {}".format(": :".join(c.cog_emoji), c.cog_name),value=f"`{self.bot.command_prefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
@@ -317,16 +320,16 @@ class Info(Cog) :
 		b = BytesIO(await (emoji.url).read())
 
 		if passed == 4 :
-			f = "pai__emoticon_{}{}-174d{}.{}".format("animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
+			f = "{}__emoticon_{}{}-174d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
 		elif passed < 4 :
 			try :
 				u = emoji.user
 				uid = emoji.user.id
-				f = "pai__emoticon_{}{}-174d{}_{}-168d{}_{}-169d{}.{}".format("animated_" if emoji.animated else "", emoji.name, emoji.id, u, uid, emoji.guild_id, emoji.guild.name, "gif" if emoji.animated else "png")
+				f = "{}__emoticon_{}{}-174d{}_{}-168d{}_{}-169d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, u, uid, emoji.guild_id, emoji.guild.name, "gif" if emoji.animated else "png")
 			except :
-				f = "pai__emoticon_{}{}-174d{}.{}".format("animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
+				f = "{}__emoticon_{}{}-174d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
 		else :
-			f = "pai__emoticon"
+			f = "{}__emoticon".format(ctx.bot.bot_name.lower())
 
 
 		file = discord.File(fp=b, filename=f)

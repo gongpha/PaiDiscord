@@ -103,6 +103,7 @@ Permission :
     ManageMessages          : จัดการข้อความ
     ManageNicknames         : จัดการชื่อเล่น
     ManageRoles             : จัดการบทบาท
+    ManageWebhooks          : จัดการ Webhook
 
 Reason :
     CommandBy               : ถูดจัดการโดย {}

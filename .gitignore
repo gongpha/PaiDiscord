@@ -2,3 +2,4 @@ cmd.exe
 *.pyc
 cache/
 cmdshortcut.lnk
+configs/info.yml

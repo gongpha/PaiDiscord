@@ -101,6 +101,11 @@ command :
         usage               : <ID ของเซิร์ฟเวอร์>
         aliases             :
             - _mig
+    _refresh_configs :
+        description         : โหลดการตั้งค่าใหม่
+        usage               :
+        aliases             :
+            - _rcfg
     # _send_embed :
     #     description         : ส่งฝังผ่านช่องด้วย ID
     #     usage               : <ID ของช่อง> <JSON ของฝัง...>
