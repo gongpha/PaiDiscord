@@ -288,7 +288,7 @@ class Pramual(commands.Bot) :
 			e.color = 0xCE3232
 			e.set_thumbnail(url=str(guild.icon_url))
 			e.set_footer(text="{} : {}".format(guild.id, t))
-			await self.get_bot_channel("guild").send(embed=e)
+			await self.get_bot_channel("system", "guild_update").send(embed=e)
 
 	async def on_message(self, message) :
 		#print(self.waitForMessage)
