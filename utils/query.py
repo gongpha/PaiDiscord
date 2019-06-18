@@ -60,12 +60,12 @@ async def qcheck_guild(bot, guild) :
 
 
 async def qinsert_guild(bot, guild) :
-	if not (await qcheck_guild(guild)) :
+	if not (await qcheck_guild(bot, guild)) :
 		return await commit(bot, "INSERT INTO `pai_discord_guild` (`snowflake`, `prefix`, `c_member_join`, `c_join_message`, `c_member_leave`, `c_leave_message`, `support`, `c_levelup_notice`, `first_seen`, `lang`) VALUES (%s, '', '1', '', '1', '', '0', '1', %s, '')", (guild.id, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 	else :
 		return False
-async def qget_guild(guild, ll) :
-	if (await qcheck_guild(guild)) :
+async def qget_guild(bot, guild, ll) :
+	if (await qcheck_guild(bot, guild)) :
 		return await fetchone(bot, "SELECT %s FROM pai_discord_profile WHERE snowflake = %s", ", ".join(ll))
 	else :
 		return False
