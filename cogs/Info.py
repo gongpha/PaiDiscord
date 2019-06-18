@@ -239,7 +239,7 @@ class Info(Cog) :
 		e.description += s.format(self.bot.stringstack["Model"]["Role"], rr)
 		e.description += s.format(self.bot.stringstack["Model"]["Guild"], len(ctx.bot.guilds))
 
-		e.add_field(name=self.bot.stringstack["Model"]["Invite"], value="[{}]()".format(self.bot.ss("ClickHere"), self.static_invite), inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["Invite"], value="[{}]()".format(self.bot.ss("ClickHere"), ctx.bot.static_invite), inline=True)
 
 		e.set_footer(text="Python {} • discord.py {}".format(platform.python_version(), discord.__version__))
 		await ctx.send(embed=e)
