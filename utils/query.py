@@ -53,8 +53,8 @@ async def commit(bot, sql, list = None) :
 
 
 
-async def qcheck_guild(guild) :
-	a = await fetchone(self.bot, "SELECT EXISTS(SELECT 1 FROM pai_discord_guild WHERE snowflake=%s LIMIT 1)", object.id)
+async def qcheck_guild(bot, guild) :
+	a = await fetchone(bot, "SELECT EXISTS(SELECT 1 FROM pai_discord_guild WHERE snowflake=%s LIMIT 1)", object.id)
 	print(a)
 	return a
 
