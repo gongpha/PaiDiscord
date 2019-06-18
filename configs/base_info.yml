@@ -66,4 +66,9 @@ cogs :
   - cogs.ImageGenerate
   - cogs.Experimental
 
+# Your Bot Invite Code or URL
+# The bot should be in the guild that invite pointed to
+my_guild_invite_code : KK6R9BJ
+
+# DO NOT TOUCH IT
 interface : True

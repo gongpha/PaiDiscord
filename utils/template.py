@@ -183,7 +183,7 @@ def model_info(ctx, model) :
 	#print(type(model))
 	nof = []
 	e = embed_t(ctx, str(model))
-	e.add_field(name=ctx.bot.stringstack["Model"]["Name"], value=escape_mentions(model.name), inline=True)
+	e.add_field(name=ctx.bot.ss("Model", "Name"), value=escape_mentions(model.name), inline=True)
 	if isinstance(model, (discord.Member, discord.User, discord.ClientUser)) :
 		nof.append(model.mention)
 		e.set_author(name=model.display_name, icon_url=model.avatar_url)
@@ -263,7 +263,8 @@ def model_info(ctx, model) :
 		e.description += "\n" + ctx.bot.ss('InformationFromServer').format(str(model.guild))
 	e.add_field(name=ctx.bot.ss("CreatedAt"), value=thai_strftime(model.created_at, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.created_at)), inline=True)
 	if isinstance(model, discord.Member) :
-		e.add_field(name=ctx.bot.stringstack["Model"]["Nickname"], value=escape_mentions(model.nick) or ctx.bot.stringstack["None"], inline=True)
+		if model.nick :
+			e.add_field(name=ctx.bot.ss("Model", "Nickname"), value=escape_mentions(model.nick), inline=True)
 		e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(model.guild), value=thai_strftime(model.joined_at, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.joined_at)), inline=True)
 		if model.premium_since :
 			e.add_field(name=ctx.bot.stringstack["PremiumSince"], value=thai_strftime(model.premium_since, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.premium_since)), inline=True)

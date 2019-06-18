@@ -91,7 +91,7 @@ class Pramual(commands.Bot) :
 		self.bot_description_long = infget('description_long', '')
 		self.token = infget('token', None)
 		self.cmd_prefix = infget('command_prefix', commands.when_mentioned_or('_'))
-		self.default_timezone = infget('default_timezone', 'UTC')
+		self.default_timezone = infget('default_timezone', 'Asia/Bangkok')
 		self.default_language = infget('default_language', 'th')
 		self.theme = infget('theme', (0xFF7F00, 0x007FFF))
 		self.owners = infget('owners', [])
@@ -110,6 +110,7 @@ class Pramual(commands.Bot) :
 		self.game = [g] if not isinstance(g, (list, tuple)) else g
 		self.cog_list = infget('cogs', ['cogs.Info', 'cogs.Experimental'])
 		self.interface = infget('interface', False)
+		self.guild_invite_code = infget('my_guild_invite_code', 'KK6R9BJ')
 
 		self.loop = loop
 		self.waitForMessage = {}
@@ -182,14 +183,6 @@ class Pramual(commands.Bot) :
 		print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 		if self.dev :
 			print('>> Developer Mode Enabled')
-		# self.log_channel = super().get_channel(self.log_channel_id)
-		# self.error_channel = super().get_channel(self.error_channel_id)
-		# self.query_channel = super().get_channel(self.query_channel_id)
-
-		# for n, id in self.channels_id.items() :
-		# 	c = super().get_channel(id)
-		# 	self.bot_channels[n] = c
-
 		for c in self.cog_list :
 			try :
 				self.load_extension(c)
@@ -198,12 +191,15 @@ class Pramual(commands.Bot) :
 				error = getattr(error, 'original', error)
 
 				traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-
 		if self.game :
 			game = discord.Game(name=self.game[0].format(self), type=discord.ActivityType.listening)
-
-
 		await self.change_presence(status=discord.Status.online, activity=game)
+		self.static_invite = 'https://discordapp.com/api/oauth2/authorize?client_id={}&permissions=470019184&scope=bot'.format(self.user.id)
+		try :
+			self.guild_invite = await self.fetch_invite(url=self.guild_invite_code)
+		except discord.NotFound :
+			print('>> WARNING : GUILD INVITE NOT FOUND')
+			self.guild_invite = None
 
 	def run_bot(self) :
 		super().run(self.token)

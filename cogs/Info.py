@@ -239,7 +239,7 @@ class Info(Cog) :
 		e.description += s.format(self.bot.stringstack["Model"]["Role"], rr)
 		e.description += s.format(self.bot.stringstack["Model"]["Guild"], len(ctx.bot.guilds))
 
-		e.add_field(name=self.bot.stringstack["Model"]["Invite"], value="[{}](https://discordapp.com/api/oauth2/authorize?client_id={}&permissions=470019184&scope=bot)".format(self.bot.stringstack["ClickHere"], self.bot.user.id), inline=True)
+		e.add_field(name=self.bot.stringstack["Model"]["Invite"], value="[{}]()".format(self.bot.ss("ClickHere"), self.static_invite), inline=True)
 
 		e.set_footer(text="Python {} • discord.py {}".format(platform.python_version(), discord.__version__))
 		await ctx.send(embed=e)
@@ -331,8 +331,17 @@ class Info(Cog) :
 		else :
 			f = "{}__emoticon".format(ctx.bot.bot_name.lower())
 
-
 		file = discord.File(fp=b, filename=f)
 		await ctx.send(file=file)
+
+	@commands.command()
+	async def invite(self, ctx) :
+		await ctx.send(embed=embed_t(ctx, ctx.bot.ss('BotInviteLink'), "[{}]({})".format(ctx.bot.ss("ClickHere"), ctx.bot.static_invite)))
+
+	@commands.command()
+	async def support(self, ctx) :
+		#if not invite_url :
+		if ctx.bot.guild_invite :
+			await ctx.send(ctx.bot.ss('SupportGuild').format(ctx.bot.guild_invite))
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))
