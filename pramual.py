@@ -14,6 +14,7 @@ import aiomysql.cursors
 import aiohttp
 import datetime
 from utils.query import *
+import re
 
 class NoToken(Exception) :
 	"""No Token was found or invalid token"""
@@ -68,6 +69,21 @@ class Pramual(commands.Bot) :
 	def load_strings(self) :
 		with open('i18n/{}.yml'.format(self.default_language), encoding="utf8") as json_file :
 			self.stringstack = yaml.safe_load(json_file)
+
+	# def interface_channel_check(self, channel) :
+	# 	if not channel.topic :
+	# 		return None
+	# 	match = re.match('@@@(.+)__([a-z]*):(.+)*', channel.topic)
+	# 	if (match.group(1)).lower() == self.bot_name.lower() :
+	# 		return (match.group(2), match.group(3).split(','))
+	# 	else :
+	# 		return None
+	#
+	# def scan_interface_channel(self) :
+	# 	for channel in self.get_all_channels()
+	# 		r = interface_channel_check(channel)
+	# 		if r :
+
 
 	def load_configs(self, info, channels, auths, configs, dev, loop) :
 		inf = info
@@ -227,6 +243,13 @@ class Pramual(commands.Bot) :
 		await self.get_bot_channel("system", "log").send(embed=e)
 
 	async def on_command_error(self, ctx, error) :
+		if isinstance(error, commands.CommandNotFound) :
+			return
+		if isinstance(error, commands.MissingRequiredArgument) :
+			e = embed_em(ctx, self.ss('InCorrectArgument'), "```{}{} {}```".format(self.command_prefix, ctx.command.name, ctx.command.usage))
+			await ctx.send(embed=e)
+			return
+
 		e = discord.Embed(title="Command Error : `{}{}`".format(self.command_prefix if ctx.command.name != None else "",ctx.command.name if ctx.command.name != None else "UNKNOWN"))
 		e.description = f"Called to `{self.bot_name}`"
 		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)
@@ -298,20 +321,28 @@ class Pramual(commands.Bot) :
 				if isinstance(cc, discord.TextChannel) :
 					r = cc.topic
 					if r != None :
-						r = r.split(':')
-						if r[0].startswith('@@@{}__channel'.format(self.bot_name.lower())) :
-							if not r[1].isdigit() :
+						match = re.match('@@@(.+)__([a-z]*):(.+)*', r)
+						if match :
+							if (match.group(1)).lower() != self.bot_name.lower() :
+								return
+							if match.group(2) != 'channel' :
+								return
+							p = match.group(3).split(',')
+							if not p[0].isdigit() :
 								await message.add_reaction('\N{NEGATIVE SQUARED CROSS MARK}')
 								await message.add_reaction('\N{INPUT SYMBOL FOR NUMBERS}')
 								return
 							else :
-								c = self.get_channel(int(r[1]))
+								c = self.get_channel(int(p[0]))
 								if c == None :
 									await message.add_reaction('\N{NEGATIVE SQUARED CROSS MARK}')
 									return
 								else :
 									await message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
-									await c.send(message.content)
+									f = []
+									for a in message.attachments :
+										f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
+									await c.send(content=message.content, tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f)
 									return
 		await self.process_commands(message)
 
