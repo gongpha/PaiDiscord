@@ -213,7 +213,7 @@ class Experimental(Cog) :
 		if not guild :
 			await ctx.send(embed=embed_em(ctx, self.bot.ss('ObjectNotFoundFromObject').format(self.bot.ss('Model', 'Guild'), gid)))
 
-		e = member_info(ctx, guild.me)
+		e = model_info(ctx, guild.me)
 		await ctx.send(embed=e)
 
 	@commands.command()
