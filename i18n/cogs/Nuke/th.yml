@@ -1,7 +1,7 @@
 cog :
     name                    : ปรมาณู
     description             : ทำลายล้าง !
-    icon_emoji              : radioactive
+    icon_emoji              : ':radioactive:'
     author                  : gongpha
     translated              : gongpha
 command :

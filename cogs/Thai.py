@@ -16,18 +16,18 @@ class Thai(Cog) :
 	@commands.command()
 	async def longdo(self, ctx, *, search : str) :
 		e = embed_t(ctx, "Longdo : *{}*".format(search))
-		e.description = "[{}]({})".format(self.bot.stringstack["OpenLink"], 'https://dict.longdo.com/mobile.php?search={}'.format(quote_plus(search)))
+		e.description = "[{}]({})".format(self.bot.ss("OpenLink"), 'https://dict.longdo.com/mobile.php?search={}'.format(quote_plus(search)))
 		await ctx.send(embed=e)
 
 	@commands.command()
 	async def word_tokenize(self, ctx, *, text : str) :
 		l = list(filter(lambda a: a != " ", wt(text)))
-		await ctx.send("```" + ", ".join(l) + "```\n{}".format(self.stringstack["Thai__WordCount"].format(len(l))))
+		await ctx.send("```" + ", ".join(l) + "```\n{}".format(self.ss("Thai__WordCount").format(len(l))))
 
 	@commands.command()
 	async def word_tokenize_ext(self, ctx, engine, *, text : str) :
 		l = list(filter(lambda a: a != " ", wt(text,engine=engine)))
-		await ctx.send("```" + ", ".join(l) + "```\n{}".format(self.stringstack["Thai__WordCount"].format(len(l))))
+		await ctx.send("```" + ", ".join(l) + "```\n{}".format(self.ss("Thai__WordCount").format(len(l))))
 
 	@commands.command()
 	async def romanization(self, ctx, *, text : str) :
@@ -36,7 +36,7 @@ class Thai(Cog) :
 	@commands.command()
 	async def spell_check(self, ctx, *, text : str) :
 		l = list(filter(lambda a: a != " ", spell(text)))
-		await ctx.send("```\n" + "\n".join(l) + "```\n{}".format(self.stringstack["Thai__WordCount"].format(len(l))))
+		await ctx.send("```\n" + "\n".join(l) + "```\n{}".format(self.ss("Thai__WordCount").format(len(l))))
 
 	@commands.command()
 	async def spell_correct(self, ctx, *, text : str) :

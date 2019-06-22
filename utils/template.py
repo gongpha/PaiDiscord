@@ -10,7 +10,7 @@ from datetime import datetime
 from pytz import timezone
 import math
 
-def embed_t(ctx, title, description = "") :
+def embed_t(ctx, title = "", description = "") :
 	e = discord.Embed()
 	#print(e.color)
 	if isinstance(ctx.bot.theme, (list, tuple)) :
@@ -20,7 +20,7 @@ def embed_t(ctx, title, description = "") :
 	e.description = description
 	e.title = title
 	if not isinstance(ctx.message.channel, discord.DMChannel) :
-		e.set_footer(text=ctx.bot.stringstack["RequestBy"].format(ctx.author.display_name), icon_url=ctx.message.author.avatar_url)
+		e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author.display_name), icon_url=ctx.message.author.avatar_url)
 
 	return e
 
@@ -34,7 +34,7 @@ def embed_em(ctx, reason, description = "", *args, **kwargs) :
 		e.set_footer(text="{}".format(kwargs.get('error', None)))
 	else :
 		if not isinstance(ctx.message.channel, discord.DMChannel) :
-			e.set_footer(text=ctx.bot.stringstack["RequestBy"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
+			e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author), icon_url=ctx.message.author.avatar_url)
 	return e
 
 def embed_wm(ctx, reason, description = "", *args, **kwargs) :
@@ -46,12 +46,12 @@ def embed_wm(ctx, reason, description = "", *args, **kwargs) :
 		e.set_footer(text="{}".format(kwargs.get('error', None)))
 	else :
 		if not isinstance(ctx.message.channel, discord.DMChannel) :
-			e.set_footer(text=ctx.bot.stringstack["RequestBy"].format(ctx.author), icon_url=ctx.message.author.avatar_url)
+			e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author), icon_url=ctx.message.author.avatar_url)
 	return e
 
 async def waitReactionRequired(ctx, bot, give, ruser, embed) :
 	e = embed.copy()
-	e.add_field(name=bot.stringstack["PleaseReactionAllCommander"],value=bot.stringstack["Empty"])
+	e.add_field(name=bot.ss("PleaseReactionAllCommander"),value=bot.stringstack["Empty"])
 	msg = await ctx.send(embed=e)
 	for em in give :
 		#await ctx.send(em.encode('unicode-escape').decode('ASCII'))
@@ -66,14 +66,14 @@ async def waitReactionRequired(ctx, bot, give, ruser, embed) :
 			reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
 		except asyncio.TimeoutError:
 			e.clear_fields()
-			e.add_field(name=bot.stringstack["PleaseReactionAllCommander"],value=bot.stringstack["TimeoutWaitingReaction"])
+			e.add_field(name=bot.ss("PleaseReactionAllCommander"),value=bot.ss("TimeoutWaitingReaction"))
 			await msg.edit(embed=e)
 			await msg.clear_reactions()
 			return False
 		else:
 			e.clear_fields()
 			added.append(str(reaction.emoji))
-			e.add_field(name=bot.stringstack["PleaseReactionAllCommander"],value=" ".join(added))
+			e.add_field(name=bot.ss("PleaseReactionAllCommander"),value=" ".join(added))
 			if set(added) == set(give) :
 				return True
 			await msg.edit(embed=e)
@@ -83,7 +83,7 @@ async def extract_str(ctx, string, count = None, char = '|') :
 	if count == None :
 		return t
 	if len(t) != count :
-		em = embed_em(ctx, ctx.bot.ss('TooManyInput'), ctx.bot.ss('ThereAreInputsButWant').format(count, len(t)))
+		em = embed_em(ctx, ctx.bot.ss('TooManyOrFewInput'), ctx.bot.ss('ThereAreInputsButWant').format(count, len(t)))
 		await ctx.send(embed=em)
 		return None
 	return t
@@ -265,23 +265,23 @@ def model_info(ctx, model) :
 	if isinstance(model, discord.Member) :
 		if model.nick :
 			e.add_field(name=ctx.bot.ss("Model", "Nickname"), value=escape_mentions(model.nick), inline=True)
-		e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(model.guild), value=thai_strftime(model.joined_at, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.joined_at)), inline=True)
+		e.add_field(name=ctx.bot.ss("JoinedGuildAt").format(model.guild), value=thai_strftime(model.joined_at, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.joined_at)), inline=True)
 		if model.premium_since :
-			e.add_field(name=ctx.bot.stringstack["PremiumSince"], value=thai_strftime(model.premium_since, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.premium_since)), inline=True)
+			e.add_field(name=ctx.bot.ss("PremiumSince"), value=thai_strftime(model.premium_since, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.premium_since)), inline=True)
 
 		def sss(SSS) :
 			return [ctx.bot.ss("Status", SSS.name), d_status_icon[SSS.name]]
 		if not model.bot :
 			status_all = "\n\n{1} **{2}** : {0}\n{4} **{5}** : {3}\n{7} **{8}** : {6}".format(
-				"🖥️ " + ctx.bot.stringstack["Model"]["Desktop"],
+				"🖥️ " + ctx.bot.stringstack("Model", "Desktop"),
 				sss(model.desktop_status)[1], sss(model.desktop_status)[0],
-				"🌐 " + ctx.bot.stringstack["Model"]["Web"],
+				"🌐 " + ctx.bot.stringstack("Model", "Web"),
 				sss(model.web_status)[1], sss(model.web_status)[0],
-				"📱 " + ctx.bot.stringstack["Model"]["Mobile"],
+				"📱 " + ctx.bot.stringstack("Model", "Mobile"),
 				sss(model.mobile_status)[1], sss(model.mobile_status)[0],
 			)
 		else :
 			status_all = ""
 		status_one = "{0} **{1}**{2}".format(sss(model.status)[1], sss(model.status)[0], status_all)
-		e.add_field(name=ctx.bot.stringstack["Model"]["Status"], value=status_one, inline=True)
+		e.add_field(name=ctx.bot.stringstack("Model", "Status"), value=status_one, inline=True)
 	return e

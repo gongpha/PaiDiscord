@@ -1,7 +1,7 @@
 cog :
     name                    : การทดลองขั้นสูง
     description             : สามารถใช้ได้แค่เจ้าของบอทเท่านั้น
-    icon_emoji              : wrench
+    icon_emoji              : ':wrench:'
     author                  : gongpha
     translated              : gongpha
 command :
@@ -52,10 +52,6 @@ command :
             - _send_direct_message
             - _snddm
             - _chat_dm
-    _set_credits :
-        description         : ตั้งเครดิต
-        usage               : <ID ของผู้ใช้> <จำนวน>
-        aliases             :
 
     _send_embed :
         description         : ส่งฝังในรูปแบบ JSON ผ่านช่องด้วย ID

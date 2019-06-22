@@ -1,0 +1,28 @@
+cog :
+    name                    : มายคราฟ (Minecraft)
+    description             : คำสั่งเกี่ยวกับภาษาไทย
+    icon_emoji              : '<:pai__mcicon:591950884368285724>'
+    author                  : gongpha
+    translated              : gongpha
+command :
+    mcskin :
+        description         : ส่งรูปผิว (Skin) จากชื่อหรือ UUID จาก Minecraft Server
+        usage               : <ชื่อหรือ UUID ของบัญชี Minecraft> <แบบมีหมวก = ใช่>
+        aliases             :
+            - minecraftskin
+            - skinminecraft
+            - skinmc
+    mcskin_raw :
+        description         : ส่งรูปผิว (Skin) จากชื่อหรือ UUID แบบต้นฉบับจาก Minecraft Server
+        usage               : <ชื่อหรือ UUID ของบัญชี Minecraft> <อวตาร์ที่แสดงแบบมีหมวก = ใช่>
+        aliases             :
+            - minecraftskinraw
+            - skinminecraftraw
+            - skinmc_raw
+            - mcskin_original
+            - mcskin_texture
+
+
+UsernameNotfound      : ไม่พบชื่อผู้ใช้
+UUIDNotfound          : ไม่พบ UUID
+NoHat                 : ไม่มีหมวก

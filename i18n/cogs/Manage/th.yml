@@ -2,7 +2,7 @@
 cog :
     name                    : การจัดการ
     description             : การตั้งค่า จัดการ ผู้ใช้ ช่อง บทบาท เซิร์ฟเวอร์
-    icon_emoji              : gear
+    icon_emoji              : ':gear:'
     author                  : gongpha
     translated              : gongpha
 command :

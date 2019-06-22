@@ -9,7 +9,7 @@ class Cog(commands.Cog) :
 	def __init__(self, bot):
 		self.bot = bot
 		#self.session = aiohttp.ClientSession(loop=bot.loop)
-		with open('i18n/cogs/{}/{}.yml'.format(self.__class__.__name__, bot.default_language), encoding="utf8") as json_file:
+		with open('i18n/cogs/{}/{}.yml'.format(self.__class__.__name__, bot.languages[0]), encoding="utf8") as json_file:
 			self.stringstack = yaml.safe_load(json_file)
 		try :
 			self.cog_name = self.stringstack["cog"]["name"]
@@ -21,6 +21,17 @@ class Cog(commands.Cog) :
 		self.cog_hidden = False
 
 		super().__init__()
+
+	def ss(self, *keylist) :
+		#lang = self.cached_language.get(id, None)
+		lang = None
+		dct = self.stringstack.copy()
+		for key in keylist :
+			try:
+				dct = dct[key]
+			except KeyError :
+				return "@@@[string_not_found/ไม่-พบ-ข้อความ]"
+		return dct
 
     # @classmethod
     # def setup(c, bot) :

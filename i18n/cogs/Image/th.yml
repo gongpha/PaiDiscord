@@ -1,7 +1,7 @@
 cog :
     name                    : รูปภาพ
     description             : แก้ไข, กรองรูปภาพ
-    icon_emoji              : frame_photo
+    icon_emoji              : ':frame_photo:'
     author                  : gongpha
     translated              : gongpha
 command :

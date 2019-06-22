@@ -4,7 +4,7 @@ import random
 
 async def r_RandomCat(b, l) :
 	r = await b.session.get('https://aws.random.cat/meow')
-	if r.status != 200:
+	if r.status != 200 :
 		return None
 	j = await r.json()
 	return (j["file"], j["file"])
@@ -19,7 +19,7 @@ async def r_Imgur(b, l) :
 
 
 	t = await b.session.post("https://api.imgur.com/oauth2/token", data=data)
-	if t.status != 200:
+	if t.status != 200 :
 		return None
 
 	jt = await t.json()
@@ -55,7 +55,7 @@ async def r_Imgur(b, l) :
 #                  access_token_key=None, session=None, logger=None,
 # **params)
 
-	if r.status != 200:
+	if r.status != 200 :
 		return None
 	j = await r.json()
 	try :

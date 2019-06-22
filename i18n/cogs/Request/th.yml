@@ -1,7 +1,7 @@
 cog :
     name                    : การร้องขอ
     description             : ใช้บอทเพื่อร้องขอข้อมูลจากอินเทอร์เน็ต
-    icon_emoji              : arrow_upper_left
+    icon_emoji              : ':arrow_upper_left:'
     author                  : gongpha
     translated              : gongpha
 command :

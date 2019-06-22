@@ -9,20 +9,24 @@ animated_image_ext = ("gif", )
 async def im_avatar(ctx, u) :
 	uu = u or ctx.author
 	url = uu.avatar_url_as(format="png")
-	#print(url)
 	r = await ctx.bot.session.get(str(url))
 	if r.status != 200:
 		return None
 	return Image.open(BytesIO(await r.read()))
 
 def avatar_image_circle(user) :
-    url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(user)
-    im = Image.open(BytesIO(requests.get(url).content))
-    mask = Image.new("L", im.size, 0)
-    d = ImageDraw.Draw(mask)
-    d.ellipse((0,0,im.width,im.height), fill=255)
-    im.putalpha(mask)
-    return im
+	url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(user)
+	im = Image.open(BytesIO(requests.get(url).content))
+	mask = Image.new("L", im.size, 0)
+	d = ImageDraw.Draw(mask)
+	d.ellipse((0,0,im.width,im.height), fill=255)
+	im.putalpha(mask)
+	return im
+
+async def processing_image_to_file(ctx=None, filename="processed_image.png", function=None, *parameter) :
+	async with ctx.channel.typing() :
+		re = await ctx.bot.loop.run_in_executor(None, function, *parameter)
+		return discord.File(re, filename=filename)
 
 async def _getlastimg(ctx, format) :
 	if ctx.message.attachments :

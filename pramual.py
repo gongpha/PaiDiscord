@@ -67,8 +67,14 @@ class Pramual(commands.Bot) :
 			self.webhook_avatar = image.read()
 
 	def load_strings(self) :
-		with open('i18n/{}.yml'.format(self.default_language), encoding="utf8") as json_file :
-			self.stringstack = yaml.safe_load(json_file)
+		self.stringstack = {}
+		for language in self.languages :
+			try :
+				with open('i18n/{}.yml'.format(language), encoding="utf8") as json_file :
+					self.stringstack[language] = yaml.safe_load(json_file)
+			except FileNotFoundError :
+				print('>> "{}" language not found'.format(language))
+				self.stringstack[language] = {}
 
 	# def interface_channel_check(self, channel) :
 	# 	if not channel.topic :
@@ -106,9 +112,18 @@ class Pramual(commands.Bot) :
 		self.bot_description = infget('description', '')
 		self.bot_description_long = infget('description_long', '')
 		self.token = infget('token', None)
-		self.cmd_prefix = infget('command_prefix', commands.when_mentioned_or('_'))
+		self.cached_prefix = {}
+		self.cached_language = {}
+		self.cmdprefix = infget('default_command_prefix', '_')
+		def prefix(bot, message) :
+			r = []
+			r = commands.when_mentioned(bot, message) + r
+			r.append(self.cached_prefix.get((message.guild or message.author).id, self.cmdprefix))
+			return r
+		self.cmd_prefix = prefix
+
 		self.default_timezone = infget('default_timezone', 'Asia/Bangkok')
-		self.default_language = infget('default_language', 'th')
+		self.languages = infget('languages', ['en', 'th'])
 		self.theme = infget('theme', (0xFF7F00, 0x007FFF))
 		self.owners = infget('owners', [])
 		self.can_mysql = infget('mysql', False)
@@ -181,7 +196,9 @@ class Pramual(commands.Bot) :
 		await self.get_bot_channel("system", "query_report").send(embed=e)
 
 	def ss(self, *keylist) :
-		dct = self.stringstack.copy()
+		#lang = self.cached_language.get(id, None)
+		lang = None
+		dct = self.stringstack[lang or self.languages[0]].copy()
 		for key in keylist :
 			try:
 				dct = dct[key]
@@ -193,6 +210,14 @@ class Pramual(commands.Bot) :
 		if self.dev :
 			return None
 		return self.dev_configs.get(key, default)
+
+	# async def fetch_language(self, id) :
+	# 	if id in self.cached_language :
+	# 		return self.cached_language[id]
+	# 	else :
+	# 		lang = await fetchone(self, "SELECT lang FROM pai_discord_profile WHERE snowflake = %s", id)
+	# 		if lang :
+
 
 	async def on_ready(self) :
 		print(f'>> Login As "{self.user.name}" ({self.user.id})')
@@ -229,7 +254,9 @@ class Pramual(commands.Bot) :
 			await commit(self, "UPDATE `pai_discord_profile` SET commands=commands + 1, user_name=%s WHERE snowflake=%s", (ctx.author.name, ctx.author.id))
 
 	async def on_command(self, ctx) :
-		e = discord.Embed(title=f"Command : `{self.command_prefix}{ctx.command.name}`")
+		# if ctx.author.id not in self.cached_language :
+		# 	await self.fetch_language(ctx.author.id)
+		e = discord.Embed(title=f"Command : `{self.cmdprefix}{ctx.command.name}`")
 		e.description = f"Called to `{self.bot_name}`"
 		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)
 		e.add_field(name='Guild', value='`{0.name}` ({0.id})'.format(ctx.message.guild) if ctx.message.guild else 'Direct Message')
@@ -246,11 +273,11 @@ class Pramual(commands.Bot) :
 		if isinstance(error, commands.CommandNotFound) :
 			return
 		if isinstance(error, commands.MissingRequiredArgument) :
-			e = embed_em(ctx, self.ss('InCorrectArgument'), "```{}{} {}```".format(self.command_prefix, ctx.command.name, ctx.command.usage))
+			e = embed_em(ctx, self.ss('InCorrectArgument'), "```{}{} {}```".format(self.cmdprefix, ctx.command.name, ctx.command.usage))
 			await ctx.send(embed=e)
 			return
 
-		e = discord.Embed(title="Command Error : `{}{}`".format(self.command_prefix if ctx.command.name != None else "",ctx.command.name if ctx.command.name != None else "UNKNOWN"))
+		e = discord.Embed(title="Command Error : `{}{}`".format(self.cmdprefix if ctx.command.name != None else "",ctx.command.name if ctx.command.name != None else "UNKNOWN"))
 		e.description = f"Called to `{self.bot_name}`"
 		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)
 		e.add_field(name='Guild', value='`{0.name}` ({0.id})'.format(ctx.message.guild) if ctx.message.guild else 'Direct Message')
@@ -275,7 +302,7 @@ class Pramual(commands.Bot) :
 
 	async def on_member_join(self, member) :
 		if self.get_dev_configs("member_join_message", True) :
-			e = discord.Embed(title=self.stringstack["WelcomeUserToGuild"].format(member, member.guild))
+			e = discord.Embed(title=self.ss("WelcomeUserToGuild").format(member, member.guild))
 			e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
 			e.color = 0x00AA80
 			e.set_thumbnail(url=member.avatar_url)
@@ -379,7 +406,7 @@ class Pramual(commands.Bot) :
 		# 	for user in message.mentions :
 		# 		if user.id == self.user.id :
 		# 			if message.author.id != self.user.id :
-		# 				if not message.content.startswith(self.command_prefix) :
+		# 				if not message.content.startswith(self.cmdprefix) :
 		# 					await message.channel.send(self.stringstack["Response"]["UserSentBot"].format(message.author.mention))
 		#
 		# 					if not message.channel.id in self.waitForMessage :

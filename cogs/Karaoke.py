@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import typing
+from io import BytesIO
 from utils.cog import Cog
 from utils.cog import loadInformation
 from utils.template import embed_t, extract_str
@@ -29,7 +30,10 @@ class Karaoke(Cog) :
 		image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - img_text.width / 2), image.height - img_text_crop.height - 50),img_text_crop)
 		image.paste(score_crop,(int(image.width / 2 - img_text.width / 2), image.height - score_crop.height - 50),score_crop)
 
-		return image
+		b = BytesIO()
+		image.save(b, format="png")
+		b.seek(0)
+		return b
 
 	def k_grammy(self, text, eng, image, percent, _size = 1) :
 		# by gongpha, designed by GMM GRAMMY
@@ -60,7 +64,10 @@ class Karaoke(Cog) :
 		image.paste(eimg_text_crop,(int(eimg_text_scored.width * (percent / 100)) + int(image.width / 2 - eimg_text.width / 2), image.height - eimg_text_crop.height - 20), eimg_text_crop)
 		image.paste(escore_crop,(int(image.width / 2 - eimg_text.width / 2), image.height - escore_crop.height - 20),escore_crop)
 
-		return image
+		b = BytesIO()
+		image.save(b, format="png")
+		b.seek(0)
+		return b
 
 	def k_topline_pp(self, text, image, color, percent, size=1) :
 		# by gongpha, designed like Topline-Diamond (ท็อปไลน์-ไดมอนด์)
@@ -77,26 +84,23 @@ class Karaoke(Cog) :
 		# draw = ImageDraw.Draw(image)
 		# image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - width / 2),int((y / 100)*(image.height))),img_text_crop)
 		# image.paste(score_crop,(int(image.width / 2 - width/2),int((y / 100)*(image.height))),score_crop)
-		image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - img_text.width / 2), image.height - img_text_crop.height - 50),img_text_crop)
-		image.paste(score_crop,(int(image.width / 2 - img_text.width / 2), image.height - score_crop.height - 50),score_crop)
+		image.paste(img_text_crop,(int(img_text_scored.width * (percent / 100)) + int(image.width / 2 - img_text.width / 2), image.height - img_text_crop.height - 50), img_text_crop)
+		image.paste(score_crop,(int(image.width / 2 - img_text.width / 2), image.height - score_crop.height - 50), score_crop)
 
-		return image
+		b = BytesIO()
+		image.save(b, format="png")
+		b.seek(0)
+		return b
 
 	@commands.command()
 	async def wanbuaban(self, ctx, *, text : str) :
-		#print(self.bot.name)
-		#print(self.bot.description)
-		self.k_wanbuaban(text, await getLastImage(ctx), randint(0, 100), 1).save('cache/wanbuaban.png')
-		file = discord.File("cache/wanbuaban.png", filename="wanbuaban.png")
-		await ctx.send("{} : `{}`".format(self.bot.stringstack["Model"]["Text"], text),file=file)
+		file = await processing_image_to_file(ctx, "wanbuaban.png", self.k_wanbuaban, text, await getLastImage(ctx), randint(0, 100), 1)
+		await ctx.send(file=file)
 
 	@commands.command()
 	async def topline(self, ctx, *, text : str) :
-		#print(self.bot.name)
-		#print(self.bot.description)
-		self.k_topline_pp(text, await getLastImage(ctx), None, randint(0, 100), 1).save('cache/topline.png')
-		file = discord.File("cache/topline.png", filename="topline-diamond.png")
-		await ctx.send("{} : `{}`".format(self.bot.stringstack["Model"]["Text"], text),file=file)
+		file = await processing_image_to_file(ctx, "topline.png", self.k_topline_pp, text, await getLastImage(ctx), None, randint(0, 100), 1)
+		await ctx.send(file=file)
 
 	@commands.command()
 	async def grammy(self, ctx, *, text : str) :
@@ -105,8 +109,7 @@ class Karaoke(Cog) :
 		t = await extract_str(ctx, text, 2)
 		if not t :
 			return
-		self.k_grammy(t[0], t[1], await getLastImage(ctx), randint(0, 100), 1).save('cache/grammy-karaoke.png')
-		file = discord.File("cache/grammy-karaoke.png", filename="grammy-karaoke.png")
-		await ctx.send("{} : `{}` | `{}`".format(self.bot.stringstack["Model"]["Text"], t[0], t[1]),file=file)
+		file = await processing_image_to_file(ctx, "grammy-karaoke.png", self.k_grammy, t[0], t[1], await getLastImage(ctx), randint(0, 100), 1)
+		await ctx.send(file=file)
 def setup(bot) :
 	bot.add_cog(loadInformation(Karaoke(bot)))

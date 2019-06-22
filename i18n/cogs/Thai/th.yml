@@ -1,7 +1,7 @@
 cog :
     name                    : ภาษาไทย
     description             : คำสั่งเกี่ยวกับภาษาไทย
-    icon_emoji              : flag_th
+    icon_emoji              : ':flag_th:'
     author                  : gongpha
     translated              : gongpha
 command :

@@ -12,7 +12,7 @@ token : ?PramualLocalToken
 
 # Bot Token
 # Leave it will be used by mention only
-command_prefix : "_"
+default_command_prefix : "_"
 
 # Timezone (Default : Asia/Bangkok)
 # See all in https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568
@@ -21,7 +21,10 @@ default_timezone : Asia/Bangkok
 # Bot Interface Language (Default : th)
 # All translation files are stored in i18n folder
 # Also, you can duplicate them and edit your own
-default_language : th
+# The first element will be default
+languages :
+    - th
+    - en
 
 # Bot Color
 # Used in embed
@@ -64,6 +67,7 @@ cogs :
   - cogs.Request
   - cogs.Thai
   - cogs.ImageGenerate
+  - cogs.Minecraft
   - cogs.Experimental
 
 # Your Bot Invite Code or URL

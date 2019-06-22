@@ -64,18 +64,6 @@ class Experimental(Cog) :
 			channel = ctx.bot.get_channel(int(chid))
 		message = await channel.fetch_message(id)
 
-		# except anymodel.NotFound as e:
-		# 	await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('MessageNotFound'), error=e))
-		# 	return
-		# except anymodel.Forbidden as e:
-		# 	#await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden') + "\n" + self.bot.ss('UserIDOwnedThisObjectNotMe').format(message.author.name, message.author.id)))
-		# 	await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden'), error=e))
-		# 	return
-
-		# except discord.HTTPException as e:
-		# 	await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
-		# 	return
-
 		try :
 			await message.edit(content=text)
 		except discord.HTTPException as e:
@@ -186,11 +174,11 @@ class Experimental(Cog) :
 		await self.bot.change_presence(status=st)
 		await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(sti, self.bot.ss("Status", "dnd"))))
 
-	@commands.command()
-	@IsOwnerBot()
-	async def _set_credits(self, ctx, id, credits) :
-		await commit(self.bot, "UPDATE `pai_discord_profile` SET credits=%s WHERE snowflake=%s", (credits, id))
-		await ctx.send(":ok_hand:")
+	# @commands.command()
+	# @IsOwnerBot()
+	# async def _set_credits(self, ctx, id, credits) :
+	# 	await commit(self.bot, "UPDATE `pai_discord_profile` SET credits=%s WHERE snowflake=%s", (credits, id))
+	# 	await ctx.send(":ok_hand:")
 
 	@commands.command()
 	@IsOwnerBot()

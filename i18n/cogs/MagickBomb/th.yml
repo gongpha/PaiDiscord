@@ -1,7 +1,7 @@
 cog :
     name                    : ระเบิดเวทมนต์
     description             : เห้ย ! มันคือเ*ี้ยอะไรเนี่ย มันคงจะขลังมาก
-    icon_emoji              : sparkles
+    icon_emoji              : ':sparkles:'
     author                  : gongpha
     translated              : gongpha
 command :
