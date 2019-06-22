@@ -48,7 +48,7 @@ class Info(Cog) :
 		return h
 
 	def help_command_embed(self, ctx, command, cog) :
-		h = embed_t(ctx, "{}**{}**    (:{}: {})".format(ctx.bot.cmdprefix, command.name, ": :".join(cog.cog_emoji), cog.cog_name), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.command_prefix, command.name, command.usage or "")))
+		h = embed_t(ctx, "{}**{}**    (:{}: {})".format(ctx.bot.cmdprefix, command.name, ": :".join(cog.cog_emoji), cog.cog_name), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.cmdprefix, command.name, command.usage or "")))
 		#if command.sql :
 		#	h.description += "\n📡 **{}**".format(self.bot.ss("CommandNeedQuery"])
 		return h
