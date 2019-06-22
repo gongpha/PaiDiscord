@@ -39,7 +39,7 @@ class Info(Cog) :
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
-		h = embed_t(ctx, ":{}: {}".format(": :".join(cog.cog_emoji), cog.cog_name), cog.cog_desc)
+		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji), cog.cog_name), cog.cog_desc)
 		if not cog.get_commands() :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.ss("NoCommand")))
 		for c in cog.get_commands() :
