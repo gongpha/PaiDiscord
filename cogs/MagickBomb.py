@@ -47,6 +47,6 @@ class MagickBomb(Cog) :
 						await r.edit(nick="r{}".format(str(r.id)), reason=rs)
 					except :
 						failed += 1
-			await pcm.edit(content='\N{HEAVY CHECK MARK} {}\n{} : {}'.format(ctx.bot.ss('Success'), ctx.bot.ss('Failed'), failed))
+			await pcm.edit(content='\N{WHITE HEAVY CHECK MARK} {}\n{} : {}'.format(ctx.bot.ss('Success'), ctx.bot.ss('Failed'), failed))
 def setup(bot) :
 	bot.add_cog(loadInformation(MagickBomb(bot)))
