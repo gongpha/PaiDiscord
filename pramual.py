@@ -302,8 +302,9 @@ class Pramual(commands.Bot) :
 
 	async def on_member_join(self, member) :
 		if self.get_dev_configs("member_join_message", True) :
-			e = discord.Embed(title=self.ss("WelcomeUserToGuild").format(member, member.guild))
-			e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
+			e = discord.Embed(title=self.ss("WelcomeUserToGuild").format(member=member, guild=member.guild))
+			ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n/10%10!=1)*(n%10<4)*n%10::4])
+			e.description = "*{}*".format(self.ss("UserWasJoinedGuildNo").format(mention=member.mention, count=len(member.guild.members), ordinal=ordinal(len(member.guild.members))))
 			e.color = 0x00AA80
 			e.set_thumbnail(url=member.avatar_url)
 			e.set_footer(text=member.id)
@@ -313,8 +314,8 @@ class Pramual(commands.Bot) :
 		if self.get_dev_configs("member_leave_message", True) :
 			if self.user.id == member.id :
 				return
-			e = discord.Embed(title=self.stringstack["UserWasLeftTheGuild"].format(member, member.guild))
-			e.description = "*{}*".format(self.stringstack["NowGuildHadNoMembersLeft"].format(len(member.guild.members)))
+			e = discord.Embed(title=self.ss("UserWasLeftTheGuild").format(member=member, guild=member.guild))
+			e.description = "*{}*".format(self.ss("NowGuildHadNoMembersLeft").format(count=len(member.guild.members)))
 			e.color = 0xCE3232
 			e.set_thumbnail(url=member.avatar_url)
 			e.set_footer(text=member.id)

@@ -41,7 +41,14 @@ class Experimental(Cog) :
 	@commands.command()
 	@IsOwnerBot()
 	async def _send(self, ctx, id, *, text : str) :
-		channel = self.bot.get_channel(int(id))
+		try :
+			user = await ctx.bot.fetch_user(id)
+			channel = user.dm_channel
+			if not channel :
+				await user.create_dm()
+				channel = user.dm_channel
+		except discord.NotFound :
+			channel = ctx.bot.get_channel(int(id))
 		if not channel :
 			await ctx.send(text)
 			return
@@ -122,19 +129,6 @@ class Experimental(Cog) :
 				for a in message.attachments :
 					f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
 				await ctx.send(content=">>>==================================================\n**{0.author}** [{0.author.mention}] user({0.author.id}) message({0.id}) : \n{0.content}\n<<<==================================================".format(message), tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f)
-
-	@commands.command()
-	@IsOwnerBot()
-	async def _send_dm(self, ctx, id, *, text : str) :
-		user = await self.bot.fetch_user(id) or ctx.author.id
-		channel = user.dm_channel
-		if not channel :
-			await user.create_dm()
-			channel = user.dm_channel
-		try :
-			await channel.send(text)
-		except discord.Forbidden :
-			await ctx.send(embed=embed_em(ctx, self.bot.ss("CannotSendTo").format(self.bot.ss("DMWithUser").format(channel.recipient.name)), self.bot.ss("Forbidden")))
 
 	@commands.command()
 	@IsOwnerBot()

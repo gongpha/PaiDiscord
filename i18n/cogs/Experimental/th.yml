@@ -86,7 +86,7 @@ command :
             - _sgm
     _set_game_playing :
         description         : ตั้งชื่อเกม โดยให้สถานะเป็น กำลังเล่น
-        usage               : <สถานะการเล่น> <ชื่อเกม...>
+        usage               : <ชื่อเกม...>
         aliases             :
             - _ตั้งเกมเล่น
             - _set_gamep

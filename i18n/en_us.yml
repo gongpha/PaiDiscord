@@ -1,0 +1,243 @@
+# WARNING : I am not English native speaker
+# Everyone can help me approve this
+
+LanguageName                : English (United States)
+lang                        : en_us
+author                      : gongpha
+need_s                      : True
+use_buddhist_era            : False
+author_id                   : 269418798975680513
+RequestBy                   : Requested By {}
+Empty                       : Empty
+None                        : None
+NoObject                    : No Object
+NoCommand                   : No Command
+Powered                     :
+
+VoiceRegion :
+    amsterdam               : Amsterdam
+    brazil                  : Brazil
+    eu_central              : EU Central
+    eu_west                 : EU West
+    frankfurt               : Frankfurt
+    hongkong                : Hong Kong
+    japan                   : Japan
+    london                  : London
+    russia                  : Russia
+    singapore               : Singapore
+    southafrica             : South Africa
+    sydney                  : Sydney
+    us_central              : US Central
+    us_east                 : US East
+    us_south                : US South
+    us_west                 : US West
+    vip_amsterdam           : Amsterdam (VIP)
+    vip_us_east             : US East (VIP)
+    vip_us_west             : US West (VIP)
+
+Model :
+    Guild                   : Server
+    Member                  : Member
+    User                    : User
+    Message                 : Message
+    CacheMessage            : Cached Message
+    ID                      : ID
+    Embed                   : Embed
+    Attachment              : Attachment
+    Channel                 : Channel
+    TextChannel             : Text Channel
+    VoiceChannel            : Voice Channel
+    VoiceClient             : Voice Client
+    Category                : Category
+    DMChannel               : Direct Message
+    Reaction                : Reaction
+    Emoji                   : Emoji
+    Role                    : Role
+    Region                  : Region
+    Owner                   : Owner
+    Command                 : Command
+    Alias                   : Alias
+    Text                    : Text
+    Name                    : Name
+    BotName                 : Bot Name
+    Nickname                : Nickname
+    Status                  : Status
+    Desktop                 : Desktop
+    Mobile                  : Mobile
+    Web                     : Web
+    Profile                 : Profile
+    Credit                  : Credit
+    Source                  : Source
+    Stats                   : Stats
+    Discriminator           : Discriminator
+    Memory                  : Memory
+    CPU                     : CPU
+    Ping                    : Ping
+    Invite                  : Invite
+    Boost                   : Boost
+    Item                    : Item
+    URL                     : URL
+    Icon                    : Icon
+    Banner                  : Banner
+    Splash                  : Splash
+    SystemChannel           : SystemChannel
+    Bot                     : Bot
+    ManagedRole             : Managed Role
+    UnmanagedRole           : Unmanaged Role
+    Limits                  : Limits
+    FileSize                : File Size
+    Bitrate                 : Bitrate
+
+Status :
+    online                  : Online
+    idle                    : Idle
+    dnd                     : Do Not Disturb
+    offline                 : Offline
+    invisible               : Invisible
+
+ActivityType :
+    unknown                 : Unknown
+    playing                 : Playing
+    streaming               : Streaming
+    listening               : Listening
+    watching                : Watching
+
+Permission :
+    ManageChannels          : Manage Channels
+    ManageMessages          : Manage Messages
+    ManageNicknames         : Manage Nicknames
+    ManageRoles             : Manage Roles
+    ManageWebhooks          : Manage Webhooks
+
+Reason :
+    CommandBy               : Commanded by {}
+
+# Obsolete (Why you didn't delete it away ?)
+Response :
+    UserSentActivitiesSpotify   : How to listen this ?
+    UserSentEveryone            : Ahh, WHAT ?
+    UserSentBot                 : What ? {}
+    BotSentItself               : I just mentioned to myself =w=
+
+Time :
+    Recently                : Recently
+    SecondsAgo              : Seconds Ago
+    MinutesAgo              : Minutes Ago
+    HoursAgo                : Hours Ago
+    Yesterday               : Yesterday
+    DaysAgo                 : Days Ago
+    WeeksAgo                : Weeks Ago
+    MonthsAgo               : Months Ago
+    YearsAgo                : Years Ago
+
+    Second                  : Second
+    Minute                  : Minute
+    Hour                    : Hour
+    Day                     : Day
+    Week                    : Week
+    Month                   : Month
+    Year                    : Year
+
+Date :
+    Monday                  : Monday
+    Tuesday                 : Tuesday
+    Wednesday               : Wednesday
+    Thursday                : Thursday
+    Friday                  : Friday
+    Saturday                : Saturday
+    Sunday                  : Sunday
+
+    _Monday                 : Mon
+    _Tuesday                : Tue
+    _Wednesday              : Wed
+    _Thursday               : Thu
+    _Friday                 : Fri
+    _Saturday               : Sat
+    _Sunday                 : Sun
+
+    January                : January
+    February               : February
+    March                  : March
+    April                  : April
+    May                    : May
+    June                   : June
+    July                   : July
+    August                 : August
+    September              : September
+    October                : October
+    November               : November
+    December               : December
+
+    _January                : Jan
+    _February               : Feb
+    _March                  : Mar
+    _April                  : Apr
+    _May                    : May
+    _June                   : Jun
+    _July                   : Jul
+    _August                 : Aug
+    _September              : Sep
+    _October                : Oct
+    _November               : Nov
+    _December               : Dec
+
+CreatedAt                   : Created At
+JoinedAt                    : Joined At
+JoinedGuildAt               : Joined {} At
+DateTimeTextUnix            : "%-d %B %Y %H:%M:%S"
+DateTimeTextWindows         : "%e %B %Y %H:%M:%S"
+DateTimeTextUnixComplex     : "%-d %B %Y %H:%M:%S + (%f)\n{}"
+DateTimeTextWindowsComplex  : "%e %B %Y %H:%M:%S + (%f)\n{}"
+TimeoutWaitingReaction      : Timeout while waiting reactions. Please send a command again
+Warning                     : Warning !
+ActionCannotUndo            : The action cannot be undo !
+PleaseReactionAllCommander  : Please add all reactions below to continue
+NoPermissionWith            : No Permission with *{}*
+CannotSendTo                : Cannot Send to `{}`
+CannotEdit                  : Cannot Edit `{}`
+CannotDelete                : Cannot delete `{}`
+ObjectNotFoundFromObject    : Not found {} `{}`
+ObjectNotFoundInObject      : "{} was not found in {}"
+YouAreNotBotOwner           : You aren't a bot owner. Then, You haven't permission to use this command
+YouAreNotGuildOwner         : You aren't a server owner. Then, You haven't permission to use this command
+CommandInDMNotAvailable     : Command isn't available in Direct Message
+DMWithUser                  : DM with {}
+WelcomeUserToGuild          : Welcome {member} to {guild} !
+UserWasJoinedGuildNo        : "{mention} was joined server as {ordinal} member"
+UserWasLeftTheGuild         : "{member} was left {guild}"
+NowGuildHadNoMembersLeft    : "There are {count} members on the server"
+NoMySQLAvailable            : "This bot doesn't have MySQL features"
+CannotUseWithBot            : Command cannot be used on the bot
+CannotUseWithUser           : Command cannot be used on the user
+ConnectionClosed            : Connection Closed
+QueryExecuteTime            : Query Execution used {} seconds
+TypeCommandForShowAllOject  : Please use {} for show all {}
+NoResult                    : No Result
+OpenOriginal                : Open an original
+OpenLink                    : Open a link
+PingReturnedSec             : "Ping : **{}** second"
+CommandNeedQuery            : Command needs query features from database
+StatsOf                     : Stats of {}
+PercentUsagedFrom           : "Usaged {} % | from {}"
+PercentUsagedNewLine        : "Usaged {} % | {}"
+SystemUpTime                : System Uptime
+ClickHere                   : Click Here
+Forbidden                   : Forbidden
+UserIDOwnedThisObjectNotMe  : "`{}` {} is an owner of this {}. Not me"
+MessageNotFound             : Message Not found
+CommandUsedCount            : Command Used Count
+SetItTo                     : Set to **{}**
+TooManyOrFewInput           : Too many or few input
+ThereAreInputsButWant       : We want `{}` but `{}` given
+InformationFromServer       : Info from Server `{}`
+BoostTierNo                 : Boost Level {}
+PremiumSince                : Premium Since
+OnObject                    : On {}
+InCorrectArgument           : Invalid Argument
+CommandUsage                : "Command Usage : \n```\n{}\n```"
+BotInviteLink               : Bot Invite Link
+SupportGuild                : "Supported Server : {}"
+Configs                     : Configs
+Processing                  : Processing...
+Success                     : Success
+Failed                      : Failed

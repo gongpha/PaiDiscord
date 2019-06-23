@@ -24,7 +24,6 @@ default_timezone : Asia/Bangkok
 # The first element will be default
 languages :
     - th
-    - en
 
 # Bot Color
 # Used in embed
@@ -54,7 +53,7 @@ mysql_database : ?PramualDatabaseDatabase
 
 # The text that will show at game stats
 # The default will show if 'game_static' wasn't found or Invalid
-game_default : OwO
+game_default : _help
 game_static : ?PramualPaiGame
 
 # Cogs (Extensions)

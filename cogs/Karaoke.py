@@ -5,7 +5,7 @@ from io import BytesIO
 from utils.cog import Cog
 from utils.cog import loadInformation
 from utils.template import embed_t, extract_str
-from utils.discord_image import getLastImage
+from utils.discord_image import getLastImage, processing_image_to_file
 from utils.text import textimage
 from utils.procimg import rgbToTuple
 from random import randint

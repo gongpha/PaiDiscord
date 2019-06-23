@@ -6,7 +6,6 @@ from io import BytesIO
 from utils.cog import Cog, loadInformation
 from utils.template import embed_t, embed_em, embed_wm, model_info, convert_size, format_date_timediff_short, format_date_timediff
 from pytz import timezone
-from pythainlp.util import thai_strftime
 from dateutil.relativedelta import relativedelta
 #from utils.anyuser import anyuser_safecheck, anyuser_convert
 from utils.anymodel import AnyModel_FindUserOrMember
@@ -35,11 +34,11 @@ class Info(Cog) :
 			h.color = self.bot.theme
 		for n, c in self.bot.cogs.items() :
 			if not c.cog_hidden :
-				h.add_field(name="{} {}".format(" ".join(c.cog_emoji), c.cog_name),value=f"`{ctx.bot.cmdprefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
+				h.add_field(name="{} {}".format(" ".join(c.cog_emoji or [":x:"]), c.cog_name or ctx.bot.ss('None')),value=f"`{ctx.bot.cmdprefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
-		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji), cog.cog_name), cog.cog_desc)
+		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or ctx.bot.ss('None')), cog.cog_desc or ctx.bot.ss('None'))
 		if not cog.get_commands() :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.ss("NoCommand")))
 		for c in cog.get_commands() :
@@ -48,7 +47,7 @@ class Info(Cog) :
 		return h
 
 	def help_command_embed(self, ctx, command, cog) :
-		h = embed_t(ctx, "{}**{}**    ({} {})".format(ctx.bot.cmdprefix, command.name, " ".join(cog.cog_emoji), cog.cog_name), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.cmdprefix, command.name, command.usage or "")))
+		h = embed_t(ctx, "{}**{}**    ({} {})".format(ctx.bot.cmdprefix, command.name, " ".join(cog.cog_emoji or [":x:"]), cog.cog_name or ctx.bot.ss('None')), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.cmdprefix, command.name, command.usage or "")))
 		#if command.sql :
 		#	h.description += "\n📡 **{}**".format(self.bot.ss("CommandNeedQuery"])
 		return h
@@ -87,67 +86,6 @@ class Info(Cog) :
 
 
 		return e
-
-	# async def user_information(self, ctx, object) :
-	# 	nof = [object.mention, str(object.id)]
-	# 	if object.bot :
-	# 		nof.append("🤖")
-	# 	e = embed_t(ctx, "", " : ".join(nof))
-	# 	e.color = object.color if object.color.value != 0 else discord.Embed.Empty
-	# 	cc = discord.ext.commands.clean_content()
-	# 	e.add_field(name=ctx.bot.stringstack["Model"]["Name"], value=await cc.convert(ctx, object.name), inline=True)
-	# 	if isinstance(object, discord.Member) :
-	# 		e.description += "\n" + ctx.bot.ss('InformationFromServer').format(str(object.guild))
-	# 		e.add_field(name=ctx.bot.stringstack["Model"]["Nickname"], value=await cc.convert(ctx, object.nick) or ctx.bot.stringstack["None"], inline=True)
-	# 	e.add_field(name=ctx.bot.stringstack["CreatedAt"],value=thai_strftime(object.created_at, get_time_format(ctx).format(th_format_date_diff(ctx, object.created_at))), inline=True)
-	# 	if isinstance(object, discord.Member) :
-	# 		e.add_field(name=ctx.bot.stringstack["JoinedGuildAt"].format(object.guild),value=thai_strftime(object.joined_at, get_time_format(ctx).format(th_format_date_diff(ctx, object.joined_at))), inline=True)
-	# 	e.set_author(name=object.display_name, icon_url=object.avatar_url)
-	#
-	# 	if isinstance(object, discord.Member) :
-	# 		# status_indicator = {
-	# 		# 	discord.Status.online : [ctx.bot.stringstack["Status"]["online"], "📗"],
-	# 		# 	discord.Status.idle : [ctx.bot.stringstack["Status"]["idle"], "📒"],
-	# 		# 	discord.Status.dnd : [ctx.bot.stringstack["Status"]["dnd"], "📕"],
-	# 		# 	discord.Status.offline : [ctx.bot.stringstack["Status"]["offline"], "📓"],
-	# 		# 	discord.Status.invisible : [ctx.bot.stringstack["Status"]["invisible"], "📓"],
-	# 		# }
-	#
-	# 		def sss(SSS) :
-	# 			return [self.bot.ss("Status", SSS.name),d_status_icon[SSS.name]]
-	# 		if not object.bot :
-	# 			status_all = "\n\n{1} **{2}** : {0}\n{4} **{5}** : {3}\n{7} **{8}** : {6}".format(
-	# 				"🖥️ " + ctx.bot.stringstack["Model"]["Desktop"],
-	# 				sss(object.desktop_status)[1], sss(object.desktop_status)[0],
-	# 				"🌐 " + ctx.bot.stringstack["Model"]["Web"],
-	# 				sss(object.web_status)[1], sss(object.web_status)[0],
-	# 				"📱 " + ctx.bot.stringstack["Model"]["Mobile"],
-	# 				sss(object.mobile_status)[1], sss(object.mobile_status)[0],
-	# 			)
-	# 		else :
-	# 			status_all = ""
-	# 		status_one = "{0} **{1}**{2}".format(sss(object.status)[1], sss(object.status)[0], status_all)
-	# 		e.add_field(name=ctx.bot.stringstack["Model"]["Status"], value=status_one, inline=True)
-	# 	e.set_thumbnail(url=object.avatar_url)
-	# 	# if not object.bot :
-	# 	# 	ep = embed_t(ctx, ctx.bot.stringstack["Model"]["Profile"], object.mention)
-	# 	#
-	# 	# 	pro = await object.profile()
-	# 	#
-	# 	# 	hypesquad_indicator = {
-	# 	# 		discord.HypeSquadHouse.bravery : 0x9C81F2,
-	# 	# 		discord.HypeSquadHouse.brilliance : 0xF67B63,
-	# 	# 		discord.HypeSquadHouse.balance : 0x3ADEC0
-	# 	# 	}
-	# 	#
-	# 	# 	e.color = hypesquad_indicator[hypesquad_houses]
-	#
-	# 	return e
-
-	# async def user__avatar(self, user : [discord.User, discord.Member]) :
-	# 	async with self.session.get(user.avatar_url_as(format="png")) as r :
-	# 		avatar = await r.read()
-	# 	return (avatar, user.avatar_url_as(format="png"))
 
 	@commands.command()
 	async def help(self, ctx, *sect : str) :

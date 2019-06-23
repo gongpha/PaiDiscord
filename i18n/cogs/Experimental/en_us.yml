@@ -1,0 +1,92 @@
+cog :
+    name                    : Experimental
+    description             : This will be worked on bot owner only
+    icon_emoji              : ':wrench:'
+    author                  : gongpha
+    translated              : gongpha
+command :
+    _shutdown :
+        description         : Shut the bot down
+        usage               :
+        aliases             :
+            - _killbot
+            - _killclient
+            - _shut
+    _send :
+        description         : Send a message
+        usage               : <Channel ID> <Text>
+        aliases             :
+            - _snd
+            - _chat
+    _edit :
+        description         : Edit a message
+        usage               : <Channel ID> <Message ID> <Text>
+        aliases             :
+            - _edit_message
+            - _edt
+            - _edtmsg
+    _delete :
+        description         : Delete a message
+        usage               : <Channel ID> <Message ID>
+        aliases             :
+            - _del
+    _history :
+        description         : |-
+            Get messages from the channel
+            This will show by webhooks when the bot has `manage_webhooks` permission.
+        usage               : <Channel ID> <จำนวน=10>
+        aliases             :
+            - _htr
+    _send_embed :
+        description         : Send embed with JSON
+        usage               : <Channel ID> <JSON of embed>
+        aliases             :
+            - _sndembd
+            - _chat_embed
+    _set_status :
+        description         : |-
+            Status :
+            `online`, 0 : Online
+            `idle`, 1 : Idle
+            `dnd`, 2 : Do Not Disturb
+            `offline`, 3 : Offline
+            `invisible`, 4 : Invisible
+        usage               : <Status>
+        aliases             :
+            - _ตั้งสถานะ
+            - _sst
+    _set_game :
+        description         : |-
+            Set a game name
+            Gaming Status :
+            `playing`, 1 : Playing
+            `streaming`, 1 : Streaming
+            `listening`, 2 : Listening
+            `watching`, 3 : Watching
+        usage               : <Gaming Status> <Game Name>
+        aliases             :
+            - _sgm
+    _set_game_playing :
+        description         : Set a game name with 'Playing' Status
+        usage               : <Game Name>
+        aliases             :
+            - _set_gamep
+            - _sgmp
+
+    _my_info_guild :
+        description         : The bot info in that server
+        usage               : <Server ID>
+        aliases             :
+            - _mig
+    _refresh_configs :
+        description         : Refresh Configs
+        usage               :
+        aliases             :
+            - _rcfg
+    # _send_embed :
+    #     description         : ส่งฝังผ่านช่องด้วย ID
+    #     usage               : <ID ของช่อง> <JSON ของฝัง...>
+    #     aliases             :
+    #         - _ส่งฝัง
+    #         - _embed
+    #         - _snde

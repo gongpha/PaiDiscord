@@ -16,6 +16,13 @@ command :
             `lanczos` : Lanczos (คุณภาพสูงกว่า, ช้ามากกว่า)
         usage               : <กว้าง> <ยาว = กว้าง> <คำนวณ = bilinear (เชิงเส้น)> <ภาพ = จากภาพล่าสุดหรือจากภาพโปรไฟล์ของตัวเอง>
         aliases             :
-            - _ปรับขนาดรูป
-            - _resizeimg
-            - _reimg
+            - ปรับขนาดรูป
+            - resizeimg
+            - reimg
+    blur :
+        description         : เบลอภาพ
+        usage               : <ความเข้ม = 16>
+        aliases             :
+            - เบลอ
+            - เบลอภาพ
+            - blur_image

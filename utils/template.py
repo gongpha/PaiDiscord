@@ -2,11 +2,10 @@ import discord
 import asyncio
 import random
 from discord.utils import escape_mentions
-from pythainlp.util import thai_strftime
 from pytz import timezone
 from sys import platform as _platform
 from utils.defined import d_status_icon
-from datetime import datetime
+import datetime
 from pytz import timezone
 import math
 
@@ -49,9 +48,172 @@ def embed_wm(ctx, reason, description = "", *args, **kwargs) :
 			e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author), icon_url=ctx.message.author.avatar_url)
 	return e
 
+_NEED_L10N = "AaBbCcDFGgvXxYy+"  # flags that need localization
+_EXTENSIONS = "EO-_0#" # extension flags
+
+# https://github.com/PyThaiNLP/pythainlp/blob/dev/pythainlp/util/date.py#L82
+def _local_strftime(datetime: datetime.datetime, fmt_char: str, be, ctx) -> str:
+
+	_abbr_weekdays = [
+		ctx.bot.ss('Date', '_Monday'),
+		ctx.bot.ss('Date', '_Tuesday'),
+		ctx.bot.ss('Date', '_Wednesday'),
+		ctx.bot.ss('Date', '_Thursday'),
+		ctx.bot.ss('Date', '_Friday'),
+		ctx.bot.ss('Date', '_Saturday'),
+		ctx.bot.ss('Date', '_Sunday')
+	]
+	_full_weekdays = [
+		ctx.bot.ss('Date', 'Monday'),
+		ctx.bot.ss('Date', 'Tuesday'),
+		ctx.bot.ss('Date', 'Wednesday'),
+		ctx.bot.ss('Date', 'Thursday'),
+		ctx.bot.ss('Date', 'Friday'),
+		ctx.bot.ss('Date', 'Saturday'),
+		ctx.bot.ss('Date', 'Sunday')
+	]
+
+	_full_months = [
+		ctx.bot.ss('Date', 'January'),
+		ctx.bot.ss('Date', 'February'),
+		ctx.bot.ss('Date', 'March'),
+		ctx.bot.ss('Date', 'April'),
+		ctx.bot.ss('Date', 'May'),
+		ctx.bot.ss('Date', 'June'),
+		ctx.bot.ss('Date', 'July'),
+		ctx.bot.ss('Date', 'August'),
+		ctx.bot.ss('Date', 'September'),
+		ctx.bot.ss('Date', 'October'),
+		ctx.bot.ss('Date', 'November'),
+		ctx.bot.ss('Date', 'December')
+	]
+	_abbr_months = [
+		ctx.bot.ss('Date', '_January'),
+		ctx.bot.ss('Date', '_February'),
+		ctx.bot.ss('Date', '_March'),
+		ctx.bot.ss('Date', '_April'),
+		ctx.bot.ss('Date', '_May'),
+		ctx.bot.ss('Date', '_June'),
+		ctx.bot.ss('Date', '_July'),
+		ctx.bot.ss('Date', '_August'),
+		ctx.bot.ss('Date', '_September'),
+		ctx.bot.ss('Date', '_October'),
+		ctx.bot.ss('Date', '_November'),
+		ctx.bot.ss('Date', '_December')
+	]
+
+	str_ = ""
+	if fmt_char == "A":
+		str_ = _full_weekdays[datetime.weekday()]
+	elif fmt_char == "a":
+		str_ = _abbr_weekdays[datetime.weekday()]
+	elif fmt_char == "B":
+		str_ = _full_months[datetime.month - 1]
+	elif fmt_char == "b":
+		str_ = _abbr_months[datetime.month - 1]
+	elif fmt_char == "C":
+		str_ = str(int((datetime.year + (543 if be else 0)) / 100) + 1)
+	elif fmt_char == "c":
+		str_ = "{:<2} {:>2} {} {} {}".format(
+			_abbr_weekdays[datetime.weekday()],
+			datetime.day,
+			_abbr_months[datetime.month - 1],
+			datetime.strftime("%H:%M:%S"),
+			datetime.year + (543 if be else 0),
+		)
+	elif fmt_char == "D":
+		str_ = "{}/{}".format(datetime.strftime("%m/%d"), str(datetime.year + ((543 if be else 0) if be else 0))[-2:])
+	elif fmt_char == "F":
+		str_ = "{}-{}".format(str(datetime.year + (543 if be else 0)), datetime.strftime("%m-%d"))
+	elif fmt_char == "G":
+		str_ = str(int(datetime.strftime("%G")) + (543 if be else 0))
+	elif fmt_char == "g":
+		str_ = str(int(datetime.strftime("%G")) + (543 if be else 0))[-2:]
+	elif fmt_char == "v":
+		str_ = "{:>2}-{}-{}".format(
+			datetime.day, _abbr_months[datetime.month - 1], datetime.year + (543 if be else 0)
+		)
+	elif fmt_char == "X":
+		str_ = datetime.strftime("%H:%M:%S")
+	elif fmt_char == "x":
+		str_ = "{}/{}/{}".format(
+			_padding(datetime.day), _padding(datetime.month), datetime.year + (543 if be else 0)
+		)
+	elif fmt_char == "Y":
+		str_ = str(datetime.year + (543 if be else 0))
+	elif fmt_char == "y":
+		str_ = str(datetime.year + (543 if be else 0))[2:4]
+	elif fmt_char == "+":
+		str_ = "{:<2} {:>2} {} {} {}".format(
+			_abbr_weekdays[datetime.weekday()],
+			datetime.day,
+			_abbr_months[datetime.month - 1],
+			datetime.year + (543 if be else 0),
+			datetime.strftime("%H:%M:%S"),
+		)
+	else:
+		str_ = datetime.strftime(f"%{fmt_char}")
+
+	return str_
+
+
+# https://github.com/PyThaiNLP/pythainlp/blob/dev/pythainlp/util/date.py#L161
+def local_strftime(ctx, datetime: datetime.datetime, fmt: str) :
+	_parts = []
+
+	i = 0
+	fmt_len = len(fmt)
+	while i < fmt_len:
+		str_ = ""
+		if fmt[i] == "%":
+			j = i + 1
+			if j < fmt_len:
+				fmt_char = fmt[j]
+				if fmt_char in _NEED_L10N:
+					str_ = _local_strftime(datetime, fmt_char, ctx.bot.ss('use_buddhist_era'), ctx)
+				elif fmt_char in _EXTENSIONS:
+
+					if fmt_char == "-":
+						k = j + 1
+						if k < fmt_len:
+							fmt_char_nopad = fmt[k]
+							if (
+								fmt_char_nopad in _NEED_L10N
+							):
+								str_ = _local_strftime(datetime, fmt_char_nopad, ctx.bot.ss('use_buddhist_era'), ctx)
+							else:
+								str_ = datetime.strftime(f"%-{fmt_char_nopad}")
+							i = i + 1
+						else:
+							str_ = "-"
+					elif fmt_char == "_":
+						pass
+					elif fmt_char == "0":
+						pass
+					elif fmt_char == "E":
+						pass
+					elif fmt_char == "O":
+						pass
+
+				elif fmt_char:
+					str_ = datetime.strftime(f"%{fmt_char}")
+
+				i = i + 1
+			else:
+				str_ = "%"
+		else:
+			str_ = fmt[i]
+
+		_parts.append(str_)
+		i = i + 1
+
+	_text = "".join(_parts)
+
+	return _text
+
 async def waitReactionRequired(ctx, bot, give, ruser, embed) :
 	e = embed.copy()
-	e.add_field(name=bot.ss("PleaseReactionAllCommander"),value=bot.stringstack["Empty"])
+	e.add_field(name=bot.ss("PleaseReactionAllCommander"),value=bot.ss("Empty"))
 	msg = await ctx.send(embed=e)
 	for em in give :
 		#await ctx.send(em.encode('unicode-escape').decode('ASCII'))
@@ -112,11 +274,11 @@ def format_date_timediff_short(ctx, time=False, now=None):
 	pretty string like 'an hour ago', 'Yesterday', '3 months ago',
 	'just now', etc
 	"""
-	now = now or datetime.now().astimezone(timezone(ctx.bot.default_timezone))
+	now = now or datetime.datetime.now().astimezone(timezone(ctx.bot.default_timezone))
 	time = time.astimezone(timezone(ctx.bot.default_timezone))
 	if type(time) is int:
-		diff = now - datetime.fromtimestamp(time)
-	elif isinstance(time,datetime):
+		diff = now - datetime.datetime.fromtimestamp(time)
+	elif isinstance(time,datetime.datetime):
 		diff = now - time
 	elif not time:
 		diff = now - now
@@ -151,11 +313,11 @@ def format_date_timediff_short(ctx, time=False, now=None):
 
 def format_date_timediff(ctx, time=False, now=None) :
 	# from https://stackoverflow.com/a/13756038
-	now = now or datetime.now().astimezone(timezone(ctx.bot.default_timezone))
+	now = now or datetime.datetime.now().astimezone(timezone(ctx.bot.default_timezone))
 	time = time.astimezone(timezone(ctx.bot.default_timezone))
 	if type(time) is int:
-		diff = now - datetime.fromtimestamp(time)
-	elif isinstance(time,datetime):
+		diff = now - datetime.datetime.fromtimestamp(time)
+	elif isinstance(time,datetime.datetime):
 		diff = now - time
 	elif not time:
 		diff = now - now
@@ -261,13 +423,13 @@ def model_info(ctx, model) :
 
 	if isinstance(model, discord.Member) :
 		e.description += "\n" + ctx.bot.ss('InformationFromServer').format(str(model.guild))
-	e.add_field(name=ctx.bot.ss("CreatedAt"), value=thai_strftime(model.created_at, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.created_at)), inline=True)
+	e.add_field(name=ctx.bot.ss("CreatedAt"), value=local_strftime(ctx, model.created_at, get_time_format(ctx)) + "\n" + ctx.bot.ss('OnObject').format(format_date_timediff_short(ctx, model.created_at)), inline=True)
 	if isinstance(model, discord.Member) :
 		if model.nick :
 			e.add_field(name=ctx.bot.ss("Model", "Nickname"), value=escape_mentions(model.nick), inline=True)
-		e.add_field(name=ctx.bot.ss("JoinedGuildAt").format(model.guild), value=thai_strftime(model.joined_at, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.joined_at)), inline=True)
+		e.add_field(name=ctx.bot.ss("JoinedGuildAt").format(model.guild), value=local_strftime(ctx, model.joined_at, get_time_format(ctx)) + "\n" + ctx.bot.ss('OnObject').format(format_date_timediff_short(ctx, model.joined_at)), inline=True)
 		if model.premium_since :
-			e.add_field(name=ctx.bot.ss("PremiumSince"), value=thai_strftime(model.premium_since, get_time_format(ctx)) + "\n" + ctx.bot.ss('WhenObject').format(format_date_timediff_short(ctx, model.premium_since)), inline=True)
+			e.add_field(name=ctx.bot.ss("PremiumSince"), value=local_strftime(ctx, model.premium_since, get_time_format(ctx)) + "\n" + ctx.bot.ss('OnObject').format(format_date_timediff_short(ctx, model.premium_since)), inline=True)
 
 		def sss(SSS) :
 			return [ctx.bot.ss("Status", SSS.name), d_status_icon[SSS.name]]

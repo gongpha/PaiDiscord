@@ -23,6 +23,12 @@ def avatar_image_circle(user) :
 	im.putalpha(mask)
 	return im
 
+async def loadImageFromURL(ctx, url) :
+	try :
+		return Image.open(BytesIO(await (await ctx.bot.session.get(str(url))).read()))
+	except OSError :
+		return None
+
 async def processing_image_to_file(ctx=None, filename="processed_image.png", function=None, *parameter) :
 	async with ctx.channel.typing() :
 		re = await ctx.bot.loop.run_in_executor(None, function, *parameter)
@@ -33,14 +39,20 @@ async def _getlastimg(ctx, format) :
 		for a in reversed(ctx.message.attachments) :
 			for extname in format :
 				if (a.filename.lower().endswith("." + extname)) :
-					return Image.open(BytesIO(await (await ctx.bot.session.get(str(a.url))).read()))
+					ii = await loadImageFromURL(ctx, a.url)
+					if ii :
+						return ii
 	else :
 		if ctx.message.embeds :
 			for e in reversed(ctx.message.embeds) :
 				if e.url != discord.Embed.Empty :
-					return Image.open(BytesIO(await (await ctx.bot.session.get(str(e.url))).read()))
+					ii = await loadImageFromURL(ctx, e.url)
+					if ii :
+						return ii
 				if e.image != discord.Embed.Empty :
-					return Image.open(BytesIO(await (await ctx.bot.session.get(str(e.image.url))).read()))
+					ii = await loadImageFromURL(ctx, e.image.url)
+					if ii :
+						return ii
 		else :
 			messages = await ctx.channel.history(limit=100).flatten()
 
@@ -49,16 +61,22 @@ async def _getlastimg(ctx, format) :
 					for a in reversed(msg.attachments) :
 						for extname in format :
 							if (a.filename.lower().endswith("." + extname)) :
-								return Image.open(BytesIO(await (await ctx.bot.session.get(str(a.url))).read()))
+								ii = await loadImageFromURL(ctx, a.url)
+								if ii :
+									return ii
 				else :
 					if msg.embeds :
 						for e in reversed(msg.embeds) :
 							if e.url != discord.Embed.Empty :
-								return Image.open(BytesIO(await (await ctx.bot.session.get(str(e.url))).read()))
+								ii = await loadImageFromURL(ctx, e.url)
+								if ii :
+									return ii
 							if e.image != discord.Embed.Empty :
 								if e.image.url != discord.Embed.Empty :
-									return Image.open(BytesIO(await (await ctx.bot.session.get(str(e.image.url))).read()))
-	return Image.open(BytesIO(await (await ctx.bot.session.get(str(ctx.author.avatar_url))).read()))
+									ii = await loadImageFromURL(ctx, e.image.url)
+									if ii :
+										return ii
+	return await loadImageFromURL(ctx, ctx.author.avatar_url)
 
 async def getLastAnimatedImage(ctx) :
 	return (await _getlastimg(ctx, ))

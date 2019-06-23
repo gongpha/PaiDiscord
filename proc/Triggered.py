@@ -5,7 +5,7 @@ from PIL import Image
 from discord.ext import commands
 from utils.proc import Proc
 from utils.proc import loadInformation
-from utils.discord_image import im_avatar
+from utils.discord_image import im_avatar, processing_image_to_file
 from utils.anymodel import AnyModel_FindUserOrMember
 from utils.discord_image import getLastImage
 #from utils.procimg import ProcImg
@@ -57,27 +57,21 @@ class Triggered(Proc) :
 		b = BytesIO()
 		frames[0].save(b, format='gif', save_all=True, append_images=frames[1:], loop=0, duration=20, optimize=True)
 		b.seek(0)
-		return frames
+		return b
 
 
 	@commands.command()
 	async def triggered(self, ctx, u = None) :
 		async with ctx.channel.typing() :
 			img = await im_avatar(ctx, await AnyModel_FindUserOrMember(ctx, u or ctx.author))
-			frames = await ctx.bot.loop.run_in_executor(None, self.m_triggered, img)
-			b = BytesIO()
-
-			file = discord.File(b, filename="triggered.gif")
+			file = await processing_image_to_file(ctx, "triggered.gif", self.m_triggered, img)
 			await ctx.send(file=file)
 
 	@commands.command()
 	async def triggered_l(self, ctx) :
 		async with ctx.channel.typing() :
 			img = await getLastImage(ctx)
-			frames = await ctx.bot.loop.run_in_executor(None, self.m_triggered, img)
-			b = BytesIO()
-			frames[0].save(b, format='gif', save_all=True, append_images=frames[1:], loop=0, duration=20, optimize=True)
-			file = discord.File(b, filename="triggered.gif")
+			file = await processing_image_to_file(ctx, "triggered.gif", self.m_triggered, img)
 			await ctx.send(file=file)
 
 def setup(bot) :

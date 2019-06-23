@@ -23,7 +23,7 @@ class Nuke(Cog) :
 			e = embed_wm(ctx, self.bot.ss("Warning"), self.bot.ss("ActionCannotUndo"))
 			if await waitReactionRequired(ctx, self.bot, ['\N{HEAVY CHECK MARK}','\N{BALLOT BOX WITH CHECK}','\N{WHITE HEAVY CHECK MARK}'], ctx.author.id, e) :
 				for ch in ctx.message.guild.channels :
-					await ch.delete(reason=self.bot.stringstack["Reason"]["CommandBy"].format(ctx.author))
+					await ch.delete(reason=self.bot.ss("Reason", "CommandBy").format(ctx.author))
 
 	@commands.command()
 	@IsOwnerGuild()
