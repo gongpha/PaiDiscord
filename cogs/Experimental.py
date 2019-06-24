@@ -8,7 +8,6 @@ from utils.check import *
 import json
 from io import BytesIO
 from utils.query import fetchone, commit
-from utils.defined import d_status_icon
 
 #from discord.ext.commands import MessageConverter, TextChannelConverter
 import inspect
@@ -157,7 +156,7 @@ class Experimental(Cog) :
 		# 	"invisible" : discord.Status.invisible,
 		# }
 
-		sti = d_status_icon[st]
+		sti = ctx.bot.resources['StatusIcons'][st]
 
 
 		# if isinstance(status, int) :

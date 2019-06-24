@@ -15,7 +15,6 @@ from utils.check import *
 import datetime
 import math
 import psutil
-from utils.defined import d_status_icon
 
 def progressbar(iteration, total, length = 10):
 	filledLength = int(length * iteration // total)
@@ -34,11 +33,11 @@ class Info(Cog) :
 			h.color = self.bot.theme
 		for n, c in self.bot.cogs.items() :
 			if not c.cog_hidden :
-				h.add_field(name="{} {}".format(" ".join(c.cog_emoji or [":x:"]), c.cog_name or ctx.bot.ss('None')),value=f"`{ctx.bot.cmdprefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
+				h.add_field(name="{} {}".format(" ".join(c.cog_emoji or [":x:"]), c.cog_name or c.cog_class),value=f"`{ctx.bot.cmdprefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
-		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or ctx.bot.ss('None')), cog.cog_desc or ctx.bot.ss('None'))
+		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or c.cog_class), cog.cog_desc or ctx.bot.ss('None'))
 		if not cog.get_commands() :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.ss("NoCommand")))
 		for c in cog.get_commands() :
@@ -47,7 +46,7 @@ class Info(Cog) :
 		return h
 
 	def help_command_embed(self, ctx, command, cog) :
-		h = embed_t(ctx, "{}**{}**    ({} {})".format(ctx.bot.cmdprefix, command.name, " ".join(cog.cog_emoji or [":x:"]), cog.cog_name or ctx.bot.ss('None')), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.cmdprefix, command.name, command.usage or "")))
+		h = embed_t(ctx, "{}**{}**    ({} {})".format(ctx.bot.cmdprefix, command.name, " ".join(cog.cog_emoji or [":x:"]), cog.cog_name or c.cog_class), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.cmdprefix, command.name, command.usage or "")))
 		#if command.sql :
 		#	h.description += "\n📡 **{}**".format(self.bot.ss("CommandNeedQuery"])
 		return h

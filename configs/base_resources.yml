@@ -1,0 +1,6 @@
+StatusIcons :
+    online : '<:pai__online:592664936887615488>'
+    idle : '<:pai__idle:592664936681832449>'
+    dnd : '<:pai__offline:592664936409464843>'
+    offline : '<:pai__offline:592664936409464843>'
+    invisible : '<:pai__offline:592664936409464843>'

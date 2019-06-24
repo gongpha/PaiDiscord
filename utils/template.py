@@ -4,7 +4,6 @@ import random
 from discord.utils import escape_mentions
 from pytz import timezone
 from sys import platform as _platform
-from utils.defined import d_status_icon
 import datetime
 from pytz import timezone
 import math
@@ -354,6 +353,9 @@ def model_info(ctx, model) :
 			nof.append(':regional_indicator_m: :regional_indicator_e:')
 		if model.id == ctx.author.id :
 			nof.append(':regional_indicator_y: :regional_indicator_o: :regional_indicator_u:')
+	if isinstance(model, discord.Member) :
+		if model.id == model.guild.owner_id :
+			nof.append(':crown:')
 
 	elif isinstance(model, discord.Guild) :
 		e.set_author(name=model.name, icon_url=model.icon_url)
@@ -430,20 +432,23 @@ def model_info(ctx, model) :
 		e.add_field(name=ctx.bot.ss("JoinedGuildAt").format(model.guild), value=local_strftime(ctx, model.joined_at, get_time_format(ctx)) + "\n" + ctx.bot.ss('OnObject').format(format_date_timediff_short(ctx, model.joined_at)), inline=True)
 		if model.premium_since :
 			e.add_field(name=ctx.bot.ss("PremiumSince"), value=local_strftime(ctx, model.premium_since, get_time_format(ctx)) + "\n" + ctx.bot.ss('OnObject').format(format_date_timediff_short(ctx, model.premium_since)), inline=True)
-
+		mt = ctx.bot.get_mutual_guilds(model)
+		mt_len = len(mt)
+		del mt[5:]
+		e.add_field(name="{} : {}".format(ctx.bot.ss("MutualGuildWithMe"), mt_len), value=("`{}`".format(", ".join([m.name for m in mt]) + (", ... {}".format(ctx.bot.ss("AndMoreObject").format(mt_len - len(mt), ctx.bot.ss('Model', 'Guild'), s='s' if ctx.bot.ss('need_s') and mt_len - len(mt) > 1 else '')) if mt_len > 5 else ''))) or ctx.bot.ss("Empty"), inline=False)
 		def sss(SSS) :
-			return [ctx.bot.ss("Status", SSS.name), d_status_icon[SSS.name]]
+			return [ctx.bot.ss("Status", SSS.name), ctx.bot.resources['StatusIcons'][SSS.name]]
 		if not model.bot :
 			status_all = "\n\n{1} **{2}** : {0}\n{4} **{5}** : {3}\n{7} **{8}** : {6}".format(
-				"🖥️ " + ctx.bot.stringstack("Model", "Desktop"),
+				"🖥️ " + ctx.bot.ss("Model", "Desktop"),
 				sss(model.desktop_status)[1], sss(model.desktop_status)[0],
-				"🌐 " + ctx.bot.stringstack("Model", "Web"),
+				"🌐 " + ctx.bot.ss("Model", "Web"),
 				sss(model.web_status)[1], sss(model.web_status)[0],
-				"📱 " + ctx.bot.stringstack("Model", "Mobile"),
+				"📱 " + ctx.bot.ss("Model", "Mobile"),
 				sss(model.mobile_status)[1], sss(model.mobile_status)[0],
 			)
 		else :
 			status_all = ""
 		status_one = "{0} **{1}**{2}".format(sss(model.status)[1], sss(model.status)[0], status_all)
-		e.add_field(name=ctx.bot.stringstack("Model", "Status"), value=status_one, inline=True)
+		e.add_field(name=ctx.bot.ss("Model", "Status"), value=status_one, inline=True)
 	return e

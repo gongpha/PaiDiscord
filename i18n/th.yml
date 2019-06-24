@@ -237,3 +237,5 @@ Configs                     : การตั้งค่า
 Processing                  : กำลังดำเนินการ . . .
 Success                     : สำเร็จ
 Failed                      : ล้มเหลว
+MutualGuildWithMe           : เซิร์ฟเวอร์ร่วมกันกับฉัน
+AndMoreObject               : และอีก {} {}

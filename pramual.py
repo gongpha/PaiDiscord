@@ -51,8 +51,17 @@ class Pramual(commands.Bot) :
 		self.channels_fname = kwargs.pop('channels', {})
 		self.auths_fname = kwargs.pop('auths', {})
 		self.configs_fname = kwargs.pop('configs', {})
+		self.resources_fname = kwargs.pop('resources', {
+			"StatusIcons" : {
+				"online" : '📗',
+				"idle" : '📒',
+				"dnd" : '📕',
+				"offline" : '📓',
+				"invisible" : '📓'
+			}
+		})
 		self.loaded_dev = kwargs.pop('dev', False)
-		self.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.loaded_dev, kwargs.pop('loop', asyncio.get_event_loop()))
+		self.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.resources_fname, self.loaded_dev, kwargs.pop('loop', asyncio.get_event_loop()))
 		self.load_strings()
 		self.load_assets()
 		if self.token == None :
@@ -91,11 +100,12 @@ class Pramual(commands.Bot) :
 	# 		if r :
 
 
-	def load_configs(self, info, channels, auths, configs, dev, loop) :
+	def load_configs(self, info, channels, auths, configs, resources, dev, loop) :
 		inf = info
 		self.bot_channels = channels
 		self.auth = auths
 		self.configs = configs
+		self.resources = resources
 		self.dev_configs = {}
 		self.dev = dev
 		if self.dev == None :
@@ -178,6 +188,12 @@ class Pramual(commands.Bot) :
 	# 	print(f">> Added Channel {name} : {id}")
 	# 	self.channels_id[name] = id
 	#
+	def get_mutual_guilds(self, user) :
+		mt = []
+		for g in self.guilds :
+			if g.get_member(user.id) :
+				mt.append(g)
+		return mt
 	def get_bot_channel(self, *keylist) :
 		c = safeget(self.bot_channels, *keylist)
 		if c == None :

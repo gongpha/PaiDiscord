@@ -26,6 +26,7 @@ class Cog(commands.Cog) :
 			except KeyError :
 				print("Load Cog for {} failed".format(self.__class__.__name__))
 			# [item for sublist in self.stringstack["cog"]["icon_emoji"] for item in sublist]
+		self.cog_class = self.__class__.__name__
 		self.cog_hidden = False
 
 		super().__init__()
@@ -52,7 +53,6 @@ def loadInformation(cog) :
 	for c in cog.get_commands() :
 		try :
 			c.description = safeget(cog.stringstack, "command", c.name, "description")
-			#c.description = cog.stringstack.get("command", {}).get(c.name, {}).get("description", STRFF)
 			c.usage = safeget(cog.stringstack, "command", c.name, "usage")
 			d = safeget(cog.stringstack, "command", c.name, "aliases")
 			if d :
