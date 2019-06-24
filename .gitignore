@@ -1,20 +1,5 @@
-
-a.txt
-blur.png
-boxblur.png
 cmd.exe
-datinfo.png
-gaussianblur.png
-resize.png
-toplinediamond.png
-__pycache__/bot_string.cpython-37.pyc
-__pycache__/imageproc.cpython-37.pyc
-__pycache__/ncfu.cpython-37.pyc
 *.pyc
-cache/medianimage.png
-cache/text.png
-python-webkit2png/
-wanbuaban.png
 cache/
-cmd.exe - Shortcut.lnk
-utils/dddddddddddddddddddddddddddddd
+cmdshortcut.lnk
+configs/info.yml

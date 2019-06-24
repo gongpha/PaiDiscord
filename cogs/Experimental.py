@@ -6,9 +6,12 @@ from utils.cog import loadInformation
 from utils.template import *
 from utils.check import *
 import json
+from io import BytesIO
 from utils.query import fetchone, commit
-from utils.defined import d_status_icon
+
+#from discord.ext.commands import MessageConverter, TextChannelConverter
 import inspect
+import utils.anymodel as anymodel
 
 class Experimental(Cog) :
 	pbot = None
@@ -29,7 +32,7 @@ class Experimental(Cog) :
 			g = ctx.message.guild
 		e = discord.Embed(title="Client was shutdowned by {0} ({1}) from{4} {2} ({3})".format(u, u.id, g, g.id, "" if isinstance(ctx.message.channel, DMChannel) else " guild"))
 		e.color = 0xDD0000
-		await self.bot.get_my_channel("log").send(embed=e)
+		await self.bot.get_bot_channel("log").send(embed=e)
 		await self.bot.session.close()
 		await self.bot.close()
 		self.bot.loop.stop()
@@ -37,21 +40,94 @@ class Experimental(Cog) :
 	@commands.command()
 	@IsOwnerBot()
 	async def _send(self, ctx, id, *, text : str) :
-		channel = self.bot.get_channel(int(id)) or ctx.message.channel
-		await channel.send(text)
+		try :
+			user = await ctx.bot.fetch_user(id)
+			channel = user.dm_channel
+			if not channel :
+				await user.create_dm()
+				channel = user.dm_channel
+		except discord.NotFound :
+			channel = ctx.bot.get_channel(int(id))
+		if not channel :
+			await ctx.send(text)
+			return
+		try :
+			await channel.send(text)
+		except discord.Forbidden as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), self.bot.ss('Forbidden'), error=e))
+			return
+		except discord.HTTPException as e :
+			await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), error=e))
+			return
 
 	@commands.command()
 	@IsOwnerBot()
-	async def _send_dm(self, ctx, id, *, text : str) :
-		user = await self.bot.fetch_user(id) or ctx.author.id
-		channel = user.dm_channel
-		if not channel :
-			await user.create_dm()
-			channel = user.dm_channel
+	async def _edit(self, ctx, chid, id, *, text : str) :
+		#u = await self.bot.fetch_user(self.bot.user.id)
 		try :
-			await channel.send(text)
-		except discord.Forbidden :
-			await ctx.send(embed=embed_em(ctx, self.bot.ss("CannotSendTo").format(self.bot.ss("DMWithUser").format(channel.recipient.name)), self.bot.ss("Forbidden")))
+			channel = await ctx.bot.fetch_user(chid)
+		except discord.NotFound :
+			channel = ctx.bot.get_channel(int(chid))
+		message = await channel.fetch_message(id)
+
+		try :
+			await message.edit(content=text)
+		except discord.HTTPException as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _delete(self, ctx, chid, id) :
+		#u = await self.bot.fetch_user(self.bot.user.id)
+		try :
+			channel = await ctx.bot.fetch_user(chid)
+		except discord.NotFound :
+			channel = ctx.bot.get_channel(int(chid))
+		message = await channel.fetch_message(id)
+
+		# except anymodel.NotFound as e:
+		# 	await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('MessageNotFound'), error=e))
+		# 	return
+		# except anymodel.Forbidden as e:
+		# 	#await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden') + "\n" + self.bot.ss('UserIDOwnedThisObjectNotMe').format(message.author.name, message.author.id)))
+		# 	await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('Forbidden'), error=e))
+		# 	return
+
+		# except discord.HTTPException as e:
+		# 	await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
+		# 	return
+
+		try :
+			await message.delete()
+		except discord.Forbidden as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), self.bot.ss('Forbidden'), error=e))
+			return
+		except discord.HTTPException as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _history(self, ctx, chid, limit=10) :
+		try :
+			channel = await ctx.bot.fetch_user(chid)
+		except discord.NotFound :
+			channel = ctx.bot.get_channel(int(chid))
+		if ctx.me.guild_permissions.manage_webhooks :
+			wh = await ctx.channel.create_webhook(name="Pai's User Representer", avatar=ctx.bot.webhook_avatar)
+			async for message in channel.history(limit=10) :
+
+				f = []
+				for a in message.attachments :
+					f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
+				await wh.send(content=message.content or "*empty message*", tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f, username=message.author.name, avatar_url=message.author.avatar_url)
+			await wh.delete()
+
+		else :
+			async for message in channel.history(limit=10) :
+				f = []
+				for a in message.attachments :
+					f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
+				await ctx.send(content=">>>==================================================\n**{0.author}** [{0.author.mention}] user({0.author.id}) message({0.id}) : \n{0.content}\n<<<==================================================".format(message), tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f)
 
 	@commands.command()
 	@IsOwnerBot()
@@ -80,7 +156,7 @@ class Experimental(Cog) :
 		# 	"invisible" : discord.Status.invisible,
 		# }
 
-		sti = d_status_icon[st]
+		sti = ctx.bot.resources['StatusIcons'][st]
 
 
 		# if isinstance(status, int) :
@@ -91,11 +167,11 @@ class Experimental(Cog) :
 		await self.bot.change_presence(status=st)
 		await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(sti, self.bot.ss("Status", "dnd"))))
 
-	@commands.command()
-	@IsOwnerBot()
-	async def _set_credits(self, ctx, id, credits) :
-		await commit(self.bot, "UPDATE `pai_discord_profile` SET credits=%s WHERE snowflake=%s", (credits, id))
-		await ctx.send(":ok_hand:")
+	# @commands.command()
+	# @IsOwnerBot()
+	# async def _set_credits(self, ctx, id, credits) :
+	# 	await commit(self.bot, "UPDATE `pai_discord_profile` SET credits=%s WHERE snowflake=%s", (credits, id))
+	# 	await ctx.send(":ok_hand:")
 
 	@commands.command()
 	@IsOwnerBot()
@@ -110,6 +186,28 @@ class Experimental(Cog) :
 		g = discord.Game(name=name)
 		await self.bot.change_presence(activity=g)
 		await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(self.bot.ss("ActivityType", "playing"), name)))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _my_info_guild(self, ctx, gid : int = None) :
+		guild = ctx.bot.get_guild(int(gid)) or ctx.guild
+		if not guild :
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('ObjectNotFoundFromObject').format(self.bot.ss('Model', 'Guild'), gid)))
+
+		e = model_info(ctx, guild.me)
+		await ctx.send(embed=e)
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _refresh_configs(self, ctx) :
+		ctx.bot.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.loaded_dev)
+		await ctx.send(":ok_hand:")
+	# @commands.command()
+	# @IsOwnerBot()
+	# async def _id(self, ctx, id) :
+	# 	IDConverter
+	# 	await self.bot.change_presence(activity=g)
+	# 	await ctx.send(":ok_hand: " + self.bot.ss("SetItTo").format("{} {}".format(self.bot.ss("ActivityType", "playing"), name)))
 
 	@commands.command()
 	@IsOwnerBot()

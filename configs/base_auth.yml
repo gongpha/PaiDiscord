@@ -1,0 +1,4 @@
+imgur :
+    refresh_token : ?PramualAuthImgurRefreshToken
+    client_id : ?PramualAuthImgurClientId
+    client_secret : ?PramualAuthImgurClientSecret

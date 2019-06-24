@@ -5,7 +5,7 @@ from PIL import Image
 from discord.ext import commands
 from utils.proc import Proc
 from utils.proc import loadInformation
-from utils.discord_image import im_avatar
+from utils.discord_image import im_avatar, processing_image_to_file
 from utils.anyuser import anyuser_safecheck
 from utils.discord_image import getLastImage
 from utils.text import textimage
@@ -38,15 +38,16 @@ class _กูรู้หมดแล้ว(Proc) :
 		# draw.text((41, 158), text, (140, 28, 51), font=font)
 		r = img_text.rotate(1, expand = True)
 		bg.paste(r,(41, 158),r)
-		return bg
+		b = BytesIO()
+		bg.save(b, format="png")
+		b.seek(0)
+		return b
 
 
 	@commands.command(name="กูรู้หมดแล้ว", aliases=["ikwi"])
 	async def ikwi(self, ctx, *, text : str) :
-		async with ctx.channel.typing() :
-			self.m_ikwi(text).save("cache/ikwi.png", format='png', optimize=True)
-			file = discord.File("cache/ikwi.png", filename="ikwi.png")
-			await ctx.send("{} : `{}`".format(ctx.bot.stringstack["Model"]["Text"], text),file=file)
+		file = await processing_image_to_file(ctx, "ikwi.png", self.m_ikwi, text)
+		await ctx.send(file=file)
 
 def setup(bot) :
 	bot.add_cog(loadInformation(_กูรู้หมดแล้ว(bot)))

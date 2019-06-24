@@ -1,7 +1,7 @@
 cog :
     name                    : การทดลองขั้นสูง
     description             : สามารถใช้ได้แค่เจ้าของบอทเท่านั้น
-    icon_emoji              : wrench
+    icon_emoji              : ':wrench:'
     author                  : gongpha
     translated              : gongpha
 command :
@@ -21,6 +21,30 @@ command :
             - _ส่ง
             - _snd
             - _chat
+    _edit :
+        description         : แก้ไขข้อความด้วย ID และ ID ของช่อง
+        usage               : <ID ของช่อง> <ID ของข้อความ> <ข้อความ...>
+        aliases             :
+            - _แก้
+            - _แก้ไข
+            - _แก้ไขข้อความ
+            - _แก้ข้อความ
+            - _edit_message
+            - _edt
+            - _edtmsg
+    _delete :
+        description         : ลบข้อความด้วย ID และ ID ของช่อง
+        usage               : <ID ของช่อง> <ID ของข้อความ>
+        aliases             :
+            - _ลบ
+            - _ลบข้อความ
+            - _del
+    _history :
+        description         : ดึงประวัติข้อความของช่องนั้น ๆ
+        usage               : <ID ของช่อง> <จำนวน=10>
+        aliases             :
+            - _ประวัติ
+            - _htr
     _send_dm :
         description         : ส่งข้อความผ่านช่องข้อความส่วนตัวด้วย ID ของผู้ใช้
         usage               : <ID ของผู้ใช้> <ข้อความ...>
@@ -28,10 +52,6 @@ command :
             - _send_direct_message
             - _snddm
             - _chat_dm
-    _set_credits :
-        description         : ตั้งเครดิต
-        usage               : <ID ของผู้ใช้> <จำนวน>
-        aliases             :
 
     _send_embed :
         description         : ส่งฝังในรูปแบบ JSON ผ่านช่องด้วย ID
@@ -66,11 +86,22 @@ command :
             - _sgm
     _set_game_playing :
         description         : ตั้งชื่อเกม โดยให้สถานะเป็น กำลังเล่น
-        usage               : <สถานะการเล่น> <ชื่อเกม...>
+        usage               : <ชื่อเกม...>
         aliases             :
             - _ตั้งเกมเล่น
             - _set_gamep
             - _sgmp
+
+    _my_info_guild :
+        description         : ข้อมูลของบอทบนเซิร์ฟเวอร์
+        usage               : <ID ของเซิร์ฟเวอร์>
+        aliases             :
+            - _mig
+    _refresh_configs :
+        description         : โหลดการตั้งค่าใหม่
+        usage               :
+        aliases             :
+            - _rcfg
     # _send_embed :
     #     description         : ส่งฝังผ่านช่องด้วย ID
     #     usage               : <ID ของช่อง> <JSON ของฝัง...>

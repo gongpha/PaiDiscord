@@ -4,22 +4,22 @@ import random
 
 async def r_RandomCat(b, l) :
 	r = await b.session.get('https://aws.random.cat/meow')
-	if r.status != 200:
+	if r.status != 200 :
 		return None
 	j = await r.json()
 	return (j["file"], j["file"])
 
 async def r_Imgur(b, l) :
 	data = {
-		'refresh_token': b.auth["imgur"]["refresh_token"],
-		'client_id': b.auth["imgur"]["client_id"],
-		'client_secret': b.auth["imgur"]["client_secret"],
+		'refresh_token': b.getAuth("imgur", "refresh_token"),
+		'client_id': b.auth("imgur", "client_id"),
+		'client_secret': b.auth("imgur", "client_secret"),
 		'grant_type': 'refresh_token'
 	}
 
 
 	t = await b.session.post("https://api.imgur.com/oauth2/token", data=data)
-	if t.status != 200:
+	if t.status != 200 :
 		return None
 
 	jt = await t.json()
@@ -55,7 +55,7 @@ async def r_Imgur(b, l) :
 #                  access_token_key=None, session=None, logger=None,
 # **params)
 
-	if r.status != 200:
+	if r.status != 200 :
 		return None
 	j = await r.json()
 	try :

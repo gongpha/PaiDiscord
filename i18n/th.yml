@@ -1,10 +1,13 @@
 LanguageName                : ภาษาไทย
 lang                        : th
 author                      : gongpha
+need_s                      : False
+use_buddhist_era            : True
 author_id                   : 269418798975680513
 RequestBy                   : ร้องขอโดย {}
 Empty                       : ว่างเปล่า
 None                        : ไม่มี
+NoObject                    : ไม่ปรากฏ
 NoCommand                   : ไม่มีคำสั่ง
 Powered                     : โดย Pramual Pai
 
@@ -42,7 +45,7 @@ Model :
     TextChannel             : ช่องข้อความ
     VoiceChannel            : ช่องเสียง
     VoiceClient             : ไคลเอนต์เสียง
-    CategoryChannel         : หมวดหมู่
+    Category                : หมวดหมู่
     DMChannel               : ข้อความส่วนตัว
     Reaction                : รีแอคชัน
     Emoji                   : อีโมจิ
@@ -68,6 +71,19 @@ Model :
     CPU                     : CPU
     Ping                    : ความล่าช้า
     Invite                  : คำเชิญ
+    Boost                   : บูสต์
+    Item                    : รายการ
+    URL                     : URL
+    Icon                    : ไอคอน
+    Banner                  : แบนเนอร์
+    Splash                  : หน้าแรกเริ่ม
+    SystemChannel           : ช่องระบบ
+    Bot                     : บอท
+    ManagedRole             : บทบาทที่ถูกจัดการโดยอัตโนมัติ
+    UnmanagedRole           : บทบาทที่ไม่ได้ถูกจัดการโดยอัตโนมัติ
+    Limits                  : การจำกัด
+    FileSize                : ขนาดไฟล์
+    Bitrate                 : บิตเรต
 
 Status :
     online                  : ออนไลน์
@@ -88,6 +104,7 @@ Permission :
     ManageMessages          : จัดการข้อความ
     ManageNicknames         : จัดการชื่อเล่น
     ManageRoles             : จัดการบทบาท
+    ManageWebhooks          : จัดการ Webhook
 
 Reason :
     CommandBy               : ถูดจัดการโดย {}
@@ -98,31 +115,97 @@ Response :
     UserSentBot                 : มีอะไรเหรอ ? {}
     BotSentItself               : นี่เราจะกล่าวถึงตัวเองทำไมเนี่ย ? =w=
 
+Time :
+    Recently                : ไม่นานมานี้
+    SecondsAgo              : วินาทีที่แล้ว
+    MinutesAgo              : นาทีที่แล้ว
+    HoursAgo                : ชั่วโมงที่แล้ว
+    Yesterday               : เมื่อวาน
+    DaysAgo                 : วันที่แล้ว
+    WeeksAgo                : สัปดาห์ที่แล้ว
+    MonthsAgo               : เดือนที่แล้ว
+    YearsAgo                : ปีที่แล้ว
+
+    Second                  : วินาที
+    Minute                  : นาที
+    Hour                    : ชั่วโมง
+    Day                     : วัน
+    Week                    : สัปดาห์
+    Month                   : เดือน
+    Year                    : ปี
+
+Date :
+    Monday                  : จันทร์
+    Tuesday                 : อังคาร
+    Wednesday               : พุธ
+    Thursday                : พฤหัสบดี
+    Friday                  : ศุกร์
+    Saturday                : เสาร์
+    Sunday                  : อาทิตย์
+
+    _Monday                 : จ
+    _Tuesday                : อ
+    _Wednesday              : พ
+    _Thursday               : พฤ
+    _Friday                 : ศ
+    _Saturday               : ส
+    _Sunday                 : อ
+
+    January                : มกราคม
+    February               : กุมภาพันธ์
+    March                  : มีนาคม
+    April                  : เมษายน
+    May                    : พฤษภาคม
+    June                   : มิถุนายน
+    July                   : กรกฎาคม
+    August                 : สิงหาคม
+    September              : กันยายน
+    October                : ตุลาคม
+    November               : พฤศจิกายน
+    December               : ธันวาคม
+
+    _January                : ม.ค.
+    _February               : ก.พ.
+    _March                  : มี.ค.
+    _April                  : เม.ย
+    _May                    : พ.ค.
+    _June                   : มิ.ย.
+    _July                   : ก.ค.
+    _August                 : ส.ค.
+    _September              : ก.ย.
+    _October                : ต.ค.
+    _November               : พ.ย.
+    _December               : ธ.ค.
+
 CreatedAt                   : สร้างเมื่อ
 JoinedAt                    : เข้าร่วมเมื่อ
 JoinedGuildAt               : เข้าร่วม {} เมื่อ
-DateTimeText                : "%d %B พ.ศ. %Y เวลา %H:%M:%S + (%f)\nเมื่อ {}"
+DateTimeTextUnix            : "%-d %B พ.ศ. %Y เวลา %H:%M:%S"
+DateTimeTextWindows         : "%e %B พ.ศ. %Y เวลา %H:%M:%S"
+DateTimeTextUnixComplex     : "%-d %B พ.ศ. %Y เวลา %H:%M:%S + (%f)\nเมื่อ {}"
+DateTimeTextWindowsComplex  : "%e %B พ.ศ. %Y เวลา %H:%M:%S + (%f)\nเมื่อ {}"
 TimeoutWaitingReaction      : หมดเวลาการรอรีแอคชัน โปรดส่งคำสั่งมาใหม่หากต้องการดำเนินการอีกครั้ง
 Warning                     : คำเตือน !
 ActionCannotUndo            : การกระทำดังกล่าวไม่สามารถคืนค่าได้
 PleaseReactionAllCommander  : โปรดเพิ่มรีแอคชันด้านล่างนี้ทั้งหมด เพื่อดำเนินการ (ผู้ใช้ที่ส่งคำสั่งเท่านั้น)
 NoPermissionWith            : ไม่มีสิทธิ์ *{}*
 CannotSendTo                : ไม่สามารถส่งไปที่ `{}`
+CannotEdit                  : ไม่สามารถแก้ไข `{}`
+CannotDelete                : ไม่สามารถลบ `{}`
 ObjectNotFoundFromObject    : ไม่พบ{} `{}`
+ObjectNotFoundInObject      : ไม่พบ{}ใน{}
 YouAreNotBotOwner           : คุณไม่ใช่เจ้าของบอทนี้ คุณจึงไม่มีสิทธิ์ใช้งานคำสั่งนี้ได้
 YouAreNotGuildOwner         : คุณไม่ใช่เจ้าของเซิร์ฟเวอร์นี้ คุณจึงไม่มีสิทธิ์ใช้งานคำสั่งนี้ได้
 CommandInDMNotAvailable     : ไม่สามารถใช้คำสั่งในข้อความส่วนตัวได้
 DMWithUser                  : ข้อความส่วนตัวกับ {}
-WelcomeUserToGuild          : ยินดีต้อนรับ {} เข้าสู่ {} !
-UserWasJoinedGuildNo        : "{} ได้เข้าร่วมเซิร์ฟเวอร์เป็นคนที่ {}"
-UserWasLeftTheGuild         : "{} ได้ออกจาก {}"
-NowGuildHadNoMembersLeft    : "ขณะนี้เหลือสมาชิกในเซิร์ฟเวอร์อยู่ {} คน"
+WelcomeUserToGuild          : ยินดีต้อนรับ {member} เข้าสู่ {guild} !
+UserWasJoinedGuildNo        : "{mention} ได้เข้าร่วมเซิร์ฟเวอร์เป็นคนที่ {count}"
+UserWasLeftTheGuild         : "{member} ได้ออกจาก {guild}"
+NowGuildHadNoMembersLeft    : "ขณะนี้เหลือสมาชิกในเซิร์ฟเวอร์อยู่ {count} คน"
 NoMySQLAvailable            : "บอทนี้ไม่สนับสนุนการเก็บข้อมูล MySQL"
 CannotUseWithBot            : ไม่สามารถเรียกใช้คำสั่งกับบอทได้
 CannotUseWithUser           : ไม่สามารถเรียกใช้คำสั่งกับผู้ใช้ได้
 ConnectionClosed            : การเชื่อมต่อถูกปิดการใช้งาน
-FirstSeenTheBot             : พบกับบอทครั้งแรก
-FirstSeenInGuild            : พบกับบอทครั้งแรกที่ {}
 QueryExecuteTime            : ใช้เวลาในการเรียกข้อมูล {} วินาที
 TypeCommandForShowAllOject  : กรุณาใช้คำสั่ง {} เพื่อแสดง{}ทั้งหมด
 NoResult                    : ไม่มีผลลัพธ์
@@ -136,8 +219,23 @@ PercentUsagedNewLine        : "ใช้งานไปแล้ว {} % | {}"
 SystemUpTime                : ช่วงเวลาในการทำงาน
 ClickHere                   : คลิกที่นี่
 Forbidden                   : ไม่มีสิทธิ์ในการเข้าถึง
+UserIDOwnedThisObjectNotMe  : "`{}` {} เป็นเข้าของ{}นี้ ไม่ใช่เรา"
+MessageNotFound             : ไม่พบข้อความดังกล่าว
 CommandUsedCount            : จำนวนการใช้คำสั่ง
 SetItTo                     : ตั้งเป็น **{}** แล้ว
-TooManyInput                : ข้อมูลขาเข้าเยอะมากเกินไป
+TooManyOrFewInput           : ข้อมูลขาเข้าเยอะหรือน้อยเกินไป
 ThereAreInputsButWant       : ต้องการข้อมูลขาเข้าแค่ `{}` แต่ข้อมูลขาเข้าที่ได้รับมี `{}`
 InformationFromServer       : ข้อมูลจากเซิร์ฟเวอร์ `{}`
+BoostTierNo                 : บูสต์ขั้นที่ {}
+PremiumSince                : พรีเมี่ยมเมื่อ
+OnObject                    : เมื่อ {}
+InCorrectArgument           : อาร์กิวเมนต์ไม่ถูกต้อง
+CommandUsage                : "การใช้งานคำสั่ง : \n```\n{}\n```"
+BotInviteLink               : ลิงค์เชิญบอท
+SupportGuild                : "เซิร์ฟเวอร์ที่สนับสนุน : {}"
+Configs                     : การตั้งค่า
+Processing                  : กำลังดำเนินการ . . .
+Success                     : สำเร็จ
+Failed                      : ล้มเหลว
+MutualGuildWithMe           : เซิร์ฟเวอร์ร่วมกันกับฉัน
+AndMoreObject               : และอีก {} {}

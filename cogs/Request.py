@@ -32,20 +32,20 @@ class Request(Cog) :
 			s = self.stack[name]
 
 		except KeyError :
-			err = embed_em(ctx, self.bot.stringstack["ObjectNotFoundFromObject"].format(self.bot.stringstack["Model"]["Source"], req))
-			err.description = self.bot.stringstack["TypeCommandForShowAllOject"].format("{}request_list".format(self.bot.command_prefix), self.bot.stringstack["Model"]["Source"])
+			err = embed_em(ctx, self.bot.ss("ObjectNotFoundFromObject").format(self.bot.ss("Model", "Source"), req))
+			err.description = self.bot.ss("TypeCommandForShowAllOject").format("{}request_list".format(self.bot.command_prefix), self.bot.ss("Model", "Source"))
 			await ctx.send(embed=err)
 			return
 
 
 			#rr = await s.get(s[0])
 		u = await s(ctx.bot, req)
-		e = embed_t(ctx, name, "[{}]({})".format(self.bot.stringstack["OpenOriginal"], u[1]))
+		e = embed_t(ctx, name, "[{}]({})".format(self.bot.ss("OpenOriginal"), u[1]))
 		if u :
 			e.set_image(url=u[0])
 			await ctx.send(embed=e)
 		else :
-			await ctx.send(embed=embed_wm(ctx, self.bot.stringstack["NoResult"],""))
+			await ctx.send(embed=embed_wm(ctx, self.bot.ss("NoResult"),""))
 
 	@commands.command()
 	async def request_list(self, ctx, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :

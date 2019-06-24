@@ -18,12 +18,12 @@ class Nuke(Cog) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 		if not ctx.message.guild.me.guild_permissions.manage_channels :
-			await ctx.send(embed=embed_em(ctx, self.bot.stringstack["NoPermissionWith"].format(self.bot.stringstack["Permission"]["ManageChannels"])))
+			await ctx.send(embed=embed_em(ctx, self.bot.ss("NoPermissionWith").format(self.bot.ss("Permission", "ManageChannels"))))
 		else :
-			e = embed_wm(ctx, self.bot.stringstack["Warning"], self.bot.stringstack["ActionCannotUndo"])
+			e = embed_wm(ctx, self.bot.ss("Warning"), self.bot.ss("ActionCannotUndo"))
 			if await waitReactionRequired(ctx, self.bot, ['\N{HEAVY CHECK MARK}','\N{BALLOT BOX WITH CHECK}','\N{WHITE HEAVY CHECK MARK}'], ctx.author.id, e) :
 				for ch in ctx.message.guild.channels :
-					await ch.delete(reason=self.bot.stringstack["Reason"]["CommandBy"].format(ctx.author))
+					await ch.delete(reason=self.bot.ss("Reason", "CommandBy").format(ctx.author))
 
 	@commands.command()
 	@IsOwnerGuild()
@@ -32,9 +32,9 @@ class Nuke(Cog) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 		if not ctx.message.guild.me.guild_permissions.manage_messages :
-			await ctx.send(embed=embed_em(ctx, self.bot.stringstack["NoPermissionWith"].format(self.bot.stringstack["Permission"]["ManageMessages"])))
+			await ctx.send(embed=embed_em(ctx, self.bot.ss("NoPermissionWith").format(self.bot.ss("Permission", "ManageMessages"))))
 		else :
-			e = embed_wm(ctx, self.bot.stringstack["Warning"], self.bot.stringstack["ActionCannotUndo"])
+			e = embed_wm(ctx, self.bot.ss("Warning"), self.bot.ss("ActionCannotUndo"))
 			if await waitReactionRequired(ctx, self.bot, ['\N{HEAVY CHECK MARK}','\N{BALLOT BOX WITH CHECK}','\N{WHITE HEAVY CHECK MARK}'], ctx.author.id, e) :
 				msgs = []
 				while len(await ctx.message.channel.history(limit=300).flatten()) > 0 :

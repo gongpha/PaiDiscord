@@ -1,7 +1,7 @@
 cog :
     name                    : ข้อมูล
     description             : หาข้อมูลเกี่ยวกับผู้ใช้ ช่อง เซิร์ฟเวอร์ และอีกมากมาย
-    icon_emoji              : information_source
+    icon_emoji              : ':information_source:'
     author                  : gongpha
     translated              : gongpha
 command :
@@ -89,6 +89,21 @@ command :
             - อีโมจิ
             - อิโมจี
             - อีโมจี
+    invite :
+        description         : ส่งลิงค์คำเชิญบอทนี้
+        usage               :
+        aliases             :
+            - เชิญบอท
+            - เชิญ
+            - invitebot
+            - invite_bot
+    support :
+        description         : ส่งลิงค์คำเชิญเซิร์ฟเวอร์ที่สนับสนุน
+        usage               :
+        aliases             :
+            - สนับสนุน
+            - report
+            - รายงาน
 AliasFor                    : นามแฝงของคำสั่ง
 Help                        : แผงช่วยเหลือ
 InfoOfUser                  : ข้อมูลผู้ใช้ {}

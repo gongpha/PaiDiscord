@@ -4,7 +4,6 @@ from discord.ext.commands import *
 async def anyemoji_convert(ctx, obj) :
 	passed = 1
 	result = None
-	print(obj)
 	if not obj :
 		return (None, 0)
 	try :

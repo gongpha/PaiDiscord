@@ -1,7 +1,7 @@
 cog :
     name                    : คาราโอเกะ
     description             : สร้างคาราโอเกะจากรูปภาพ
-    icon_emoji              : microphone
+    icon_emoji              : ':microphone:'
     author                  : gongpha
     translated              : gongpha
 command :
