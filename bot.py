@@ -22,7 +22,7 @@ bot = Pramual(	info=load_yml('configs/info.yml', 'configs/base_info.yml'),
 				max_messages=13213,
 				loop=loop)
 
-print("Pramual 2.1")
+print("Pramual 2.2")
 print("Starting a Task...")
 loop.create_task(bot.run_bot())
 loop.run_until_complete(loop)

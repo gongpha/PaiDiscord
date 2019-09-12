@@ -13,7 +13,7 @@ class Proc(commands.Cog) :
 		super().__init__()
 		self.cog_name = self.qualified_name
 		self.cog_desc = self.description
-		self.cog_emoji = ["gear"]
+		self.cog_emoji = [":gear:"]
 
 
 

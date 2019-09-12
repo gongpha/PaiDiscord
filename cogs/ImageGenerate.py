@@ -9,7 +9,8 @@ from importlib import import_module
 
 proc_list = [
 	"proc.Triggered",
-	"proc._กูรู้หมดแล้ว"
+	"proc._กูรู้หมดแล้ว",
+	"proc.Fortune"
 ]
 
 stack = []
