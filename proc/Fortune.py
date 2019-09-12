@@ -17,7 +17,7 @@ class Fortune(Proc) :
 	desc = {
 		"th" : {
 			"lovematch" : "เอ๊ะ ! ความรักนี่มัน !?",
-			"lovematch_random" : "เอ๊ะ ! ความรักนี่มัน !?"
+			"lovematch_random" : "เอ๊ะ ! ความรักนี่มัน !? (แบบสุ่ม)"
 		}
 	}
 	author = "gongpha"
