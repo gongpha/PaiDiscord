@@ -5,6 +5,7 @@ import sys
 import traceback
 import random
 import os
+import json
 from io import BytesIO
 from discord.ext import commands
 from utils.template import embed_em
@@ -204,9 +205,11 @@ class Pramual(commands.Bot) :
 			else :
 				raise BotIsNotReady
 
-	async def use_query(self, sql, time) :
+	async def use_query(self, sql, result, time, rowcount) :
 		e = discord.Embed(title=f"Query Report")
-		e.description = "```\n" + sql + "```"
+		e.description = "```\n" + sql[:2041] + "```"
+		j = json.dumps(result, indent=4)
+		e.add_field(name="Result ({})".format(rowcount), value='```\n' + j[:1017] + '```')
 		e.color = 0xFFFF00
 		e.set_footer(text=time)
 		await self.get_bot_channel("system", "query_report").send(embed=e)
@@ -258,6 +261,12 @@ class Pramual(commands.Bot) :
 			print('>> WARNING : GUILD INVITE NOT FOUND')
 			self.guild_invite = None
 
+		testdb = await self.connect_db()
+		if testdb != None :
+			print("Database was connected successful")
+		else :
+			print("Failed to connect to database")
+
 	def run_bot(self) :
 		super().run(self.token)
 
@@ -266,8 +275,8 @@ class Pramual(commands.Bot) :
 	# 	await ctx.send("Hello from after_invoke")
 
 	async def on_command_completion(self, ctx) :
-		if self.get_dev_configs("update_command_used_count", False) :
-			await commit(self, "UPDATE `pai_discord_profile` SET commands=commands + 1, user_name=%s WHERE snowflake=%s", (ctx.author.name, ctx.author.id))
+		#if self.get_dev_configs("update_command_used_count", False) :
+		await commit(self, "UPDATE `discord_user` SET `commands`=commands + 1, `updated_at`=NOW(), `username`=\"{}\" WHERE snowflake=%s".format(ctx.author.name), ctx.author.id)
 
 	async def on_command(self, ctx) :
 		# if ctx.author.id not in self.cached_language :
@@ -289,7 +298,7 @@ class Pramual(commands.Bot) :
 		if isinstance(error, commands.CommandNotFound) :
 			return
 		if isinstance(error, commands.MissingRequiredArgument) :
-			e = embed_em(ctx, self.ss('InCorrectArgument'), "```{}{} {}```".format(self.cmdprefix, ctx.command.name, ctx.command.usage))
+			e = embed_em(ctx, self.ss('InCorrectArgument'), "```{}{} {}```".format(self.cmdprefix, ctx.command.name, ctx.command.usage) if ctx.command.usage != None else '')
 			await ctx.send(embed=e)
 			return
 

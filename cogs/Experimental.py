@@ -7,7 +7,7 @@ from utils.template import *
 from utils.check import *
 import json
 from io import BytesIO
-from utils.query import fetchone, commit
+from utils.query import fetchone, commit, qupdate_all_profile_record
 
 #from discord.ext.commands import MessageConverter, TextChannelConverter
 import inspect
@@ -263,5 +263,10 @@ class Experimental(Cog) :
 	# 	channel = self.bot.get_channel(int(id)) or ctx.message.channel
 	# 	await channel.send(text)
 
+	@commands.command()
+	@IsOwnerBot()
+	async def _update_all_users(self, ctx) :
+		await qupdate_all_profile_record(self.bot)
+		await ctx.send(":ok_hand:")
 def setup(bot) :
 	bot.add_cog(loadInformation(Experimental(bot)))

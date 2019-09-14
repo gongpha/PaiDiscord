@@ -52,17 +52,15 @@ class Info(Cog) :
 		return h
 
 	async def profile_information(self, ctx, object) :
-		r = await qget_profile(ctx.bot, object, ['profile_name', 'profile_description', 'credits', 'commands'])
+		r = await qget_profile(ctx.bot, object, ['credits', 'commands', 'username'])
 		if r == False :
-			print(await qinsert_profile(ctx.bot, object))
-			r = await qget_profile(ctx.bot, object, ['profile_name', 'profile_description', 'credits', 'commands'])
+			if r['result']['username'] != object.name :
+				await qupdate_profile_record(ctx.bot, object)
 		if object.bot :
 			e = embed_wm(ctx, ctx.bot.ss("CannotUseWithBot"))
 		else :
-			new = False
 			t = 0
 			if not r["result"] and r["rows"] == 0 :
-				new = True
 				try :
 					fromid = ctx.message.guild.id
 				except AttributeError :
@@ -70,19 +68,17 @@ class Info(Cog) :
 				t = await qinsert_profile(ctx.bot, object)
 				r = {
 					"result" : {
-						"profile_name" : object.display_name + " *",
-						"profile_description" : "",
-						"credits" : 0
+						"credits" : 0,
+						"commands" : 0,
+						"username" : object.display_name
 					}
 				}
-			e = embed_t(ctx, "", r["result"]["profile_description"])
+			e = embed_t(ctx)
 			e.color = object.color if object.color.value != 0 else discord.Embed.Empty
-
 			e.add_field(name=":credit_card: " + ctx.bot.ss("Model", "Credit"), value=r["result"]["credits"], inline=True)
 			e.add_field(name=":arrow_upper_left: " + ctx.bot.ss("CommandUsedCount"), value=r["result"]["commands"], inline=True)
-			e.set_author(name=r["result"]["profile_name"] or object, icon_url=object.avatar_url)
-			e.set_footer(text="🆔 {} : ⏲ {}".format(object.id, ctx.bot.ss("QueryExecuteTime").format(r["time"] if not new else t)))
-
+			e.set_author(name=object.display_name or object.name, icon_url=object.avatar_url)
+			e.set_footer(text=str(object.id))
 
 		return e
 
