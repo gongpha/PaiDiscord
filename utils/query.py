@@ -2,7 +2,7 @@
 import aiomysql
 from time import time
 import datetime
-from discord import NotFound
+from discord import NotFound, Forbidden
 
 async def fetchall(bot, sql, plist = None) :
 	connection = await bot.connect_db()
@@ -122,21 +122,59 @@ async def qupdate_profile(bot, user, dct) :
 		str = ",".join(["{}=\"{}\"".format(key, value) for key, value in dct.items()])
 		return await commit(bot, "UPDATE `discord_user` SET {} WHERE snowflake = %s".format(str), (user.id))
 
+async def qupdate_guild(bot, guild, dct) :
+	if (await qcheck_guild(bot, guild)) :
+		str = ",".join(["{}=\"{}\"".format(key, value) for key, value in dct.items()])
+		return await commit(bot, "UPDATE `discord_guild` SET {} WHERE snowflake = %s".format(str), (guild.id))
+
 async def qupdate_profile_record(bot, user) :
 	if (await qcheck_profile(bot, user)) :
 		return await qupdate_profile(bot, user, {'username':user.name})
 
 async def qupdate_all_profile_record(bot) :
-	al = await qget_id_list(bot)
+	al = await qget_user_id_list(bot)
 	strall = ""
 	for s in al['result'] :
 		try :
 			us = await bot.fetch_user(s['snowflake'])
 		except NotFound :
-			strall += "UPDATE `discord_user` SET `username`=\"{}\", `updated_at`=NOW() WHERE snowflake = {};".format('@@@("NOT FOUND")', s['snowflake'])
+			strall += "UPDATE `discord_user` SET `username`='{}', `updated_at`=NOW() WHERE snowflake = {};".format('@@@("NOT FOUND")', s['snowflake'])
 		else :
 			strall += "UPDATE `discord_user` SET `username`=\"{}\", `updated_at`=NOW() WHERE snowflake = {};".format(us.name, s['snowflake'])
 	return await commit(bot, strall)
 
 async def qget_id_list(bot, addid = False) :
 	return await fetchall(bot, "SELECT {}snowflake FROM discord_user".format("id," if addid else ''))
+
+
+
+
+
+
+
+
+async def qupdate_guild_record(bot, guild) :
+	if (await qcheck_guild(bot, guild)) :
+		return await qupdate_guild(bot, guild, {'name':guild.name, 'owner_snowflake':guild.owner_id})
+
+async def qupdate_all_guild_record(bot) :
+	al = await qget_guild_id_list(bot)
+	strall = ""
+	ad = []
+	for s in al['result'] :
+		gu = bot.get_guild(s['snowflake'])
+		if gu == None :
+			strall += "UPDATE `discord_guild` SET `forbidden`=1, `owner_snowflake`={}, `updated_at`=NOW() WHERE snowflake = {};".format(gu.owner_id, s['snowflake'])
+		else :
+			strall += "UPDATE `discord_guild` SET `forbidden`=0, `name`=\"{}\", `owner_snowflake`={}, `updated_at`=NOW() WHERE snowflake = {};".format(gu.name, gu.owner_id, s['snowflake'])
+		ad.append(s['snowflake'])
+	for gu in bot.guilds :
+		if gu.id not in ad :
+			strall += "INSERT INTO `discord_guild` (`snowflake`, `name`, `added_at`, `updated_at`, `owner_snowflake`, `supported`) VALUES ({}, \"{}\", \"{}\", \"{}\", {}, 0);".format(gu.id, gu.name, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), gu.owner_id)
+
+	return await commit(bot, strall)
+
+async def qget_user_id_list(bot, addid = False) :
+	return await fetchall(bot, "SELECT {}snowflake FROM discord_user".format("id," if addid else ''))
+async def qget_guild_id_list(bot, addid = False) :
+	return await fetchall(bot, "SELECT {}snowflake FROM discord_guild".format("id," if addid else ''))

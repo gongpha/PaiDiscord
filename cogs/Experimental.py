@@ -7,7 +7,7 @@ from utils.template import *
 from utils.check import *
 import json
 from io import BytesIO
-from utils.query import fetchone, commit, qupdate_all_profile_record
+from utils.query import fetchone, commit, qupdate_all_profile_record, qupdate_all_guild_record
 
 #from discord.ext.commands import MessageConverter, TextChannelConverter
 import inspect
@@ -268,5 +268,36 @@ class Experimental(Cog) :
 	async def _update_all_users(self, ctx) :
 		await qupdate_all_profile_record(self.bot)
 		await ctx.send(":ok_hand:")
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _update_all_guilds(self, ctx) :
+		await qupdate_all_guild_record(self.bot)
+		await ctx.send(":ok_hand:")
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _guilds(self, ctx, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :
+		if end is None:
+			end = start + 20
+		stri = "```\n"
+		stri += "\n".join([str(x) for x in ctx.bot.guilds][:20])
+		stri += '```'
+		e = embed_t(ctx, "", "")
+		e.add_field(name=f"{start} - {end}", value=stri)
+		await ctx.send(embed=e)
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _users(self, ctx, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :
+		if end is None:
+			end = start + 20
+		stri = "```\n"
+		stri += "\n".join([str(x) for x in ctx.bot.users][:20])
+		stri += '```'
+		print(stri)
+		e = embed_t(ctx, "", "")
+		e.add_field(name=f"{start} - {end}", value=stri)
+		await ctx.send(embed=e)
 def setup(bot) :
 	bot.add_cog(loadInformation(Experimental(bot)))
