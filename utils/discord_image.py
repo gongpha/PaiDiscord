@@ -32,6 +32,11 @@ async def loadImageFromURL(ctx, url) :
 async def processing_image_to_file(ctx=None, filename="processed_image.png", function=None, *parameter) :
 	async with ctx.channel.typing() :
 		re = await ctx.bot.loop.run_in_executor(None, function, *parameter)
+		if len(re.getvalue()) >= 8388608 :
+			i = Image.open(re)
+			i.save(re, format="jpg")
+			re.seek(0)
+			filename += '.jpg'
 		return discord.File(re, filename=filename)
 
 async def _getlastimg(ctx, format) :

@@ -26,3 +26,6 @@ command :
             - เบลอ
             - เบลอภาพ
             - blur_image
+
+Resize__CannotResizeThisImage : "ขออภัย ! ไม่สามารถย่อขยายรูปภาพนี้ได้"
+Resize__TryReduceSize         : "ลองลดจำนวนที่จะย่อขยายลง"

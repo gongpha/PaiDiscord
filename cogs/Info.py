@@ -119,7 +119,7 @@ class Info(Cog) :
 	async def stats(self, ctx) :
 		e = embed_t(ctx, self.bot.ss("StatsOf").format(ctx.bot.bot_name))
 		e.set_author(name=ctx.bot.bot_name, icon_url=self.bot.user.avatar_url)
-		e.set_thumbnail(url=(await ctx.bot.application_info()).icon_url)
+		#e.set_thumbnail(url=(await ctx.bot.application_info()).icon_url)
 		s = "**{}** : {}\n"
 		e.description += s.format(self.bot.ss("Model", "Name"), ctx.bot.user)
 		e.description += s.format(self.bot.ss("Model", "BotName"), ctx.bot.bot_name)
