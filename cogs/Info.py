@@ -94,7 +94,7 @@ class Info(Cog) :
 			e.color = self.bot.theme[0] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
 			e.description = self.bot.bot_description
 			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
-			e.set_footer(text=self.bot.ss("Powered"))
+			e.set_footer(text="Build " + str(self.bot.build_number))
 		else :
 			for n, c in self.bot.cogs.items() :
 				#print(n)
@@ -110,10 +110,15 @@ class Info(Cog) :
 							break
 
 		#msgh.set_thumbnail(url=ctx.author.avatar_url)
+		www = discord.Embed()
+		www.color = 0xFF0000
+		www.description = self.bot.ss('PrivateWarning')
+
 		if e != None :
 			await ctx.send(embed=e)
 		if h != None :
 			await ctx.send(embed=h)
+		await ctx.send(embed=www)
 
 	@commands.command()
 	async def stats(self, ctx) :
@@ -227,10 +232,30 @@ class Info(Cog) :
 	@commands.command()
 	async def avatar(self, ctx, *, obj = None) :
 		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
-		#async with ctx.typing() :
 		if member :
 			file = discord.File(fp=BytesIO(await (member.avatar_url_as(static_format="png")).read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.is_avatar_animated() else "png"))
 			await ctx.send("`{}`".format(member), file=file)
+
+	@commands.command()
+	async def avatar_url(self, ctx, *, obj = None) :
+		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
+		if member :
+			url = member.avatar_url
+			await ctx.send("`{}`\n{}".format(member, url))
+
+	@commands.command()
+	async def icon(self, ctx) :
+		guild = ctx.guild
+		if guild :
+			file = discord.File(fp=BytesIO(await (guild.icon_url_as(static_format="png")).read()), filename="pai__icon_{}-168d{}.{}".format(guild.name, guild.id, "gif" if guild.is_icon_animated() else "png"))
+			await ctx.send("`{}`".format(guild), file=file)
+
+	@commands.command()
+	async def icon_url(self, ctx) :
+		guild = ctx.guild
+		if guild :
+			url = guild.icon_url
+			await ctx.send("`{}`\n{}".format(guild, url))
 
 	@commands.command()
 	async def anyuser(self, ctx, *, obj = None) :

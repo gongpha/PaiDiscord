@@ -62,7 +62,7 @@ class Pramual(commands.Bot) :
 			}
 		})
 		self.loaded_dev = kwargs.pop('dev', False)
-		self.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.resources_fname, self.loaded_dev, kwargs.pop('loop', asyncio.get_event_loop()))
+		self.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.resources_fname, self.loaded_dev, kwargs.pop('loop', asyncio.get_event_loop()), kwargs.pop('build_number', 0))
 		self.load_strings()
 		self.load_assets()
 		if self.token == None :
@@ -101,12 +101,13 @@ class Pramual(commands.Bot) :
 	# 		if r :
 
 
-	def load_configs(self, info, channels, auths, configs, resources, dev, loop) :
+	def load_configs(self, info, channels, auths, configs, resources, dev, loop, build_number) :
 		inf = info
 		self.bot_channels = channels
 		self.auth = auths
 		self.configs = configs
 		self.resources = resources
+		self.build_number = build_number
 		self.dev_configs = {}
 		self.dev = dev
 		if self.dev == None :

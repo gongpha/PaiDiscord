@@ -8,7 +8,12 @@ from pramual import Pramual, load_yml
 
 
 
-
+with open(r'BUILD','r+') as f:
+	buildnumber = int(f.read())
+	if (os.environ.get('PramualBuildCount', False)) :
+		f.seek(0)
+		f.write(str(buildnumber + 1))
+	buildnumber += 1
 
 
 
@@ -20,9 +25,9 @@ bot = Pramual(	info=load_yml('configs/info.yml', 'configs/base_info.yml'),
 				configs=load_yml('configs/configs.yml', 'configs/base_configs.yml'),
 				resources=load_yml('configs/resources.yml', 'configs/base_resources.yml'),
 				max_messages=13213,
-				loop=loop)
+				loop=loop,build_number=buildnumber)
 
-print("Pramual 2.2")
+print("Pramual 2.2 : Build", buildnumber)
 print("Starting a Task...")
 loop.create_task(bot.run_bot())
 loop.run_until_complete(loop)

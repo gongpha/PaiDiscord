@@ -9,7 +9,7 @@ command :
         description         : |-
             ร้องขอข้อมูล
 
-            แหล่งที่ใช้ได้ ให้ใช้คำสั่ง `{0.command_prefix}request_list`
+            แหล่งที่ใช้ได้ ให้ใช้คำสั่ง `{0.cmdprefix}request_list`
         usage               : <ชื่อของแหล่ง>
         aliases             :
             - r

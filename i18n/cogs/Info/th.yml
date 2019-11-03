@@ -42,10 +42,52 @@ command :
         description         : ส่งภาพประจำตัวของผู้ใช้คนนั้น
         usage               : "<สมาชิก = ตัวเอง>"
         aliases             :
+            - รูปโปร
+            - รูปปก
+            - ปก
             - profile_picture
             - profilepic
             - profileavatar
             - profilepicture
+            - av
+    avatar_url :
+        description         : ส่งภาพประจำตัวของผู้ใช้คนนั้นโดย URL
+        usage               : "<สมาชิก = ตัวเอง>"
+        aliases             :
+            - profile_picture_url
+            - profilepicurl
+            - profileavatarurl
+            - profilepictureurl
+            - avatarurl
+            - avurl
+            - av_url
+    icon :
+        description         : ส่งภาพไอคอนของเซิร์ฟเวอร์
+        usage               :
+        aliases             :
+            - รูปกลุ่ม
+            - รูปเซิฟ
+            - รูปเซิร์ฟเวอร์
+            - guild_avatar
+            - avatar_gulid
+            - server_avatar
+            - avatar_server
+            - guild_picture
+            - picture_gulid
+            - server_picture
+            - picture_server
+    icon_url :
+        description         : ส่งภาพไอคอนของเซิร์ฟเวอร์โดย URL
+        usage               :
+        aliases             :
+            - guild_avatar_url
+            - avatar_gulid_url
+            - server_avatar_url
+            - avatar_server_url
+            - guild_picture_url
+            - picture_gulid_url
+            - server_picture_url
+            - picture_server_url
     anyuser :
         description         : |-
             แสดงข้อมูลของผู้ใช้ที่ถูกแปลงจากชื่อผู้ใช้, ชื่อผู้ใช้ติดแท็ก, ID ของผู้ใช้, การกล่าวถึง และชื่อเล่นของผู้ใช้
