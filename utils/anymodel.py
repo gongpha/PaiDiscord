@@ -146,7 +146,7 @@ async def AnyModel__MemberOrUser_Optional(ctx, object, external=True, in_ctx_gui
 async def AnyModel_FindUserOrMember(ctx, object, external=True, in_ctx_guild=True) :
 	r = await AnyModel__MemberOrUser_Optional(ctx, object, external, in_ctx_guild)
 	if not r :
-		err = embed_em(ctx, ctx.bot.stringstack["ObjectNotFoundFromObject"].format(ctx.bot.stringstack["Model"]["User"], str(object)))
+		err = embed_em(ctx, ctx.bot.ss("ObjectNotFoundFromObject").format(ctx.bot.ss("Model", "User"), str(object)))
 		#err.description = "```{}```".format(result.text)
 		await ctx.send(embed=err)
 		return None
