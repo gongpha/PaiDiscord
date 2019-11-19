@@ -116,7 +116,7 @@ class Info(Cog) :
 
 		if e != None :
 			await ctx.send(embed=e)
-			await ctx.send(embed=www)
+
 		if h != None :
 			await ctx.send(embed=h)
 			await ctx.send(embed=www)
