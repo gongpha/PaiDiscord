@@ -80,7 +80,7 @@ class Experimental(Cog) :
 	async def _delete(self, ctx, chid, id) :
 		#u = await self.bot.fetch_user(self.bot.user.id)
 		try :
-			channel = await ctx.bot.fetch_user(chid)
+			channel = await ctx.bot.fetch_user(int(chid))
 		except discord.NotFound :
 			channel = ctx.bot.get_channel(int(chid))
 		message = await channel.fetch_message(id)
@@ -109,7 +109,7 @@ class Experimental(Cog) :
 	@IsOwnerBot()
 	async def _history(self, ctx, chid, limit=10) :
 		try :
-			channel = await ctx.bot.fetch_user(chid)
+			channel = await ctx.bot.fetch_user(int(chid))
 		except discord.NotFound :
 			channel = ctx.bot.get_channel(int(chid))
 		if ctx.me.guild_permissions.manage_webhooks :
@@ -299,5 +299,44 @@ class Experimental(Cog) :
 		e = embed_t(ctx, "", "")
 		e.add_field(name=f"{start} - {end}", value=stri)
 		await ctx.send(embed=e)
+
+
+
+
+
+
+
+
+
+##############################################################
+
+
+
+
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _channel_list(self, ctx, guild_id = None, attr : str = None) :
+		if guild_id == "this" :
+			guild = ctx.guild
+		else :
+			guild = ctx.bot.get_guild(int(guild_id)) or ctx.guild
+		e = embed_t(ctx, len(guild.text_channels) + len(guild.voice_channels), len(guild.categories))
+		for c in guild.categories :
+			e.add_field(name=c.name, value="\n".join(ch.name + ((" (" + str(getattr(ch, attr)) + ")") if attr != None else "") for ch in c.channels))
+
+		await ctx.send(embed=e)
+
+
+
+
+
+
+
+
+
+
+
+
 def setup(bot) :
 	bot.add_cog(loadInformation(Experimental(bot)))
