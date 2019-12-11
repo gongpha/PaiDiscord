@@ -8,3 +8,4 @@ aiomysql
 pymysql
 psutil
 pytz
+pandas
