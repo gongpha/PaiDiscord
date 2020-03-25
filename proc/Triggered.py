@@ -66,7 +66,7 @@ class Triggered(Proc) :
 				else:
 					base.paste(triggered, (-(mmmw) + randint(-(mmmw), (mmmw)), (base.height - triggered.height) + mmmh + randint(-int(mmmh), int(mmmh))))
 
-				base.paste(tint, (0, 0), img)
+				base.paste(tint, (0, 0), tint)
 				d = 20
 				frames.append(base)
 		else :
