@@ -20,13 +20,21 @@ stack = []
 class ImageGenerate(Cog) :
 	def __init__(self, bot) :
 		for c in proc_list :
-			#try:
-			lib = import_module(c)
-			# except ImportError as e:
-			# 	raise errors.ExtensionNotFound(c, e) from e
-			#else :
-			bot._load_from_module_spec(lib, c)
-			stack.append(lib.name)
+			##try:
+			#lib = import_module(c)
+			## except ImportError as e:
+			## 	raise errors.ExtensionNotFound(c, e) from e
+			##else :
+			#lib.setup(bot)
+			#bot.__extensions[name] = lib
+
+			#stack.append(lib.name)
+
+			try:
+				bot.load_extension(c)
+			except Exception as e:
+				print(f"Failed to load the {extensiom}", file=sys.stderr)
+				traceback.print_exc()
 
 
 				#traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
