@@ -86,8 +86,8 @@ async def commit(bot, sql, plist = None) :
 
 
 async def qcheck_guild(bot, guild) :
-	a = await fetchone(bot, "SELECT EXISTS(SELECT 1 FROM discord_guild WHERE snowflake=%s LIMIT 1)", guild.id)
-	return a
+	a = await fetchone(bot, "SELECT EXISTS(SELECT 1 FROM discord_guild WHERE snowflake=%s LIMIT 1) AS ex", guild.id)
+	return a["result"]["ex"]
 
 async def qinsert_guild(bot, guild) :
 	if not (await qcheck_guild(bot, guild)) :
@@ -102,12 +102,12 @@ async def qget_guild(bot, guild, ll) :
 		return False
 
 async def qcheck_profile(bot, user) :
-	a = await fetchone(bot, "SELECT EXISTS(SELECT 1 FROM discord_user WHERE snowflake=%s LIMIT 1)", user.id)
-	return a
+	a = await fetchone(bot, "SELECT EXISTS(SELECT 1 FROM discord_user WHERE snowflake=%s LIMIT 1) AS ex", user.id)
+	return a["result"]["ex"]
 
 async def qinsert_profile(bot, user) :
 	if not (await qcheck_profile(bot, user)) :
-		return await commit(bot, "INSERT INTO `discord_user` (`snowflake`, `username`, `added_at`, `credits`, `owner`, `commands`) VALUES (%s, %s, 0, 0, 0)", (user.id, user.name, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+		return await commit(bot, "INSERT INTO `discord_user` (`snowflake`, `username`, `added_at`, `credits`, `owner`, `commands`) VALUES (%s, %s, %s, 0, 0, 0)", (user.id, user.name, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 	else :
 		return False
 
@@ -129,7 +129,7 @@ async def qupdate_guild(bot, guild, dct) :
 
 async def qupdate_profile_record(bot, user) :
 	if (await qcheck_profile(bot, user)) :
-		return await qupdate_profile(bot, user, {'username':user.name})
+		return await qupdate_profile(bot, user, {'username':user.name, 'updated_at':datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
 
 async def qupdate_all_profile_record(bot) :
 	al = await qget_user_id_list(bot)
@@ -144,7 +144,7 @@ async def qupdate_all_profile_record(bot) :
 	return await commit(bot, strall)
 
 async def qget_id_list(bot, addid = False) :
-	return await fetchall(bot, "SELECT {}snowflake FROM discord_user".format("id," if addid else ''))
+	return await fetchall(bot, "SELECT {} FROM discord_user".format("id," if addid else ''))
 
 
 

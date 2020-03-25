@@ -8,17 +8,26 @@ import datetime
 from pytz import timezone
 import math
 
-def embed_t(ctx, title = "", description = "") :
+defcol = 0x36393F
+
+def embed_t(ctx, title = "", description = "", casesensitive = False) :
 	e = discord.Embed()
 	#print(e.color)
-	if isinstance(ctx.bot.theme, (list, tuple)) :
-		e.color = ctx.bot.theme[1] if len(ctx.bot.theme) > 1 else ctx.bot.theme[0]
-	else :
-		e.color = ctx.bot.theme
+
+	if isinstance(ctx.me, discord.Member) :
+		e.color = ctx.me.color
+	elif isinstance(ctx.me, (discord.User, discord.ClientUser)) :
+		e.color = defcol
+	#if isinstance(ctx.bot.theme, (list, tuple)) :
+	#	e.color = ctx.bot.theme[1] if len(ctx.bot.theme) > 1 else ctx.bot.theme[0]
+	#else :
+	#	e.color = ctx.bot.theme
+
 	e.description = description
 	e.title = title
 	if not isinstance(ctx.message.channel, discord.DMChannel) :
-		e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author.display_name), icon_url=ctx.message.author.avatar_url)
+		e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author.display_name) + (" • " + ctx.bot.ss('DontForgetCaseSensitive')) if casesensitive else "", icon_url=ctx.message.author.avatar_url)
+
 
 	return e
 
@@ -378,7 +387,7 @@ def model_info(ctx, model) :
 	if isinstance(model, discord.Member) :
 		e.color = model.color
 	elif isinstance(model, (discord.User, discord.ClientUser)) :
-		e.color = discord.Embed.Empty
+		e.color = defcol
 	elif isinstance(model, discord.Guild) :
 		e.add_field(name=ctx.bot.ss("Model", "Region"),value=ctx.bot.ss("VoiceRegion", model.region.name), inline=True)
 		e.add_field(name=ctx.bot.ss("Model", "Owner"),value=model.owner.mention, inline=True)
@@ -451,4 +460,17 @@ def model_info(ctx, model) :
 			status_all = ""
 		status_one = "{0} **{1}**{2}".format(sss(model.status)[1], sss(model.status)[0], status_all)
 		e.add_field(name=ctx.bot.ss("Model", "Status"), value=status_one, inline=True)
+	return e
+
+def embed_list(ctx, list, start = 0, end = None) :
+	if end is None:
+		end = start + 20
+	if len(list) > 0 :
+		stri = "```\n"
+		stri += "\n".join([x.url for x in list][:20])
+		stri += '```'
+		print(stri)
+		e = embed_t(ctx, "", "")
+		e.add_field(name=f"{start} - {end}", value=stri)
+	e.set_footer(text=str(len(list)))
 	return e

@@ -3,3 +3,4 @@ cmd.exe
 cache/
 cmdshortcut.lnk
 configs/info.yml
+*.aiscaledpng

@@ -5,6 +5,7 @@ from utils.cog import Cog
 from utils.cog import loadInformation
 from utils.template import *
 from utils.check import *
+from utils.discord_image import *
 import json
 from io import BytesIO
 from utils.query import fetchone, commit, qupdate_all_profile_record, qupdate_all_guild_record
@@ -12,6 +13,34 @@ from utils.query import fetchone, commit, qupdate_all_profile_record, qupdate_al
 #from discord.ext.commands import MessageConverter, TextChannelConverter
 import inspect
 import utils.anymodel as anymodel
+
+async def check_m(ctx, chid, id) :
+	if not id :
+		try :
+			message = await commands.MessageConverter().convert(ctx, chid);
+		except discord.ext.commands.CommandError :
+			message = None
+			async with ctx.channel.typing() :
+				for guild in ctx.bot.guilds:
+					for channel in guild.channels:
+						try :
+							message = await channel.fetch_message(id)
+						except :
+							pass
+				if not message :
+					return None
+	else :
+		try :
+			channel = await ctx.bot.fetch_user(int(chid))
+		except discord.NotFound :
+			channel = ctx.bot.get_channel(int(chid))
+			if not channel :
+				return None
+		try :
+			message = await channel.fetch_message(id)
+		except discord.NotFound:
+			return None
+	return message
 
 class Experimental(Cog) :
 	pbot = None
@@ -52,7 +81,8 @@ class Experimental(Cog) :
 			await ctx.send(text)
 			return
 		try :
-			await channel.send(text)
+			sm = await channel.send(text)
+			await ctx.send(sm.jump_url)
 		except discord.Forbidden as e:
 			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), self.bot.ss('Forbidden'), error=e))
 			return
@@ -64,27 +94,25 @@ class Experimental(Cog) :
 	@IsOwnerBot()
 	async def _edit(self, ctx, chid, id, *, text : str) :
 		#u = await self.bot.fetch_user(self.bot.user.id)
-		try :
-			channel = await ctx.bot.fetch_user(chid)
-		except discord.NotFound :
-			channel = ctx.bot.get_channel(int(chid))
-		message = await channel.fetch_message(id)
+		message = await check_m(ctx, chid, id)
+		if not message :
+			await ctx.send(embed=embed_em(ctx, ctx.bot.ss('CannotEdit').format(id or chid), ctx.bot.ss('MessageNotFound')))
+			return
 
 		try :
 			await message.edit(content=text)
+			await ctx.message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
 		except discord.HTTPException as e:
 			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
 
 	@commands.command()
 	@IsOwnerBot()
-	async def _delete(self, ctx, chid, id) :
+	async def _delete(self, ctx, chid, id = None) :
 		#u = await self.bot.fetch_user(self.bot.user.id)
-		try :
-			channel = await ctx.bot.fetch_user(int(chid))
-		except discord.NotFound :
-			channel = ctx.bot.get_channel(int(chid))
-		message = await channel.fetch_message(id)
-
+		message = await check_m(ctx, chid, id)
+		if not message :
+			await ctx.send(embed=embed_em(ctx, ctx.bot.ss('CannotDelete').format(id or chid), ctx.bot.ss('MessageNotFound')))
+			return
 		# except anymodel.NotFound as e:
 		# 	await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), self.bot.ss('MessageNotFound'), error=e))
 		# 	return
@@ -99,11 +127,12 @@ class Experimental(Cog) :
 
 		try :
 			await message.delete()
+			await ctx.message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
 		except discord.Forbidden as e:
-			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), self.bot.ss('Forbidden'), error=e))
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotDelete').format(id), self.bot.ss('Forbidden'), error=e))
 			return
 		except discord.HTTPException as e:
-			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotDelete').format(id), error=e))
 
 	@commands.command()
 	@IsOwnerBot()
@@ -112,7 +141,7 @@ class Experimental(Cog) :
 			channel = await ctx.bot.fetch_user(int(chid))
 		except discord.NotFound :
 			channel = ctx.bot.get_channel(int(chid))
-		if ctx.me.guild_permissions.manage_webhooks :
+		if ctx.channel.guild.me.guild_permissions.manage_webhooks :
 			wh = await ctx.channel.create_webhook(name="Pai's User Representer", avatar=ctx.bot.webhook_avatar)
 			async for message in channel.history(limit=10) :
 
@@ -327,16 +356,80 @@ class Experimental(Cog) :
 
 		await ctx.send(embed=e)
 
+	@commands.command()
+	@IsOwnerBot()
+	async def _attachments(self, ctx, chid, id = None, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :
+		message = await check_m(ctx, chid, id)
+		if not message :
+			await ctx.send(embed=embed_em(ctx, ctx.bot.ss('CannotEdit').format(id or chid), ctx.bot.ss('MessageNotFound')))
+			return
 
+		stri = ". . ."
+		if end is None:
+			end = start + 20
+		if len(message.attachments) > 0 :
+			stri = "\n".join(["[{}]({})".format(x.filename,x.url) for x in message.attachments][:20])
+			print(stri)
+		e = embed_t(ctx, "", "")
+		e.add_field(name=f"{start} - {end}", value=stri)
+		e.set_footer(text=str(len(message.attachments)))
+		await ctx.send(embed=e)
 
+	@commands.command()
+	@IsOwnerBot()
+	async def _lastimg(self, ctx, count = 1, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :
+		l = await getLastImageOrAnimatedImage(ctx, count, 1);
 
+		stri = ". . ."
+		if end is None:
+			end = start + 20
+		if not isinstance(l, list) :
+			l = [l]
+		if len(l) > 0 :
+			stri = "\n".join([str(x) for x in l][:20])
+		e = embed_t(ctx, "", "")
+		e.add_field(name=f"{start} - {end}", value=stri)
+		e.set_footer(text=str(len(l)))
+		await ctx.send(embed=e)
 
+	@commands.command()
+	@IsOwnerBot()
+	async def _lastimg_animate(self, ctx, count = 1, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :
+		l = await getLastAnimatedImage(ctx, count, 1);
 
+		stri = ". . ."
+		if end is None:
+			end = start + 20
+		if not isinstance(l, list) :
+			l = [l]
+		if len(l) > 0 :
+			stri = "\n".join([str(x) for x in l][:20])
+		e = embed_t(ctx, "", "")
+		e.add_field(name=f"{start} - {end}", value=stri)
+		e.set_footer(text=str(len(l)))
+		await ctx.send(embed=e)
 
+	@commands.command()
+	@IsOwnerBot()
+	async def _lastimg_static(self, ctx, count = 1, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :
+		l = await getLastImage(ctx, count, 1);
 
+		stri = ". . ."
+		if end is None:
+			end = start + 20
+		if not isinstance(l, list) :
+			l = [l]
+		if len(l) > 0 :
+			stri = "\n".join([str(x) for x in l][:20])
+		e = embed_t(ctx, "", "")
+		e.add_field(name=f"{start} - {end}", value=stri)
+		e.set_footer(text=str(len(l)))
+		await ctx.send(embed=e)
 
-
-
+	@commands.command()
+	async def pai_avatar(self, ctx) :
+		if (ctx.bot.user.id == 473457863822409728 or ctx.bot.user.id == 457908707817422860) and ctx.bot.hd_avatar_url :
+			await ctx.send(ctx.bot.hd_avatar_url)
 
 def setup(bot) :
 	bot.add_cog(loadInformation(Experimental(bot)))

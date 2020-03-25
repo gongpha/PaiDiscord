@@ -10,6 +10,12 @@ async def anyuser_convert(ctx, obj) :
 		while True :
 			result = await MemberConverter().convert(ctx, obj)
 	except BadArgument :
+		# Search begin and end
+		if not str(obj).isdigit() :
+			n = str(obj)
+			for m in ctx.guild.members :
+				if m.display_name.startswith(n) or m.name.startswith(n) :
+					return (m, passed)
 		passed += 1
 		try :
 			result = await UserConverter().convert(ctx, obj)

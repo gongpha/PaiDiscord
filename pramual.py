@@ -126,6 +126,7 @@ class Pramual(commands.Bot) :
 		self.token = infget('token', None)
 		self.cached_prefix = {}
 		self.cached_language = {}
+		self.hd_avatar_url = infget('hd_avatar_url', None)
 		self.cmdprefix = infget('default_command_prefix', '_')
 		def prefix(bot, message) :
 			r = []
@@ -202,7 +203,7 @@ class Pramual(commands.Bot) :
 			raise BotChannelNotFound
 		else :
 			if self.is_ready() :
-				return self.get_channel(c)
+				return self.get_channel(int(c))
 			else :
 				raise BotIsNotReady
 

@@ -34,7 +34,7 @@ class Request(Cog) :
 
 		except KeyError :
 			err = embed_em(ctx, self.bot.ss("ObjectNotFoundFromObject").format(self.bot.ss("Model", "Source"), req))
-			err.description = self.bot.ss("TypeCommandForShowAllOject").format("{}request_list".format(self.bot.command_prefix), self.bot.ss("Model", "Source"))
+			err.description = self.bot.ss("TypeCommandForShowAllOject").format("{}request_list".format(ctx.bot.cmdprefix), self.bot.ss("Model", "Source"))
 			await ctx.send(embed=err)
 			return
 

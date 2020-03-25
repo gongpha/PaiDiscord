@@ -48,7 +48,7 @@ class Fortune(Proc) :
 		b = BytesIO()
 		result.save(b, format="png")
 		b.seek(0)
-		return b
+		return b, "png"
 
 	@commands.command()
 	async def lovematch(self, ctx, user) :
@@ -56,7 +56,7 @@ class Fortune(Proc) :
 			datuser = await AnyModel_FindUserOrMember(ctx, user)
 			img = await im_avatar(ctx, datuser)
 			percent = (((datuser.id % 100) + (ctx.author.id % 100)) / 200) * 100
-			file = await processing_image_to_file(ctx, "match.png", self.m_match, await im_avatar(ctx, ctx.author), img, percent)
+			file = await processing_image_to_file(ctx, "match", self.m_match, await im_avatar(ctx, ctx.author), img, percent)
 			await ctx.send(file=file)
 
 	@commands.command()
@@ -65,7 +65,7 @@ class Fortune(Proc) :
 			datuser = await AnyModel_FindUserOrMember(ctx, user)
 			img = await im_avatar(ctx, datuser)
 			percent = randrange(0, 100)
-			file = await processing_image_to_file(ctx, "match.png", self.m_match, await im_avatar(ctx, ctx.author), img, percent)
+			file = await processing_image_to_file(ctx, "match", self.m_match, await im_avatar(ctx, ctx.author), img, percent)
 			await ctx.send(file=file)
 
 def setup(bot) :

@@ -41,12 +41,12 @@ class _กูรู้หมดแล้ว(Proc) :
 		b = BytesIO()
 		bg.save(b, format="png")
 		b.seek(0)
-		return b
+		return b, "png"
 
 
 	@commands.command(name="กูรู้หมดแล้ว", aliases=["ikwi"])
 	async def ikwi(self, ctx, *, text : str) :
-		file = await processing_image_to_file(ctx, "ikwi.png", self.m_ikwi, text)
+		file = await processing_image_to_file(ctx, "ikwi", self.m_ikwi, text)
 		await ctx.send(file=file)
 
 def setup(bot) :

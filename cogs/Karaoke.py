@@ -33,7 +33,7 @@ class Karaoke(Cog) :
 		b = BytesIO()
 		image.save(b, format="png")
 		b.seek(0)
-		return b
+		return b, "png"
 
 	def k_grammy(self, text, eng, image, percent, _size = 1) :
 		# by gongpha, designed by GMM GRAMMY
@@ -67,7 +67,7 @@ class Karaoke(Cog) :
 		b = BytesIO()
 		image.save(b, format="png")
 		b.seek(0)
-		return b
+		return b, "png"
 
 	def k_topline_pp(self, text, image, color, percent, size=1) :
 		# by gongpha, designed like Topline-Diamond (ท็อปไลน์-ไดมอนด์)
@@ -90,16 +90,16 @@ class Karaoke(Cog) :
 		b = BytesIO()
 		image.save(b, format="png")
 		b.seek(0)
-		return b
+		return b, "png"
 
 	@commands.command()
 	async def wanbuaban(self, ctx, *, text : str) :
-		file = await processing_image_to_file(ctx, "wanbuaban.png", self.k_wanbuaban, text, await getLastImage(ctx), randint(0, 100), 1)
+		file = await processing_image_to_file(ctx, "wanbuaban", self.k_wanbuaban, text, await getLastImage(ctx), randint(0, 100), 1)
 		await ctx.send(file=file)
 
 	@commands.command()
 	async def topline(self, ctx, *, text : str) :
-		file = await processing_image_to_file(ctx, "topline.png", self.k_topline_pp, text, await getLastImage(ctx), None, randint(0, 100), 1)
+		file = await processing_image_to_file(ctx, "topline", self.k_topline_pp, text, await getLastImage(ctx), None, randint(0, 100), 1)
 		await ctx.send(file=file)
 
 	@commands.command()
@@ -109,7 +109,7 @@ class Karaoke(Cog) :
 		t = await extract_str(ctx, text, 2)
 		if not t :
 			return
-		file = await processing_image_to_file(ctx, "grammy-karaoke.png", self.k_grammy, t[0], t[1], await getLastImage(ctx), randint(0, 100), 1)
+		file = await processing_image_to_file(ctx, "grammy-karaoke", self.k_grammy, t[0], t[1], await getLastImage(ctx), randint(0, 100), 1)
 		await ctx.send(file=file)
 def setup(bot) :
 	bot.add_cog(loadInformation(Karaoke(bot)))

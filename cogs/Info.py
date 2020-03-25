@@ -12,6 +12,7 @@ from utils.anymodel import AnyModel_FindUserOrMember
 from utils.anyemoji import anyemoji_convert
 from utils.query import qinsert_profile, qget_profile
 from utils.check import *
+
 import datetime
 import math
 import psutil
@@ -26,23 +27,23 @@ class Info(Cog) :
 		super().__init__(bot)
 
 	def help_overview_embed(self, ctx) :
-		h = embed_t(ctx, "❔ {}".format(self.ss("Help")), "")
-		if isinstance(self.bot.theme, (list, tuple)) :
-			h.color = self.bot.theme[1] if len(self.bot.theme) > 1 else self.bot.theme[0]
-		else :
-			h.color = self.bot.theme
+		h = embed_t(ctx, "❔ {}".format(self.ss("Help")), casesensitive=True)
+		#if isinstance(self.bot.theme, (list, tuple)) :
+		#	h.color = self.bot.theme[1] if len(self.bot.theme) > 1 else self.bot.theme[0]
+		#else :
+		#	h.color = self.bot.theme
 		for n, c in self.bot.cogs.items() :
 			if not c.cog_hidden :
 				h.add_field(name="{} {}".format(" ".join(c.cog_emoji or [":x:"]), c.cog_name or c.cog_class),value=f"`{ctx.bot.cmdprefix}{ctx.command.name} {c.qualified_name}`",inline=True) # +"\n".join([f"`{self.bot.command_prefix}{i} {c.qualified_name}`" for i in ctx.command.aliases])
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
-		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or cog.cog_class), cog.cog_desc or ctx.bot.ss('None'))
+		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or cog.cog_class), cog.cog_desc, casesensitive=True)
 		if not cog.get_commands() :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.ss("NoCommand")))
 		for c in cog.get_commands() :
 			#h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.ss("Empty"],inline=True)
-			h.add_field(name="`{}{}`".format(ctx.bot.cmdprefix, c.name),value=(c.description or "").format(ctx.bot) or ctx.bot.ss("Empty"),inline=True)
+			h.add_field(name="`{}{}`".format(ctx.bot.cmdprefix, c.name),value=(c.description or "").format(ctx.bot) or ctx.bot.ss("NoDescription"),inline=True)
 		return h
 
 	def help_command_embed(self, ctx, command, cog) :
@@ -53,14 +54,13 @@ class Info(Cog) :
 
 	async def profile_information(self, ctx, object) :
 		r = await qget_profile(ctx.bot, object, ['credits', 'commands', 'username'])
-		if r == False :
-			if r['result']['username'] != object.name :
-				await qupdate_profile_record(ctx.bot, object)
+		if r != False :
+			await qupdate_profile_record(ctx.bot, object)
 		if object.bot :
 			e = embed_wm(ctx, ctx.bot.ss("CannotUseWithBot"))
 		else :
 			t = 0
-			if not r["result"] and r["rows"] == 0 :
+			if r == False :
 				try :
 					fromid = ctx.message.guild.id
 				except AttributeError :
@@ -74,7 +74,7 @@ class Info(Cog) :
 					}
 				}
 			e = embed_t(ctx)
-			e.color = object.color if object.color.value != 0 else discord.Embed.Empty
+			e.color = object.color if object.color.value != 0 else discord.Color.default()
 			e.add_field(name=":credit_card: " + ctx.bot.ss("Model", "Credit"), value=r["result"]["credits"], inline=True)
 			e.add_field(name=":arrow_upper_left: " + ctx.bot.ss("CommandUsedCount"), value=r["result"]["commands"], inline=True)
 			e.set_author(name=object.display_name or object.name, icon_url=object.avatar_url)
@@ -88,11 +88,12 @@ class Info(Cog) :
 		#print(self.bot.description)
 		e = None
 		h = None
+		ov = False
 		if not sect :
+			ov = True
 			h = self.help_overview_embed(ctx)
-			e = discord.Embed()
-			e.color = self.bot.theme[0] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
-			e.description = self.bot.bot_description
+			e = embed_t(ctx, description=self.bot.bot_description)
+			#e.color = self.bot.theme[0] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
 			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
 			e.set_footer(text="Build " + str(self.bot.build_number))
 		else :
@@ -119,6 +120,7 @@ class Info(Cog) :
 
 		if h != None :
 			await ctx.send(embed=h)
+		if ov :
 			await ctx.send(embed=www)
 
 
@@ -234,9 +236,13 @@ class Info(Cog) :
 	@commands.command()
 	async def avatar(self, ctx, *, obj = None) :
 		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
+		# PAI FEATURE ONLY
 		if member :
 			file = discord.File(fp=BytesIO(await (member.avatar_url_as(static_format="png")).read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.is_avatar_animated() else "png"))
-			await ctx.send("`{}`".format(member), file=file)
+			if (member.id == 473457863822409728 or member.id == 457908707817422860) and ctx.bot.hd_avatar_url :
+				await ctx.send("{}\n{}".format(ctx.bot.ss('WantToSeeHDBotAvatar').format(ctx.bot.bot_name), ctx.bot.ss('TryTypingCmd').format(f"{ctx.bot.cmdprefix}pai_avatar")), file=file)
+			else :
+				await ctx.send("`{}`".format(member), file=file)
 
 	@commands.command()
 	async def avatar_url(self, ctx, *, obj = None) :

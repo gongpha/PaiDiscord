@@ -38,19 +38,15 @@ class _ป้าถือไม้กวาด(Proc) :
 			loser = loser.resize((90, 90), Image.LANCZOS).convert('RGBA')
 			victim.paste(loser, (380, 45), loser)
 
-		victim = victim.resize((image.width, int(ps * victim.height)), Image.LANCZOS)
-
-		result = Image.new('RGBA', (image.width, image.height + victim.height), color=(255, 255, 255))
-		result.paste(image, (0, 0))
-		result.paste(victim, (0, image.height))
+		img = join_vert_image(image, victim)
 
 
 		#388,47
 
 		b = BytesIO()
-		result.save(b, format="png")
+		img.save(b, format="png")
 		b.seek(0)
-		return b
+		return b, "png"
 
 
 	@commands.command(name="ป้าถือไม้กวาด", aliases=["broomaunt"])
@@ -60,7 +56,7 @@ class _ป้าถือไม้กวาด(Proc) :
 		else :
 			av = None
 		img = await getLastImage(ctx)
-		file = await processing_image_to_file(ctx, "broomaunt.png", self.m_broomaunt, img, av)
+		file = await processing_image_to_file(ctx, "broomaunt", self.m_broomaunt, img, av)
 		await ctx.send(file=file)
 
 def setup(bot) :

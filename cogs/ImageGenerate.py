@@ -11,7 +11,8 @@ proc_list = [
 	"proc.Triggered",
 	"proc._กูรู้หมดแล้ว",
 	"proc.Fortune",
-	"proc._ป้าถือไม้กวาด"
+	"proc._ป้าถือไม้กวาด",
+	"proc.RTX"
 ]
 
 stack = []
@@ -38,7 +39,7 @@ class ImageGenerate(Cog) :
 		stri = "```\n"
 		stri += "\n".join(stack)
 		stri += '```'
-		e = embed_t(ctx, "", "")
+		e = embed_t(ctx, "", ctx.bot.ss("TypeToGetMoreInfoOfEachCmd").format(str(ctx.bot.cmdprefix) + "help <{}>".format(ctx.bot.ss("Model", "Name"))), casesensitive=True)
 		e.add_field(name=f"{start} - {end}", value=stri)
 		await ctx.send(embed=e)
 def setup(bot) :
