@@ -32,8 +32,9 @@ class ImageGenerate(Cog) :
 
 			try:
 				bot.load_extension(c)
+				stack.append(c[5:])
 			except Exception as e:
-				print(f"Failed to load the {extensiom}", file=sys.stderr)
+				print(f"Failed to load the {c}")
 				traceback.print_exc()
 
 
