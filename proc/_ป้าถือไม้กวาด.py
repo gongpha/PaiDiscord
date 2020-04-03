@@ -9,6 +9,7 @@ from utils.discord_image import im_avatar, processing_image_to_file
 from utils.anyuser import anyuser_safecheck
 from utils.discord_image import getLastImage
 from utils.anymodel import AnyModel_FindUserOrMember
+from utils.procimg import join_vert_image
 from utils.text import textimage
 #from utils.procimg import ProcImg
 
