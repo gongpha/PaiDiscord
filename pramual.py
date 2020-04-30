@@ -164,7 +164,8 @@ class Pramual(commands.Bot) :
 
 	async def connect_db(self) :
 		# all([self.database_host, self.database_username, self.database_password, self.database_database])
-		if not (self.mysql_hostname and self.mysql_username and self.mysql_database) return None
+		if not (self.mysql_hostname and self.mysql_username and self.mysql_database) :
+			return None
 		if self.can_mysql :
 			return await aiomysql.connect(host=self.mysql_hostname,
 				user=self.mysql_username,
