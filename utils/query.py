@@ -9,7 +9,6 @@ async def fetchall(bot, sql, plist = None) :
 		connection = await bot.connect_db()
 	except pymysql.err.OperationalError :
 		return -1
-	fsql = (sql % plist) if plist != None else sql
 	if not connection :
 		return
 	try :
@@ -18,16 +17,16 @@ async def fetchall(bot, sql, plist = None) :
 			await cursor.execute(sql, plist)
 			s = time()
 			used = s - f
-			print('[MySQL Query] Query Executed "{}"'.format(fsql))
+			print('[MySQL Query] Query Executed')
 			r = await cursor.fetchall()
-			await bot.use_query(fsql, r, used, cursor.rowcount)
+			await bot.use_query(sql, r, used, cursor.rowcount)
 			return {
 				"result" : r,
 				"time" : used,
 				"rows" : cursor.rowcount
 			}
 	except aiomysql.Error as e:
-		print('[MySQL Query] Query Failed to execute "{}" :\n{}'.format(fsql,e))
+		print('[MySQL Query] Query Failed to execute')
 		return None
 	finally :
 		connection.close()
@@ -38,7 +37,6 @@ async def fetchone(bot, sql, plist = None) :
 		connection = await bot.connect_db()
 	except pymysql.err.OperationalError :
 		return -1
-	fsql = (sql % plist) if plist != None else sql
 	if not connection :
 		return
 	try :
@@ -47,16 +45,16 @@ async def fetchone(bot, sql, plist = None) :
 			await cursor.execute(sql, plist)
 			s = time()
 			used = s - f
-			print('[MySQL Query] Query Executed "{}"'.format(fsql))
+			print('[MySQL Query] Query Executed')
 			r = await cursor.fetchone()
-			await bot.use_query(fsql, r, used, cursor.rowcount)
+			await bot.use_query(sql, r, used, cursor.rowcount)
 			return {
 				"result" : r,
 				"time" : used,
 				"rows" : cursor.rowcount
 			}
 	except aiomysql.Error as e:
-		print('[MySQL Query] Query Failed to execute "{}" :\n{}'.format(fsql,e))
+		print('[MySQL Query] Query Failed to execute')
 		return None
 	finally :
 		connection.close()
@@ -67,7 +65,6 @@ async def commit(bot, sql, plist = None) :
 		connection = await bot.connect_db()
 	except pymysql.err.OperationalError :
 		return -1
-	fsql = (sql % plist) if plist != None else sql
 	if not connection :
 		return
 	try :
@@ -76,12 +73,12 @@ async def commit(bot, sql, plist = None) :
 			await cursor.execute(sql, plist)
 			s = time()
 			used = s - f
-		print('[MySQL Query] Query Executed "{}"'.format(fsql))
-		await bot.use_query(fsql, {}, used, cursor.rowcount)
+		print('[MySQL Query] Query Executed')
+		await bot.use_query(sql, {}, used, cursor.rowcount)
 		await connection.commit()
 		return used
 	except aiomysql.Error as e:
-		print('[MySQL Query] Query Failed to execute "{}" :\n{}'.format(fsql,e))
+		print('[MySQL Query] Query Failed to execute')
 		return None
 	finally :
 		connection.close()
@@ -106,7 +103,7 @@ async def qinsert_guild(bot, guild) :
 
 async def qget_guild(bot, guild, ll) :
 	if (await qcheck_guild(bot, guild)) :
-		return await fetchone(bot, "SELECT %s FROM discord_user WHERE snowflake = %s", ll)
+		return await fetchone(bot, "SELECT {} FROM discord_user WHERE snowflake = %s".format(','.join(ll)))
 	else :
 		return False
 
@@ -128,13 +125,25 @@ async def qget_profile(bot, user, ll) :
 
 async def qupdate_profile(bot, user, dct) :
 	if (await qcheck_profile(bot, user)) :
-		str = ",".join(["{}=\"{}\"".format(key, value) for key, value in dct.items()])
-		return await commit(bot, "UPDATE `discord_user` SET {} WHERE snowflake = %s".format(str), (user.id))
+		k = []
+		l = []
+		for key, value in dct.items() :
+			k.append(key)
+			l.append(value)
+		l.append(guild.id)
+		str = ",".join(["{}=%s".format(key) for key in k])
+		return await commit(bot, "UPDATE `discord_guild` SET {} WHERE snowflake = %s".format(str), (l))
 
 async def qupdate_guild(bot, guild, dct) :
 	if (await qcheck_guild(bot, guild)) :
-		str = ",".join(["{}=\"{}\"".format(key, value) for key, value in dct.items()])
-		return await commit(bot, "UPDATE `discord_guild` SET {} WHERE snowflake = %s".format(str), (guild.id))
+		k = []
+		l = []
+		for key, value in dct.items() :
+			k.append(key)
+			l.append(value)
+		l.append(guild.id)
+		str = ",".join(["{}=%s".format(key) for key in k])
+		return await commit(bot, "UPDATE `discord_guild` SET {} WHERE snowflake = %s".format(str), (l))
 
 async def qupdate_profile_record(bot, user) :
 	if (await qcheck_profile(bot, user)) :
@@ -143,17 +152,17 @@ async def qupdate_profile_record(bot, user) :
 async def qupdate_all_profile_record(bot) :
 	al = await qget_user_id_list(bot)
 	strall = ""
+	namelist = []
 	for s in al['result'] :
 		try :
 			us = await bot.fetch_user(s['snowflake'])
 		except NotFound :
-			strall += "UPDATE `discord_user` SET `username`='{}', `updated_at`=NOW() WHERE snowflake = {};".format('@@@("NOT FOUND")', s['snowflake'])
+			strall += "UPDATE `discord_user` SET `missing`=1, `updated_at`=NOW() WHERE snowflake = {};".format(s['snowflake'])
 		else :
-			strall += "UPDATE `discord_user` SET `username`=\"{}\", `updated_at`=NOW() WHERE snowflake = {};".format(us.name, s['snowflake'])
-	return await commit(bot, strall)
+			strall += "UPDATE `discord_user` SET `username`=%s, `updated_at`=NOW() WHERE snowflake = {};".format(s['snowflake'])
+			namelist.append(us.name)
+	return await commit(bot, strall, namelist)
 
-async def qget_id_list(bot, addid = False) :
-	return await fetchall(bot, "SELECT {} FROM discord_user".format("id," if addid else ''))
 
 
 
@@ -170,18 +179,21 @@ async def qupdate_all_guild_record(bot) :
 	al = await qget_guild_id_list(bot)
 	strall = ""
 	ad = []
+	prm = []
 	for s in al['result'] :
 		gu = bot.get_guild(s['snowflake'])
 		if gu == None :
-			strall += "UPDATE `discord_guild` SET `forbidden`=1, `owner_snowflake`={}, `updated_at`=NOW() WHERE snowflake = {};".format(gu.owner_id, s['snowflake'])
+			strall += "UPDATE `discord_guild` SET `missing`=1, `updated_at`=NOW() WHERE snowflake = {};".format(gu.owner_id, s['snowflake'])
 		else :
-			strall += "UPDATE `discord_guild` SET `forbidden`=0, `name`=\"{}\", `owner_snowflake`={}, `updated_at`=NOW() WHERE snowflake = {};".format(gu.name, gu.owner_id, s['snowflake'])
+			strall += "UPDATE `discord_guild` SET `name`=%s, `updated_at`=NOW() WHERE snowflake = {};".format(gu.owner_id, s['snowflake'])
+			prm.append(gu.name)
 		ad.append(s['snowflake'])
 	for gu in bot.guilds :
 		if gu.id not in ad :
-			strall += "INSERT INTO `discord_guild` (`snowflake`, `name`, `added_at`, `updated_at`, `owner_snowflake`, `supported`) VALUES ({}, \"{}\", \"{}\", \"{}\", {}, 0);".format(gu.id, gu.name, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), gu.owner_id)
+			strall += "INSERT INTO `discord_guild` (`snowflake`, `name`, `added_at`, `updated_at`, `owner_snowflake`, `supported`) VALUES (%s, %s, %s, %s, %s, 0);"
+			prm.extend([gu.id, gu.name, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), gu.owner_id])
 
-	return await commit(bot, strall)
+	return await commit(bot, strall, prm)
 
 async def qget_user_id_list(bot, addid = False) :
 	return await fetchall(bot, "SELECT {}snowflake FROM discord_user".format("id," if addid else ''))
