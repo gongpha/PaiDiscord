@@ -71,25 +71,30 @@ class Image(Cog) :
 	@commands.command()
 	async def resize(self, ctx, width : str, height : typing.Optional[str] = "asWidth", resample : typing.Optional[str] = "bilinear") :
 		im = await getLastImageOrAnimatedImage(ctx)
-		if width.endswith("%") :
-			w = int((int(width.replace('%', '')) / 100) * im.width)
-		else :
-			w = width
-
-		if height == "asWidth" :
+		try :
 			if width.endswith("%") :
-				h = int((int(width.replace('%', '')) / 100) * im.height)
+				w = int((int(width.replace('%', '')) / 100) * im.width)
 			else :
-				h = w
-		else :
-			if height.endswith("%") :
-				h = int((int(height.replace('%', '')) / 100) * im.height)
+				w = width
+
+			if height == "asWidth" :
+				if width.endswith("%") :
+					h = int((int(width.replace('%', '')) / 100) * im.height)
+				else :
+					h = w
 			else :
-				h = height
-		if int(w) <= 0 :
-			w = 1
-		if int(h) <= 0 :
-			h = 1
+				if height.endswith("%") :
+					h = int((int(height.replace('%', '')) / 100) * im.height)
+				else :
+					h = height
+			if int(w) <= 0 :
+				w = 1
+			if int(h) <= 0 :
+				h = 1
+		except ValueError:
+			e = embed_em(ctx, self.ss('Resize__CannotResizeThisImage'), self.bot.ss('InvalidNumber'))
+			await ctx.send(embed=e)
+			return
 		try :
 			file = await processing_image_to_file(ctx, "resize", resize_img_b, im, w, h, resample)
 		except Image__Failed :

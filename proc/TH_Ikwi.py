@@ -11,18 +11,20 @@ from utils.discord_image import getLastImage
 from utils.text import textimage
 #from utils.procimg import ProcImg
 
-name = "_กูรู้หมดแล้ว"
+name = "TH_Ikwi"
 
-class _กูรู้หมดแล้ว(Proc) :
+#ikwi : i know who is
+
+class Ikwi(Proc) :
 	desc = {
 		"th" : {
-			"กูรู้หมดแล้ว" : "มีม กูรู้หมดแล้ว ของกำนันโชติ",
+			"ikwi" : "มีม กูรู้หมดแล้ว ของกำนันโชติ",
 		}
 	}
 	author = "gongpha"
 	usag = {
 		"th" : {
-			"กูรู้หมดแล้ว" : "<ข้อความ>"
+			"ikwi" : "<ข้อความ>"
 		}
 	}
 	def __init__(self, bot) :
@@ -44,11 +46,11 @@ class _กูรู้หมดแล้ว(Proc) :
 		return b, "png"
 
 
-	@commands.command(name="กูรู้หมดแล้ว", aliases=["ikwi"])
+	@commands.command(aliases=["กูรู้หมดแล้ว"])
 	async def ikwi(self, ctx, *, text : str) :
 		file = await processing_image_to_file(ctx, "ikwi", self.m_ikwi, text)
 		await ctx.send(file=file)
 
 def setup(bot) :
-	bot.add_cog(loadInformation(_กูรู้หมดแล้ว(bot)))
+	bot.add_cog(loadInformation(Ikwi(bot)))
 	#[0].save("a.gif", save_all=True, append_images=frames[1:], format='gif', loop=0, duration=20, disposal=2, optimize=True)

@@ -50,7 +50,7 @@ class Fortune(Proc) :
 		b.seek(0)
 		return b, "png"
 
-	@commands.command()
+	@commands.command(aliases=['love'])
 	async def lovematch(self, ctx, user) :
 		async with ctx.channel.typing() :
 			datuser = await AnyModel_FindUserOrMember(ctx, user)

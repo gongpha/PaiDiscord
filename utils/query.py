@@ -1,11 +1,14 @@
-#import pymysql.cursors
+import pymysql
 import aiomysql
 from time import time
 import datetime
 from discord import NotFound, Forbidden
 
 async def fetchall(bot, sql, plist = None) :
-	connection = await bot.connect_db()
+	try :
+		connection = await bot.connect_db()
+	except pymysql.err.OperationalError :
+		return -1
 	fsql = (sql % plist) if plist != None else sql
 	if not connection :
 		return
@@ -31,7 +34,10 @@ async def fetchall(bot, sql, plist = None) :
 		print('[MySQL Query] Query Connection Closed')
 
 async def fetchone(bot, sql, plist = None) :
-	connection = await bot.connect_db()
+	try :
+		connection = await bot.connect_db()
+	except pymysql.err.OperationalError :
+		return -1
 	fsql = (sql % plist) if plist != None else sql
 	if not connection :
 		return
@@ -57,7 +63,10 @@ async def fetchone(bot, sql, plist = None) :
 		print('[MySQL Query] Query Connection Closed')
 
 async def commit(bot, sql, plist = None) :
-	connection = await bot.connect_db()
+	try :
+		connection = await bot.connect_db()
+	except pymysql.err.OperationalError :
+		return -1
 	fsql = (sql % plist) if plist != None else sql
 	if not connection :
 		return

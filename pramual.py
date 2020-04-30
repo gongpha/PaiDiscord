@@ -62,7 +62,7 @@ class Pramual(commands.Bot) :
 			}
 		})
 		self.loaded_dev = kwargs.pop('dev', False)
-		self.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.resources_fname, self.loaded_dev, kwargs.pop('loop', asyncio.get_event_loop()), kwargs.pop('build_number', 0))
+		self.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.resources_fname, self.loaded_dev, kwargs.pop('loop', asyncio.get_event_loop()), kwargs.pop('build_number', 0), kwargs.pop('build_date', None))
 		self.load_strings()
 		self.load_assets()
 		if self.token == None :
@@ -101,13 +101,14 @@ class Pramual(commands.Bot) :
 	# 		if r :
 
 
-	def load_configs(self, info, channels, auths, configs, resources, dev, loop, build_number) :
+	def load_configs(self, info, channels, auths, configs, resources, dev, loop, build_number, build_date) :
 		inf = info
 		self.bot_channels = channels
 		self.auth = auths
 		self.configs = configs
 		self.resources = resources
 		self.build_number = build_number
+		self.build_date = build_date
 		self.dev_configs = {}
 		self.dev = dev
 		if self.dev == None :
@@ -163,6 +164,7 @@ class Pramual(commands.Bot) :
 
 	async def connect_db(self) :
 		# all([self.database_host, self.database_username, self.database_password, self.database_database])
+		if not (self.mysql_hostname and self.mysql_username and self.mysql_database)) return None
 		if self.can_mysql :
 			return await aiomysql.connect(host=self.mysql_hostname,
 				user=self.mysql_username,
@@ -263,11 +265,14 @@ class Pramual(commands.Bot) :
 			print('>> WARNING : GUILD INVITE NOT FOUND')
 			self.guild_invite = None
 
-		testdb = await self.connect_db()
-		if testdb != None :
-			print("Database was connected successful")
-		else :
-			print("Failed to connect to database")
+		try :
+			testdb = await self.connect_db()
+			if testdb != None :
+				print("Database was connected successful")
+			else :
+				print("Failed to connect to database")
+		except pymysql.err.OperationalError :
+			print("Cannot connect database")
 
 	def run_bot(self) :
 		super().run(self.token)
@@ -297,10 +302,11 @@ class Pramual(commands.Bot) :
 		await self.get_bot_channel("system", "log").send(embed=e)
 
 	async def on_command_error(self, ctx, error) :
+		cmdn = ctx.message.content.split(' ')[0]
 		if isinstance(error, commands.CommandNotFound) :
 			return
 		if isinstance(error, commands.MissingRequiredArgument) :
-			e = embed_em(ctx, self.ss('InCorrectArgument'), "```{}{} {}```".format(self.cmdprefix, ctx.command.name, ctx.command.usage) if ctx.command.usage != None else '')
+			e = embed_em(ctx, self.ss('InCorrectArgument'), "```{} {}```".format(cmdn, ctx.command.usage) if ctx.command.usage != None else '')
 			await ctx.send(embed=e)
 			return
 

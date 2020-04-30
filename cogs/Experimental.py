@@ -219,7 +219,7 @@ class Experimental(Cog) :
 	@commands.command()
 	@IsOwnerBot()
 	async def _my_info_guild(self, ctx, gid : int = None) :
-		guild = ctx.bot.get_guild(int(gid)) or ctx.guild
+		guild = ctx.bot.get_guild(int(gid)) if gid else ctx.guild
 		if not guild :
 			await ctx.send(embed=embed_em(ctx, self.bot.ss('ObjectNotFoundFromObject').format(self.bot.ss('Model', 'Guild'), gid)))
 
@@ -306,11 +306,11 @@ class Experimental(Cog) :
 
 	@commands.command()
 	@IsOwnerBot()
-	async def _guilds(self, ctx, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :
+	async def _guilds(self, ctx, start : typing.Optional[int] = 0, end : typing.Optional[int] = None, attr : str = None) :
 		if end is None:
 			end = start + 20
 		stri = "```\n"
-		stri += "\n".join([str(x) for x in ctx.bot.guilds][:20])
+		stri += "\n".join([str(x) + (("\n (" + str(getattr(x, attr)) + ")") if attr != None else "") for x in ctx.bot.guilds][:20])
 		stri += '```'
 		e = embed_t(ctx, "", "")
 		e.add_field(name=f"{start} - {end}", value=stri)
@@ -318,13 +318,12 @@ class Experimental(Cog) :
 
 	@commands.command()
 	@IsOwnerBot()
-	async def _users(self, ctx, start : typing.Optional[int] = 0, end : typing.Optional[int] = None) :
+	async def _users(self, ctx, start : typing.Optional[int] = 0, end : typing.Optional[int] = None, attr : str = None) :
 		if end is None:
 			end = start + 20
 		stri = "```\n"
-		stri += "\n".join([str(x) for x in ctx.bot.users][:20])
+		stri += "\n".join([str(x) + (("\n (" + str(getattr(x, attr)) + ")") if attr != None else "") for x in ctx.bot.users][:20])
 		stri += '```'
-		print(stri)
 		e = embed_t(ctx, "", "")
 		e.add_field(name=f"{start} - {end}", value=stri)
 		await ctx.send(embed=e)

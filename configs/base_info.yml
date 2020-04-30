@@ -64,9 +64,9 @@ cogs :
   - cogs.Nuke
   - cogs.MagickBomb
   - cogs.Request
-  - cogs.Thai
+#  - cogs.Thai
   - cogs.ImageGenerate
-  - cogs.Minecraft
+#  - cogs.Minecraft
   - cogs.Experimental
 
 # Your Bot Invite Code or URL

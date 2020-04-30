@@ -4,7 +4,7 @@ from discord.ext import commands
 import typing
 from io import BytesIO
 from utils.cog import Cog, loadInformation
-from utils.template import embed_t, embed_em, embed_wm, model_info, convert_size, format_date_timediff_short, format_date_timediff
+from utils.template import embed_t, embed_em, embed_wm, model_info, convert_size, format_date_timediff_short, format_date_timediff, local_strftime, get_time_format
 from pytz import timezone
 from dateutil.relativedelta import relativedelta
 #from utils.anyuser import anyuser_safecheck, anyuser_convert
@@ -95,7 +95,7 @@ class Info(Cog) :
 			e = embed_t(ctx, description=self.bot.bot_description)
 			#e.color = self.bot.theme[0] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
 			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
-			e.set_footer(text="Build " + str(self.bot.build_number))
+			e.set_footer(text="Build " + str(self.bot.build_number) + " • " + (local_strftime(ctx, self.bot.build_date, get_time_format(ctx)) if self.bot.build_date else ""))
 		else :
 			for n, c in self.bot.cogs.items() :
 				#print(n)
@@ -113,7 +113,7 @@ class Info(Cog) :
 		#msgh.set_thumbnail(url=ctx.author.avatar_url)
 		www = discord.Embed()
 		www.color = 0xFF0000
-		www.description = self.bot.ss('PrivateWarning')
+		www.description = self.bot.ss('PrivateWarning').format("gongpha#0238")
 
 		if e != None :
 			await ctx.send(embed=e)
@@ -199,7 +199,7 @@ class Info(Cog) :
 			c_a = c.aliases.copy()
 			c_a.insert(0, c.name)
 			if sect in c_a :
-				h = embed_t(ctx, "{} {} ({})".format(self.ss("AliasFor"), sect, c.name) if sect != c.name else "{} {}".format(self.ss("AliasFor"), sect), "")
+				h = embed_t(ctx, "{} {} ({})".format(self.ss("AliasFor"), sect, c.name) if sect != c.name else "{} {}".format(self.ss("AliasFor"), sect), self.ss("YouCanCallAliasesInstead"))
 				h.add_field(name=self.bot.ss("Model", "Command"), value=f"`{c.name}`")
 				h.add_field(name=self.bot.ss("Model", "Alias"), value="\n".join([f"`{i}`" for i in c.aliases]))
 				break
@@ -271,12 +271,12 @@ class Info(Cog) :
 		if result :
 			await ctx.send(embed=model_info(ctx, result))
 
-	@commands.command()
-	async def profile(self, ctx, *, obj = None) :
-		result = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
-		async with ctx.message.channel.typing() :
-			ee = await self.profile_information(ctx,result or ctx.author)
-			await ctx.send(embed=ee)
+	#@commands.command()
+	#async def profile(self, ctx, *, obj = None) :
+	#	result = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
+	#	async with ctx.message.channel.typing() :
+	#		ee = await self.profile_information(ctx,result or ctx.author)
+	#		await ctx.send(embed=ee)
 
 	@commands.command()
 	async def ping(self, ctx) :
@@ -306,10 +306,10 @@ class Info(Cog) :
 	async def invite(self, ctx) :
 		await ctx.send(embed=embed_t(ctx, ctx.bot.ss('BotInviteLink'), "[{}]({})".format(ctx.bot.ss("ClickHere"), ctx.bot.static_invite)))
 
-	@commands.command()
-	async def support(self, ctx) :
-		#if not invite_url :
-		if ctx.bot.guild_invite :
-			await ctx.send(ctx.bot.ss('SupportGuild').format(ctx.bot.guild_invite))
+	#@commands.command()
+	#async def support(self, ctx) :
+	#	#if not invite_url :
+	#	if ctx.bot.guild_invite :
+	#		await ctx.send(ctx.bot.ss('SupportGuild').format(ctx.bot.guild_invite))
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))

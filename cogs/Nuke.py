@@ -31,15 +31,15 @@ class Nuke(Cog) :
 	async def nuke__messages(self, ctx) :
 		#print(self.bot.name)
 		#print(self.bot.description)
-		if not ctx.message.guild.me.guild_permissions.manage_messages :
-			await ctx.send(embed=embed_em(ctx, self.bot.ss("NoPermissionWith").format(self.bot.ss("Permission", "ManageMessages"))))
+		if not ctx.message.guild.me.guild_permissions.manage_channels :
+			await ctx.send(embed=embed_em(ctx, self.bot.ss("NoPermissionWith").format(self.bot.ss("Permission", "ManageChannels"))))
 		else :
 			e = embed_wm(ctx, self.bot.ss("Warning"), self.bot.ss("ActionCannotUndo"))
 			if await waitReactionRequired(ctx, self.bot, ['\N{HEAVY CHECK MARK}','\N{BALLOT BOX WITH CHECK}','\N{WHITE HEAVY CHECK MARK}'], ctx.author.id, e) :
-				msgs = []
-				while len(await ctx.message.channel.history(limit=300).flatten()) > 0 :
-					async for m in ctx.message.channel.history(limit=300) :
-						msgs.append(m)
-					await ctx.message.channel.delete_messages(msgs)
+				pos = ctx.channel.position;
+				ch = await ctx.channel.clone(reason="CLEANING MESSAGES")
+				await ctx.channel.delete(reason="CLEANING MESSAGES")
+				await ch.edit(reason="CLEANING MESSAGES", position=pos)
+
 def setup(bot) :
 	bot.add_cog(loadInformation(Nuke(bot)))

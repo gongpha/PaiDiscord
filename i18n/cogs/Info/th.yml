@@ -139,14 +139,15 @@ command :
             - เชิญ
             - invitebot
             - invite_bot
-    support :
-        description         : ส่งลิงค์คำเชิญเซิร์ฟเวอร์ที่สนับสนุน
-        usage               :
-        aliases             :
-            - สนับสนุน
-            - report
-            - รายงาน
+    #support :
+    #    description         : ส่งลิงค์คำเชิญเซิร์ฟเวอร์ที่สนับสนุน
+    #    usage               :
+    #    aliases             :
+    #        - สนับสนุน
+    #        - report
+    #        - รายงาน
 AliasFor                    : นามแฝงของคำสั่ง
+YouCanCallAliasesInstead    : คูณสามารถเรียกใช้ชื่อคำสั่งเหล่านี้แทนชื่อคำสั่งจริง ๆ ได้
 Help                        : แผงช่วยเหลือ
 InfoOfUser                  : ข้อมูลผู้ใช้ {}
 InfoOfGuild                 : ข้อมูลเซิร์ฟเวอร์ {}

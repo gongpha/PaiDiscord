@@ -13,18 +13,18 @@ from utils.procimg import join_vert_image
 from utils.text import textimage
 #from utils.procimg import ProcImg
 
-name = "_ป้าถือไม้กวาด"
+name = "Broomaunt"
 
-class _ป้าถือไม้กวาด(Proc) :
+class Broomaunt(Proc) :
 	desc = {
 		"th" : {
-			"ป้าถือไม้กวาด" : "ป้าถือไม้กวาด จ้องตีใครสักคน",
+			"broomaunt" : "ป้าถือไม้กวาด จ้องตีใครสักคน",
 		}
 	}
 	author = "gongpha"
 	usag = {
 		"th" : {
-			"ป้าถือไม้กวาด" : "<ผู้ใช้แทนคนในรูป=ไม่มี>"
+			"broomaunt" : "<ผู้ใช้แทนคนในรูป=ไม่มี>"
 		}
 	}
 	def __init__(self, bot) :
@@ -33,7 +33,7 @@ class _ป้าถือไม้กวาด(Proc) :
 	def m_broomaunt(self, image, loser=None) :
 		# by gongpha
 
-		victim = Image.open("template/meme/ป้าถือไม้กวาด.png")
+		victim = Image.open("template/meme/broomaunt.png")
 		ps = image.width / victim.width
 		if loser != None :
 			loser = loser.resize((90, 90), Image.LANCZOS).convert('RGBA')
@@ -50,7 +50,7 @@ class _ป้าถือไม้กวาด(Proc) :
 		return b, "png"
 
 
-	@commands.command(name="ป้าถือไม้กวาด", aliases=["broomaunt"])
+	@commands.command(aliases=["ป้าถือไม้กวาด"])
 	async def broomaunt(self, ctx, user=None) :
 		if user != None :
 			av = await im_avatar(ctx, await AnyModel_FindUserOrMember(ctx, user))
@@ -61,5 +61,5 @@ class _ป้าถือไม้กวาด(Proc) :
 		await ctx.send(file=file)
 
 def setup(bot) :
-	bot.add_cog(loadInformation(_ป้าถือไม้กวาด(bot)))
+	bot.add_cog(loadInformation(Broomaunt(bot)))
 	#[0].save("a.gif", save_all=True, append_images=frames[1:], format='gif', loop=0, duration=20, disposal=2, optimize=True)

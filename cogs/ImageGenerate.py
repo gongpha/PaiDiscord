@@ -9,9 +9,9 @@ from importlib import import_module
 
 proc_list = [
 	"proc.Triggered",
-	"proc._กูรู้หมดแล้ว",
+	"proc.TH_Ikwi",
 	"proc.Fortune",
-	"proc._ป้าถือไม้กวาด",
+	"proc.Broomaunt",
 	"proc.RTX"
 ]
 
