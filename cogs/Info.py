@@ -10,7 +10,6 @@ from dateutil.relativedelta import relativedelta
 #from utils.anyuser import anyuser_safecheck, anyuser_convert
 from utils.anymodel import AnyModel_FindUserOrMember
 from utils.anyemoji import anyemoji_convert
-from utils.query import qinsert_profile, qget_profile
 from utils.check import *
 
 import datetime
@@ -39,11 +38,17 @@ class Info(Cog) :
 
 	def help_specific_embed(self, ctx, cog) :
 		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or cog.cog_class), cog.cog_desc, casesensitive=True)
-		if not cog.get_commands() :
-			h.add_field(name="﻿",value="*{}*".format(self.bot.ss("NoCommand")))
-		for c in cog.get_commands() :
-			#h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.ss("Empty"],inline=True)
+		def a() :
 			h.add_field(name="`{}{}`".format(ctx.bot.cmdprefix, c.name),value=(c.description or "").format(ctx.bot) or ctx.bot.ss("NoDescription"),inline=True)
+		for c in cog.get_commands() :
+			if (c.name.startswith('_')) :
+				if (ctx.author.id in ctx.bot.owners) :
+					a()
+			elif (not c.hidden) or (ctx.author.id not in ctx.bot.owners) :
+				a()
+			#h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.ss("Empty"],inline=True)
+		if h.fields == discord.Embed.Empty :
+			h.add_field(name="﻿",value="*{}*".format(self.bot.ss("NoCommand")))
 		return h
 
 	def help_command_embed(self, ctx, command, cog) :
@@ -53,9 +58,9 @@ class Info(Cog) :
 		return h
 
 	async def profile_information(self, ctx, object) :
-		r = await qget_profile(ctx.bot, object, ['credits', 'commands', 'username'])
+		r = await ctx.bot.db.get_profile(object, ['credits', 'commands', 'username'])
 		if r != False :
-			await qupdate_profile_record(ctx.bot, object)
+			await ctx.bot.db.update_profile_record(object)
 		if object.bot :
 			e = embed_wm(ctx, ctx.bot.ss("CannotUseWithBot"))
 		else :
@@ -65,7 +70,7 @@ class Info(Cog) :
 					fromid = ctx.message.guild.id
 				except AttributeError :
 					fromid = ctx.message.channel.id
-				t = await qinsert_profile(ctx.bot, object)
+				t = await ctx.bot.db.insert_profile(object)
 				r = {
 					"result" : {
 						"credits" : 0,

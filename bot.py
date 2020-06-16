@@ -9,7 +9,7 @@ from pramual import Pramual, load_yml
 
 
 
-with open(r'BUILD','r+') as f:
+with open(r'BUILD','r+') as f :
 	dat = f.read().split('\n')
 	buildnumber = int(dat[0])
 	date = datetime.strptime(dat[1], "%Y-%m-%d %H:%M:%S")
@@ -18,7 +18,7 @@ with open(r'BUILD','r+') as f:
 		f.write(str(buildnumber + 1))
 		f.write('\n')
 		f.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	buildnumber += 1
+		buildnumber += 1
 
 
 
@@ -34,6 +34,15 @@ bot = Pramual(	info=load_yml('configs/info.yml', 'configs/base_info.yml'),
 
 print("Pramual 2.2 : Build", buildnumber)
 print("Starting a Task...")
-loop.create_task(bot.run_bot())
-loop.run_until_complete(loop)
+try :
+	main_task = loop.create_task(bot.run_bot())
+	loop.run_until_complete(main_task)
+	loop.run_forever()
+except (asyncio.KeyboardInterrupt, asyncio.RuntimeError) :
+	print("<X> KeyboardInterrupt or RuntimeError !")
+	print("(!) Shutting a bot down . . .")
+	bot.die()
+finally :
+	print("(!) Closing a loop . . .")
+	loop.close()
 #loop.run_forever()

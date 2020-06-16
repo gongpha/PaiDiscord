@@ -8,13 +8,13 @@ import os
 import json
 from io import BytesIO
 from discord.ext import commands
-from utils.template import embed_em
+from utils.template import embed_em, embed_wm
 from utils.dict import safeget
 #import pymysql.cursors
 import aiomysql.cursors
 import aiohttp
 import datetime
-from utils.query import *
+import utils.botdb as botdb
 import re
 
 class NoToken(Exception) :
@@ -140,11 +140,11 @@ class Pramual(commands.Bot) :
 		self.languages = infget('languages', ['en', 'th'])
 		self.theme = infget('theme', (0xFF7F00, 0x007FFF))
 		self.owners = infget('owners', [])
-		self.can_mysql = infget('mysql', False)
-		self.mysql_hostname = infget('mysql_hostname', None)
-		self.mysql_username = infget('mysql_username', None)
-		self.mysql_password = infget('mysql_password', None)
-		self.mysql_database = infget('mysql_database', None)
+		self.db = infget('db', None)
+		self.db_host = infget('db_hostname', None)
+		self.db_username = infget('db_username', None)
+		self.db_password = infget('db_password', None)
+		self.db_database = infget('db_database', None)
 
 		#self.cache_interface = {}
 
@@ -161,21 +161,6 @@ class Pramual(commands.Bot) :
 		self.waitForMessage = {}
 		self.start_time = datetime.datetime.now()
 		self.session = aiohttp.ClientSession(loop=self.loop)
-
-	async def connect_db(self) :
-		# all([self.database_host, self.database_username, self.database_password, self.database_database])
-		if not (self.mysql_hostname and self.mysql_username and self.mysql_database) :
-			return None
-		if self.can_mysql :
-			return await aiomysql.connect(host=self.mysql_hostname,
-				user=self.mysql_username,
-				password=self.mysql_password,
-				db=self.mysql_database,
-				charset='utf8mb4',
-				cursorclass=aiomysql.cursors.DictCursor,
-				loop=self.loop)
-		else :
-			return None
 
 	def getAuth(self, *keylist) :
 		dct = self.auth.copy()
@@ -210,14 +195,14 @@ class Pramual(commands.Bot) :
 			else :
 				raise BotIsNotReady
 
-	async def use_query(self, sql, result, time, rowcount) :
-		e = discord.Embed(title=f"Query Report")
-		e.description = "```\n" + sql[:2041] + "```"
-		j = json.dumps(result, indent=4)
-		e.add_field(name="Result ({})".format(rowcount), value='```\n' + j[:1017] + '```')
-		e.color = 0xFFFF00
-		e.set_footer(text=time)
-		await self.get_bot_channel("system", "query_report").send(embed=e)
+	#async def use_query(self, sql, result, time, rowcount) :
+	#	e = discord.Embed(title=f"Query Report")
+	#	e.description = "```\n" + sql[:2041] + "```"
+	#	j = json.dumps(result, indent=4)
+	#	e.add_field(name="Result ({})".format(rowcount), value='```\n' + j[:1017] + '```')
+	#	e.color = 0xFFFF00
+	#	e.set_footer(text=time)
+	#	await self.get_bot_channel("system", "query_report").send(embed=e)
 
 	def ss(self, *keylist) :
 		#lang = self.cached_language.get(id, None)
@@ -266,17 +251,30 @@ class Pramual(commands.Bot) :
 			print('>> WARNING : GUILD INVITE NOT FOUND')
 			self.guild_invite = None
 
+		self.db = botdb.BotDB(self, self.db, self.db_host, self.db_username, self.db_password, self.db_database)
 		try :
-			testdb = await self.connect_db()
-			if testdb != None :
-				print("Database was connected successful")
-			else :
-				print("Failed to connect to database")
-		except pymysql.err.OperationalError :
-			print("Cannot connect database")
+			await self.db.init()
+			print("(!) Connected to Database")
+		except botdb.CannotConnect :
+			print("<X> Cannot connect database")
+		except botdb.NotAllowConnect :
+			print("(!) No Connecting for database")
 
 	def run_bot(self) :
-		super().run(self.token)
+		try :
+			super().run(self.token)
+		except discord.errors.HTTPException as e :
+			print("(X) HTTP ERROR")
+			print("    ({}) {}".format(e.status, e.text))
+
+	async def kill_bot(self) :
+		for vc in self.voice_clients :
+			await vc.disconnect()
+		await self.session.close()
+		await self.close()
+		self.bot.loop.stop()
+		if self.db :
+			self.db.close()
 
 	# @after_invoke
 	# async def after_command(self, ctx):
@@ -284,7 +282,7 @@ class Pramual(commands.Bot) :
 
 	async def on_command_completion(self, ctx) :
 		#if self.get_dev_configs("update_command_used_count", False) :
-		await commit(self, "UPDATE `discord_user` SET `commands`=commands + 1, `updated_at`=NOW(), `username`=\"{}\" WHERE snowflake=%s".format(ctx.author.name), ctx.author.id)
+		await ctx.bot.db.update_and_increase_cmd_count(ctx.author)
 
 	async def on_command(self, ctx) :
 		# if ctx.author.id not in self.cached_language :
@@ -306,9 +304,19 @@ class Pramual(commands.Bot) :
 		cmdn = ctx.message.content.split(' ')[0]
 		if isinstance(error, commands.CommandNotFound) :
 			return
-		if isinstance(error, commands.MissingRequiredArgument) :
-			e = embed_em(ctx, self.ss('InCorrectArgument'), "```{} {}```".format(cmdn, ctx.command.usage) if ctx.command.usage != None else '')
-			await ctx.send(embed=e)
+		elif isinstance(error, commands.MissingRequiredArgument) :
+			await ctx.send(embed=embed_em(ctx, self.ss('InCorrectArgument'), "```{} {}```".format(cmdn, ctx.command.usage) if ctx.command.usage != None else ''))
+			return
+		elif isinstance(error, commands.PrivateMessageOnly) :
+			await ctx.send(embed=embed_wm(ctx, ctx.bot.ss("CommandInDMNotAvailable")))
+			return
+		elif isinstance(error, commands.MissingPermissions) :
+			l = ('\n'.join(ctx.bot.ss("NoPermissionWith").format(ctx.bot.ss("Permission", string)) for string in error.missing_perms)) if error.missing_perms else ctx.bot.ss("None")
+			await ctx.send(embed=embed_em(ctx, l))
+			return
+		elif isinstance(error, commands.CheckFailure) :
+			print(ctx.message)
+			await ctx.send(embed=embed_em(ctx, ctx.bot.ss("AnErrorOccurred"), getattr(error, 'message', "")))
 			return
 
 		e = discord.Embed(title="Command Error : `{}{}`".format(self.cmdprefix if ctx.command.name != None else "",ctx.command.name if ctx.command.name != None else "UNKNOWN"))

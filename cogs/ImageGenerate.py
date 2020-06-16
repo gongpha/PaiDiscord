@@ -12,7 +12,8 @@ proc_list = [
 	"proc.TH_Ikwi",
 	"proc.Fortune",
 	"proc.Broomaunt",
-	"proc.RTX"
+	"proc.RTX",
+	"proc.Karaoke"
 ]
 
 stack = []

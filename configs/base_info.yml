@@ -42,14 +42,14 @@ owners :
     - 359621664641908736 # Monochrome#0378    TESTER
     - 359616528041246723 # Unallocated#5609   TESTER
 
-# Is bot using MySQL ?
-mysql : True
+# Are you allow bot to use db ?
+db : True
 
-# If above is True, Enter your MySQL Connecting details here
-mysql_hostname : ?PramualDatabaseHost
-mysql_username : ?PramualDatabaseUsername
-mysql_password : ?PramualDatabasePassword
-mysql_database : ?PramualDatabaseDatabase
+# If above is True, Enter your Database details here
+db_hostname : ?PramualDatabaseHost
+db_username : ?PramualDatabaseUsername
+db_password : ?PramualDatabasePassword
+db_database : ?PramualDatabaseDatabase
 
 # The text that will show at game stats
 # The default will show if 'game_static' wasn't found or Invalid
@@ -60,7 +60,6 @@ game_static : ?PramualPaiGame
 cogs :
   - cogs.Info
   - cogs.Image
-  - cogs.Karaoke
   - cogs.Nuke
   - cogs.MagickBomb
   - cogs.Request

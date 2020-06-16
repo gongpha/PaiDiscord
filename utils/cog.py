@@ -54,6 +54,9 @@ def loadInformation(cog) :
 		try :
 			c.description = safeget(cog.stringstack, "command", c.name, "description")
 			c.usage = safeget(cog.stringstack, "command", c.name, "usage")
+			c.hidden = safeget(cog.stringstack, "command", c.name, "hidden")
+			if not c.hidden :
+				c.hidden = False
 			d = safeget(cog.stringstack, "command", c.name, "aliases")
 			if d :
 				if not isinstance(d, (list, tuple)) :

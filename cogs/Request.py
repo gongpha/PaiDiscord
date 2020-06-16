@@ -10,11 +10,13 @@ import json
 import mimetypes
 from io import BytesIO
 import random
+import inspect
 
 class Request(Cog) :
 	def __init__(self, bot) :
 		super().__init__(bot)
 		self.cached_search = {}
+		self.cached_search_nsfw = {}
 
 		self.stack = {
 			"randomcat" : r_RandomCat,
@@ -27,6 +29,8 @@ class Request(Cog) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 		req = list(req)
+		if not req :
+			raise discord.ext.commands.MissingRequiredArgument(inspect.Parameter("req", inspect.Parameter.VAR_POSITIONAL))
 		name = req[0]
 		req.pop(0)
 		try :
@@ -70,8 +74,18 @@ class Request(Cog) :
 
 	@commands.command()
 	@IsOwnerBot()
+	async def _request__list_nsfw(self, ctx) :
+		e = embed_t(ctx, len(self.cached_search_nsfw))
+		for key, value in self.cached_search_nsfw.items() :
+			e.add_field(name=key, value=len(value))
+
+		await ctx.send(embed=e)
+
+	@commands.command()
+	@IsOwnerBot()
 	async def _request__clear(self, ctx) :
 		self.cached_search = {}
+		self.cached_search_nsfw = {}
 		await ctx.send(':ok_hand:')
 
 	@commands.command()
@@ -107,7 +121,10 @@ class Request(Cog) :
 						return
 					else :
 						urls = [r.get('media') for r in o]
-						self.cached_search[q] = urls
+						if ctx.message.channel.is_nsfw() :
+							self.cached_search_nsfw[q] = urls
+						else :
+							self.cached_search[q] = urls
 			async with self.bot.session.get(random.choice(urls)) as resp :
 				if resp.status == 200 :
 					buffer = BytesIO(await resp.read())

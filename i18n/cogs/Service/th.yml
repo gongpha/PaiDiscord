@@ -1,0 +1,8 @@
+cog :
+    name                    : บริการ
+    description             : บริการของบอท
+    icon_emoji              : ':gear:'
+    author                  : gongpha
+    translated              : gongpha
+
+YouUsedCount                : "คุณใช้บอทนี้ไป **{}** ครั้ง"

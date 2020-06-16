@@ -1,18 +1,31 @@
 import discord
 from discord.ext import commands
-import typing
 from io import BytesIO
-from utils.cog import Cog
-from utils.cog import loadInformation
+from utils.proc import Proc
+from utils.proc import loadInformation
 from utils.template import embed_t, extract_str
 from utils.discord_image import getLastImage, processing_image_to_file
 from utils.text import textimage
 from utils.procimg import rgbToTuple
 from random import randint
-class Karaoke(Cog) :
+class Karaoke(Proc) :
+	desc = {
+		"th" : {
+			"wanbuaban" : "คาราโอเกะ : วังบัวบาน\nนำรูปแบบของค่ายเพลงส่วนใหญ่มาใช้โดยใช้ฟอนต์ Angsana UPC และไม่มีตัวหนังสือภาษาอังกฤษ",
+			"topline" : "คาราโอเกะ : ท็อปไลน์\nนำรูปแบบของค่ายท็อปไลน์ - ไดมอนด์ ปี พ.ศ. 2533 มาใช้",
+			"grammy" : "คาราโอเกะ : แกรมมี่คาราโอเกะ (คุ้นเคยที่สุด)"
+		}
+	}
+	author = "gongpha"
+	usag = {
+		"th" : {
+			"wanbuaban" : "<ข้อความ...>",
+			"topline" : "<ข้อความ...>",
+			"grammy" : "<ข้อความ...>|<ข้อความภาษาอังกฤษ...>"
+		}
+	}
 	def __init__(self, bot) :
 		super().__init__(bot)
-
 	def k_wanbuaban(self, text, image, percent, size = 1) :
 		# by gongpha, designed like Topline-Diamond's Wangbuaban (ท็อปไลน์-ไดมอนด์ วังบัวบาน ของ พุ่มพวง ดวงจันทร์)
 
@@ -92,20 +105,18 @@ class Karaoke(Cog) :
 		b.seek(0)
 		return b, "png"
 
-	@commands.command()
+	@commands.command(aliases=["วังบัวบาน", "_wbb", "wanbuabankaraoke", "wangbuaban", "wangbuabankaraoke", "karaokewanbuaban"])
 	async def wanbuaban(self, ctx, *, text : str) :
 		file = await processing_image_to_file(ctx, "wanbuaban", self.k_wanbuaban, text, await getLastImage(ctx), randint(0, 100), 1)
 		await ctx.send(file=file)
 
-	@commands.command()
+	@commands.command(aliases=["ท็อปไลน์", "_tpln", "toplinediamond", "toplinekaraoke", "karaoketopline", "topline_pp", "topline_poompuang", "topline_2533", "topline_1990"])
 	async def topline(self, ctx, *, text : str) :
 		file = await processing_image_to_file(ctx, "topline", self.k_topline_pp, text, await getLastImage(ctx), None, randint(0, 100), 1)
 		await ctx.send(file=file)
 
-	@commands.command()
+	@commands.command(aliases=["gmm", "gmmgrammy", "gmmgrammykaraoke", "grammykaraoke", "_gmmkar"])
 	async def grammy(self, ctx, *, text : str) :
-		#print(self.bot.name)
-		#print(self.bot.description)
 		t = await extract_str(ctx, text, 2)
 		if not t :
 			return

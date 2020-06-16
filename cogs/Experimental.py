@@ -8,7 +8,6 @@ from utils.check import *
 from utils.discord_image import *
 import json
 from io import BytesIO
-from utils.query import fetchone, commit, qupdate_all_profile_record, qupdate_all_guild_record
 
 #from discord.ext.commands import MessageConverter, TextChannelConverter
 import inspect
@@ -49,6 +48,7 @@ class Experimental(Cog) :
 
 		super().__init__(bot)
 		self.cog_hidden = True
+		self.last_message = None;
 
 	@commands.command()
 	@IsOwnerBot()
@@ -62,9 +62,24 @@ class Experimental(Cog) :
 		e = discord.Embed(title="Client was shutdowned by {0} ({1}) from{4} {2} ({3})".format(u, u.id, g, g.id, "" if isinstance(ctx.message.channel, DMChannel) else " guild"))
 		e.color = 0xDD0000
 		await self.bot.get_bot_channel("system", "log").send(embed=e)
-		await self.bot.session.close()
-		await self.bot.close()
-		self.bot.loop.stop()
+		await self.bot.kill_bot()
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _sendlast(self, ctx, *, text : str) :
+		if not self.last_message :
+			await ctx.send(embed=embed_em(ctx, self.ss('NoLastMessage')))
+			return
+		try :
+			sm = await self.last_message.channel.send(text)
+			await ctx.send("> " + sm.jump_url)
+			self.last_message = sm
+		except discord.Forbidden as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(self.last_message.channel.id), self.bot.ss('Forbidden'), error=e))
+			return
+		except discord.HTTPException as e :
+			await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotSend').format(self.last_message.channel.id), error=e))
+			return
 
 	@commands.command()
 	@IsOwnerBot()
@@ -82,7 +97,8 @@ class Experimental(Cog) :
 			return
 		try :
 			sm = await channel.send(text)
-			await ctx.send(sm.jump_url)
+			await ctx.send("> " + sm.jump_url)
+			self.last_message = sm
 		except discord.Forbidden as e:
 			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotSend').format(id), self.bot.ss('Forbidden'), error=e))
 			return
@@ -92,7 +108,7 @@ class Experimental(Cog) :
 
 	@commands.command()
 	@IsOwnerBot()
-	async def _edit(self, ctx, chid, id, *, text : str) :
+	async def _edit(self, ctx, chid : str, id : typing.Optional[int] = 0, *, text : str) :
 		#u = await self.bot.fetch_user(self.bot.user.id)
 		message = await check_m(ctx, chid, id)
 		if not message :
@@ -104,6 +120,20 @@ class Experimental(Cog) :
 			await ctx.message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
 		except discord.HTTPException as e:
 			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(id), error=e))
+
+	@commands.command()
+	@IsOwnerBot()
+	async def _editlast(self, ctx, *, text : str) :
+		#u = await self.bot.fetch_user(self.bot.user.id)
+		if not self.last_message :
+			await ctx.send(embed=embed_em(ctx, self.ss('NoLastMessage')))
+			return
+
+		try :
+			await self.last_message.edit(content=text)
+			await ctx.message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
+		except discord.HTTPException as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotEdit').format(self.last_message.id), error=e))
 
 	@commands.command()
 	@IsOwnerBot()
@@ -218,6 +248,16 @@ class Experimental(Cog) :
 
 	@commands.command()
 	@IsOwnerBot()
+	async def _guild(self, ctx, gid : int = None) :
+		guild = ctx.bot.get_guild(int(gid)) if gid else ctx.guild
+		if not guild :
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('ObjectNotFoundFromObject').format(self.bot.ss('Model', 'Guild'), gid)))
+
+		e = model_info(ctx, guild)
+		await ctx.send(embed=e)
+
+	@commands.command()
+	@IsOwnerBot()
 	async def _my_info_guild(self, ctx, gid : int = None) :
 		guild = ctx.bot.get_guild(int(gid)) if gid else ctx.guild
 		if not guild :
@@ -295,14 +335,16 @@ class Experimental(Cog) :
 	@commands.command()
 	@IsOwnerBot()
 	async def _update_all_users(self, ctx) :
-		await qupdate_all_profile_record(self.bot)
-		await ctx.send(":ok_hand:")
+		if (ctx.bot.db) :
+			await ctx.bot.db.update_all_profile_record()
+			await ctx.send(":ok_hand:")
 
 	@commands.command()
 	@IsOwnerBot()
 	async def _update_all_guilds(self, ctx) :
-		await qupdate_all_guild_record(self.bot)
-		await ctx.send(":ok_hand:")
+		if (ctx.bot.db) :
+			await ctx.bot.db.update_all_guild_record()
+			await ctx.send(":ok_hand:")
 
 	@commands.command()
 	@IsOwnerBot()
@@ -313,7 +355,7 @@ class Experimental(Cog) :
 		stri += "\n".join([str(x) + (("\n (" + str(getattr(x, attr)) + ")") if attr != None else "") for x in ctx.bot.guilds][:20])
 		stri += '```'
 		e = embed_t(ctx, "", "")
-		e.add_field(name=f"{start} - {end}", value=stri)
+		e.add_field(name=f"{start} - {end} ({len(ctx.bot.guilds)})", value=stri)
 		await ctx.send(embed=e)
 
 	@commands.command()
