@@ -66,6 +66,16 @@ class Experimental(Cog) :
 
 	@commands.command()
 	@IsOwnerBot()
+	async def _announce(self, ctx, *, text : str) :
+		e = embed_t(ctx, "", text)
+		e.set_author(name=self.bot.ss("AnnouncementFromBot"), icon_url=self.bot.user.avatar_url)
+		e.set_footer(text=self.bot.ss("IfYouSeeDeleteThis"))
+		for g in ctx.bot.guilds :
+			if g.system_channel :
+				await g.system_channel.send(embed=e)
+
+	@commands.command()
+	@IsOwnerBot()
 	async def _sendlast(self, ctx, *, text : str) :
 		if not self.last_message :
 			await ctx.send(embed=embed_em(ctx, self.ss('NoLastMessage')))

@@ -12,9 +12,9 @@ class MagickBomb(Cog) :
 		super().__init__(bot)
 
 	@commands.command()
+	@commands.guild_only()
 	@IsOwnerGuild()
 	@CheckBotGuildPermission(['manage_messages', 'manage_nicknames', 'manage_roles'])
-	@IsNotDM()
 	async def magick__sidname(self, ctx) :
 		#print(self.bot.name)
 		#print(self.bot.description)

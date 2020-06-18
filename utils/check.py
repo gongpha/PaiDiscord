@@ -4,22 +4,18 @@ from discord import DMChannel
 def IsOwnerBot() :
 	async def predicate(ctx) :
 		if ctx.author.id not in ctx.bot.owners :
-			raise commands.CheckFailure(ctx.bot.ss("YouAreNotGuildOwner"))
+			raise commands.NotOwner()
 		return True
 	return commands.check(predicate)
 
 def IsOwnerGuild() :
 	async def predicate(ctx) :
-		if ctx.author.id == ctx.message.guild.owner_id :
-			raise commands.CheckFailure(ctx.bot.ss("YouAreNotBotOwner"))
-		return True
-	return commands.check(predicate)
+		if ctx.guild :
+			if ctx.author.id == ctx.message.guild.owner_id :
+				return True
+			raise commands.CheckFailure(ctx.bot.ss("YouAreNotGuildOwner"))
+		raise commands.NoPrivateMessage()
 
-def IsNotDM() :
-	async def predicate(ctx) :
-		if ctx.guild is False :
-			raise commands.NoPrivateMessage()
-		return True
 	return commands.check(predicate)
 
 def CheckBotGuildPermission(pmstrlist) :

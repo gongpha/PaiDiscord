@@ -27,7 +27,8 @@ def embed_t(ctx, title = "", description = "", casesensitive = False) :
 	e.title = title
 	if not isinstance(ctx.message.channel, discord.DMChannel) :
 		e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author.display_name) + (" • " + ctx.bot.ss('DontForgetCaseSensitive')) if casesensitive else "", icon_url=ctx.message.author.avatar_url)
-
+	elif casesensitive :
+		e.set_footer(text=ctx.bot.ss('DontForgetCaseSensitive'), icon_url=ctx.message.author.avatar_url)
 
 	return e
 
@@ -219,6 +220,26 @@ def local_strftime(ctx, datetime: datetime.datetime, fmt: str) :
 
 	return _text
 
+async def reaction_message_bool(ctx, bot, msg) :
+	await msg.add_reaction(emoji="\N{HEAVY CHECK MARK}")
+	await msg.add_reaction(emoji="\N{NEGATIVE SQUARED CROSS MARK}")
+
+	def check(reaction, user) :
+		if user.id == msg.author_id :
+			return str(reaction.emoji) in give
+
+	while True :
+		try:
+			reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
+		except asyncio.TimeoutError :
+			await msg.clear_reactions()
+			return False
+		else :
+			if str(reaction.emoji) == "\N{HEAVY CHECK MARK}" :
+				return True
+			if str(reaction.emoji) == "\N{NEGATIVE SQUARED CROSS MARK}" :
+				return False
+
 async def waitReactionRequired(ctx, bot, give, ruser, embed) :
 	e = embed.copy()
 	e.add_field(name=bot.ss("PleaseReactionAllCommander"),value=bot.ss("Empty"))
@@ -230,17 +251,16 @@ async def waitReactionRequired(ctx, bot, give, ruser, embed) :
 	def check(reaction, user) :
 		if user.id == ruser :
 			return str(reaction.emoji) in give and str(reaction.emoji) not in added
-	yes = False
-	while not yes :
+	while True :
 		try:
 			reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
-		except asyncio.TimeoutError:
+		except asyncio.TimeoutError :
 			e.clear_fields()
 			e.add_field(name=bot.ss("PleaseReactionAllCommander"),value=bot.ss("TimeoutWaitingReaction"))
 			await msg.edit(embed=e)
 			await msg.clear_reactions()
 			return False
-		else:
+		else :
 			e.clear_fields()
 			added.append(str(reaction.emoji))
 			e.add_field(name=bot.ss("PleaseReactionAllCommander"),value=" ".join(added))

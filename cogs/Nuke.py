@@ -12,8 +12,8 @@ class Nuke(Cog) :
 		super().__init__(bot)
 
 	@commands.command()
+	@commands.guild_only()
 	@IsOwnerGuild()
-	@IsNotDM()
 	async def nuke__channels(self, ctx) :
 		#print(self.bot.name)
 		#print(self.bot.description)
@@ -26,8 +26,8 @@ class Nuke(Cog) :
 					await ch.delete(reason=self.bot.ss("Reason", "CommandBy").format(ctx.author))
 
 	@commands.command()
+	@commands.guild_only()
 	@IsOwnerGuild()
-	@IsNotDM()
 	async def nuke__messages(self, ctx) :
 		#print(self.bot.name)
 		#print(self.bot.description)

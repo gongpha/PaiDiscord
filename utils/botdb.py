@@ -42,7 +42,10 @@ class BotDB :
 		await self.pool.wait_closed()
 
 	async def get_cursor(self) :
-		return await (await self.pool.acquire()).cursor()
+		if self.pool :
+			return await (await self.pool.acquire()).cursor()
+		else :
+			raise CannotConnect()
 
 	async def fetchone(self, sql, arglist = None) :
 		if self.allow :
@@ -159,9 +162,9 @@ class BotDB :
 			try :
 				us = await self.bot.fetch_user(s['snowflake'])
 			except NotFound :
-				ulist.append(tuple(1, 'discord_user.username', s['snowflake']))
+				ulist.append((1, 'discord_user.username', s['snowflake']))
 			else :
-				ulist.append(tuple(0, us.name, s['snowflake']))
+				ulist.append((0, us.name, s['snowflake']))
 		await self.commit_list(sql, ulist)
 		return True
 
@@ -186,9 +189,9 @@ class BotDB :
 			try :
 				us = await self.bot.fetch_user(s['snowflake'])
 			except NotFound :
-				ulist.append(tuple(1, 'discord_guild.name', 'discord_guild.owner_snowflake', s['snowflake']))
+				ulist.append((1, 'discord_guild.name', 'discord_guild.owner_snowflake', s['snowflake']))
 			else :
-				ulist.append(tuple(0, us.name, us.owner_id, s['snowflake']))
+				ulist.append((0, us.name, us.owner_id, s['snowflake']))
 		await self.commit_list(sql, ulist)
 		ulist = []
 		for gu in self.bot.guilds :

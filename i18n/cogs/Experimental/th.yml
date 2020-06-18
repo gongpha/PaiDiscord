@@ -14,6 +14,11 @@ command :
             - _killbot
             - _killclient
             - _shut
+    _announce :
+        description         : ส่งประกาศไปทุกเซิร์ฟเวอร์ที่มีช่องระบบ
+        usage               : <ข้อความ...>
+        aliases             :
+            - _ประกาศ
     _send :
         description         : ส่งข้อความผ่านช่องด้วย ID
         usage               : <ID ของช่อง> <ข้อความ...>

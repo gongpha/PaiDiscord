@@ -37,7 +37,6 @@ class ConfigsNotFound(Exception) :
 	"""Config and Base Config files are not found"""
 	pass
 
-
 def eget(dict, key, default) :
 	v = dict.get(key, '')
 	try :
@@ -282,7 +281,10 @@ class Pramual(commands.Bot) :
 
 	async def on_command_completion(self, ctx) :
 		#if self.get_dev_configs("update_command_used_count", False) :
-		await ctx.bot.db.update_and_increase_cmd_count(ctx.author)
+		try :
+			await ctx.bot.db.update_and_increase_cmd_count(ctx.author)
+		except botdb.CannotConnect :
+			pass
 
 	async def on_command(self, ctx) :
 		# if ctx.author.id not in self.cached_language :
@@ -307,16 +309,18 @@ class Pramual(commands.Bot) :
 		elif isinstance(error, commands.MissingRequiredArgument) :
 			await ctx.send(embed=embed_em(ctx, self.ss('InCorrectArgument'), "```{} {}```".format(cmdn, ctx.command.usage) if ctx.command.usage != None else ''))
 			return
-		elif isinstance(error, commands.PrivateMessageOnly) :
+		elif isinstance(error, commands.NoPrivateMessage) :
 			await ctx.send(embed=embed_wm(ctx, ctx.bot.ss("CommandInDMNotAvailable")))
 			return
 		elif isinstance(error, commands.MissingPermissions) :
 			l = ('\n'.join(ctx.bot.ss("NoPermissionWith").format(ctx.bot.ss("Permission", string)) for string in error.missing_perms)) if error.missing_perms else ctx.bot.ss("None")
 			await ctx.send(embed=embed_em(ctx, l))
 			return
+		elif isinstance(error, commands.NotOwner) :
+			await ctx.send(embed=embed_em(ctx, ctx.bot.ss("YouAreNotBotOwner")))
+			return
 		elif isinstance(error, commands.CheckFailure) :
-			print(ctx.message)
-			await ctx.send(embed=embed_em(ctx, ctx.bot.ss("AnErrorOccurred"), getattr(error, 'message', "")))
+			await ctx.send(embed=embed_em(ctx, error)) # ctx.bot.ss("AnErrorOccurred")
 			return
 
 		e = discord.Embed(title="Command Error : `{}{}`".format(self.cmdprefix if ctx.command.name != None else "",ctx.command.name if ctx.command.name != None else "UNKNOWN"))
