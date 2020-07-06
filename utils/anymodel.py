@@ -17,9 +17,9 @@ from utils.template import embed_em
 # 	if passed < 0 :
 # 		result = await fetch_channel(object)
 
-def _get_from_guilds(bot, getter, argument):
+def _get_from_guilds(bot, getter, argument) :
 	result = None
-	for guild in bot.guilds:
+	for guild in bot.guilds :
 		result = getattr(guild, getter)(argument)
 		if result:
 			return result
@@ -50,13 +50,13 @@ class AnyUser(AnyID) :
 		result = None
 		state = ctx._state
 
-		if match is not None:
+		if match is not None :
 			user_id = int(match.group(1))
 			result = ctx.bot.get_user(user_id)
 		else:
 			arg = object
 			# check for discriminator if it exists
-			if len(arg) > 5 and arg[-5] == '#':
+			if len(arg) > 5 and arg[-5] == '#' :
 				discrim = arg[-4:]
 				name = arg[:-5]
 				predicate = lambda u: u.name == name and u.discriminator == discrim
@@ -87,34 +87,26 @@ class AnyMember(AnyID) :
 		if in_ctx_guild and isinstance(ctx.message.channel, discord.TextChannel) :
 			guild = ctx.guild
 			if match is None :
-				# not a mention...
-				if guild :
-					result = guild.get_member_named(object)
-				else :
-					result = _get_from_guilds(bot, 'get_member_named', object)
+				result = guild.get_member_named(object)
 			else :
-				user_id = int(match.group(1))
-				if guild :
-					result = guild.get_member(user_id)
-				else :
-					result = _get_from_guilds(bot, 'get_member', user_id)
+				result = guild.get_member(int(match.group(1)))
+			if not result :
+				for m in guild.members :
+					if object in m.name :
+						result = m
+					elif m.nick :
+						if object in m.nick :
+							result = m
 		else :
 			if not isinstance(ctx.message.channel, discord.TextChannel) :
 				raise NotFound('No Guild in non-TextChannel')
-			if match is None:
-				# not a mention...
+			if match is None :
 				for guild in bot.guilds :
-					if guild :
-						result = guild.get_member_named(object)
-					else :
-						result = _get_from_guilds(bot, 'get_member_named', object)
+					result = guild.get_member_named(object)
 			else :
 				user_id = int(match.group(1))
 				for guild in bot.guilds :
-					if guild :
-						result = guild.get_member(user_id)
-					else:
-						result = _get_from_guilds(bot, 'get_member', user_id)
+					result = guild.get_member(user_id)
 
 		if result is None :
 			raise NotFound('Member "{}" not found'.format(object))

@@ -216,7 +216,7 @@ class Info(Cog) :
 	async def guild(self, ctx, guild_id = None) :
 		#print(self.bot.name)
 		#print(self.bot.description)
-		guild = self.bot.get_guild(int(guild_id or 0)) or (ctx.message.guild if isinstance(ctx.message.channel, discord.TextChannel) else None)
+		guild = ctx.message.guild if isinstance(ctx.message.channel, discord.TextChannel) else None
 		# if not guild :
 		# 	return
 		# s = embed_t(ctx, guild.name, "")
