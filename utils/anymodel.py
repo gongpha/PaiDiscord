@@ -92,10 +92,10 @@ class AnyMember(AnyID) :
 				result = guild.get_member(int(match.group(1)))
 			if not result :
 				for m in guild.members :
-					if object in m.name :
-						result = m
-					elif m.nick :
-						if object in m.nick :
+					if str(object).lower() in (m.nick or "").lower() :
+							result = m
+					else :
+						if str(object).lower() in m.name.lower() :
 							result = m
 		else :
 			if not isinstance(ctx.message.channel, discord.TextChannel) :
@@ -143,64 +143,3 @@ async def AnyModel_FindUserOrMember(ctx, object, external=True, in_ctx_guild=Tru
 		await ctx.send(embed=err)
 		return None
 	return r
-# class AnyMessage(AnyConverter) :
-# 	async def convert(self, ctx, object, destination) :
-#
-# 		id_regex = re.compile(r'^(?:(?P<channel_id>[0-9]{15,21})-)?(?P<message_id>[0-9]{15,21})$')
-# 		link_regex = re.compile(
-# 			r'^https?://(?:(ptb|canary)\.)?discordapp\.com/channels/'
-# 			r'(?:([0-9]{15,21})|(@me))'
-# 			r'/(?P<channel_id>[0-9]{15,21})/(?P<message_id>[0-9]{15,21})/?$'
-# 		)
-# 		match = id_regex.match(object) or link_regex.match(object)
-# 		if not match:
-# 			raise NotFound('Message "{msg}" not found'.format(msg=object))
-# 		message_id = int(match.group("message_id"))
-# 		channel_id = match.group("channel_id")
-# 		message = ctx.bot._connection._get_message(message_id)
-# 		if message:
-# 			return message
-# 		if in_ctx_channel :
-# 			channel = ctx.bot.get_channel(int(channel_id)) if channel_id else ctx.channel
-# 			if not channel :
-# 				raise NotFound('Channel "{channel}" not found'.format(channel=channel_id))
-# 		else :
-# 			m = None
-# 			for guild in ctx.bot.guilds :
-# 				for channel_ in guild.text_channels :
-# 					try :
-# 						m = await channel_.fetch_message(message_id)
-# 					except : pass
-# 			if not m :
-# 				raise NotFound('Message "{msg}" not found from all channels'.format(msg=object))
-# 		try :
-# 			return await channel.fetch_message(message_id)
-# 		except discord.NotFound :
-# 			raise NotFound('Message "{msg}" not found'.format(msg=object))
-# 		except discord.Forbidden :
-# 			raise Forbidden("Can't read messages in {channel}".format(channel=channel.mention))
-
-
-# async def anyuser_convert(ctx, obj) :
-# 	passed = 1
-# 	result = None
-# 	if not obj :
-# 		return (ctx.author, 0)
-# 	try :
-# 		result = await MemberConverter().convert(ctx, obj)
-# 	except BadArgument :
-# 		passed += 1
-# 		try :
-# 			result = await UserConverter().convert(ctx, obj)
-# 		except BadArgument :
-# 			passed += 1
-# 			result = ctx.bot.get_user(obj)
-# 			if result == None :
-# 				passed += 1
-# 				try :
-# 					result = await ctx.bot.fetch_user(obj)
-# 				except discord.NotFound as e :
-# 					return (e, -1)
-# 				except discord.HTTPException as e:
-# 					return (e, -2)
-# 	return (result, passed)
