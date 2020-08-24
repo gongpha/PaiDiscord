@@ -32,7 +32,7 @@ class Ikwi(Proc) :
 
 	def m_ikwi(self, text) :
 		# by gongpha
-		bg = Image.open("template/meme/กูรู้หมดแล้ว.png")
+		bg = Image.open("template/meme/ikwi.png")
 
 		img_text = textimage(text, "font/sukhumvitb.ttf", 50, (160, 28, 51), None, None, 0)
 
