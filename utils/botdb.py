@@ -206,3 +206,12 @@ class BotDB :
 		return await self.fetchall("SELECT {}snowflake FROM discord_user WHERE missing=0".format("id," if addid else ''))
 	async def get_guild_id_list(self, addid = False) :
 		return await self.fetchall("SELECT {}snowflake FROM discord_guild WHERE missing=0".format("id," if addid else ''))
+
+
+
+
+
+
+
+	async def look_for_alias(self, user_id, guild_id) :
+		return await self.fetchone("SELECT snowflake FROM discord_user_alias WHERE alias=%s AND guild_snowflake=%s")
