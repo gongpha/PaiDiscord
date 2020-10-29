@@ -1,5 +1,7 @@
 import discord
 from discord.ext.commands import *
+import codecs
+from io import BytesIO
 
 async def anyemoji_convert(ctx, obj) :
 	passed = 1
@@ -20,8 +22,14 @@ async def anyemoji_convert(ctx, obj) :
 				try :
 					result = await PartialEmojiConverter().convert(ctx, obj)
 				except BadArgument :
-					return (None, -1)
-	return (result, passed)
+					try :
+						url = "https://twemoji.maxcdn.com/v/13.0.1/72x72/{}.png".format(format(ord(obj), 'x'))
+						b = BytesIO(await (await ctx.bot.session.get(url)).read())
+						return ((b,url), 0)
+					except :
+						return (None, -1)
+	b = BytesIO(await (result.url).read())
+	return ((b, result), passed)
 
 async def anyemoji_check(ctx, object) :
 	r, passed = await anyemoji_convert(ctx,object)

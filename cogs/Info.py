@@ -290,19 +290,27 @@ class Info(Cog) :
 	@commands.command()
 	async def emoji(self, ctx, emoji_text) :
 		emoji, passed = await anyemoji_convert(ctx, emoji_text)
-		b = BytesIO(await (emoji.url).read())
+		if passed == -1 :
+			err = embed_em(ctx, ctx.bot.ss("ObjectNotFoundFromObject").format(ctx.bot.ss("Model", "Emoji"), emoji_text))
+			#err.description = "```{}```".format(result.text)
+			await ctx.send(embed=err)
+			return
 
-		if passed == 4 :
-			f = "{}__emoticon_{}{}-174d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
-		elif passed < 4 :
-			try :
-				u = emoji.user
-				uid = emoji.user.id
-				f = "{}__emoticon_{}{}-174d{}_{}-168d{}_{}-169d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, u, uid, emoji.guild_id, emoji.guild.name, "gif" if emoji.animated else "png")
-			except :
-				f = "{}__emoticon_{}{}-174d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
+		b = emoji[0]
+		if passed == 0 :
+			f = "{}__emoticon_{}.png".format(ctx.bot.bot_name.lower(), format(ord(emoji_text), 'x'))
 		else :
-			f = "{}__emoticon".format(ctx.bot.bot_name.lower())
+			if passed == 4 :
+				f = "{}__emoticon_{}{}-174d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
+			elif passed < 4 :
+				try :
+					u = emoji.user
+					uid = emoji.user.id
+					f = "{}__emoticon_{}{}-174d{}_{}-168d{}_{}-169d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, u, uid, emoji.guild_id, emoji.guild.name, "gif" if emoji.animated else "png")
+				except :
+					f = "{}__emoticon_{}{}-174d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
+			else :
+				f = "{}__emoticon".format(ctx.bot.bot_name.lower())
 
 		file = discord.File(fp=b, filename=f)
 		await ctx.send(file=file)
