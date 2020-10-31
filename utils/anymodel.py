@@ -93,7 +93,7 @@ class AnyMember(AnyID) :
 			if not result :
 				for m in guild.members :
 					if str(object).lower() in (m.nick or "").lower() :
-							result = m
+						result = m
 					else :
 						if str(object).lower() in m.name.lower() :
 							result = m
