@@ -67,7 +67,11 @@ class Pramual(commands.Bot) :
 		if self.token == None :
 			raise NoToken("Invalid Token")
 
-		super().__init__(command_prefix=self.cmd_prefix, *args, **kwargs)
+		intents = discord.Intents.default()
+		intents.members = True
+
+
+		super().__init__(command_prefix=self.cmd_prefix, intents=intents, *args, **kwargs)
 		self.remove_command('help')
 		pbot = self
 
