@@ -300,6 +300,7 @@ class Info(Cog) :
 		if passed == 0 :
 			f = "{}__emoticon_{}.png".format(ctx.bot.bot_name.lower(), format(ord(emoji_text), 'x'))
 		else :
+			emoji = emoji[1]
 			if passed == 4 :
 				f = "{}__emoticon_{}{}-174d{}.{}".format(ctx.bot.bot_name.lower(), "animated_" if emoji.animated else "", emoji.name, emoji.id, "gif" if emoji.animated else "png")
 			elif passed < 4 :
