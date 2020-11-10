@@ -238,6 +238,7 @@ Processing                  : กำลังดำเนินการ . . .
 Success                     : สำเร็จ
 Failed                      : ล้มเหลว
 MutualGuildWithMe           : เซิร์ฟเวอร์ร่วมกันกับฉัน
+MutualGuildWithBot          : เซิร์ฟเวอร์ร่วมกันกับบอท
 AndMoreObject               : และอีก {} {}
 
 AnErrorOccurred             : มีบางอย่างผิดพลาด !
@@ -253,3 +254,5 @@ InvalidNumber               : ตัวเลขไม่ถูกต้อง
 
 AnnouncementFromBot         : ประกาศจากบอท
 IfYouSeeDeleteThis          : หากผู้ดูแลได้เห็นประกาศนี้แล้ว ท่านสามารถลบประกาศนี้ได้
+
+JSONDecodingFailed          : ถอดรหัส JSON ล้มเหลว

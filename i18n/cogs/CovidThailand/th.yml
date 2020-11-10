@@ -1,0 +1,22 @@
+cog :
+    name                    : Covid-19 Thailand Stats
+    description             : รายงานสถานการณ์ COVID-19 ในประเทศไทย
+    icon_emoji              : ':microbe::warning:'
+    author                  : gongpha
+    translated              : gongpha
+command :
+    covid :
+        description         : รายงานสถานการณ์ COVID-19 ในประเทศไทยภายในวันนี้
+        usage               :
+        aliases             :
+            - โควิด
+            - โคโรนา
+            - โคโรน่า
+            - corona
+            - coronavirus
+
+Title : รายงานสถานการณ์ COVID-19 ในประเทศไทย
+Confirmed : ติดเชื้อสะสม
+Recovered : รักษาหายแล้ว
+Hospitalized : รักษาอยู่
+Deaths : เสียชีวิต

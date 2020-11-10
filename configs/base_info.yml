@@ -58,6 +58,7 @@ game_static : ?PramualPaiGame
 
 # Cogs (Extensions)
 cogs :
+  - cogs.CovidThailand
   - cogs.Info
   - cogs.Image
   - cogs.Nuke
