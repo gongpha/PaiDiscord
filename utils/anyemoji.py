@@ -23,8 +23,16 @@ async def anyemoji_convert(ctx, obj) :
 					result = await PartialEmojiConverter().convert(ctx, obj)
 				except BadArgument :
 					try :
-						url = "https://twemoji.maxcdn.com/v/13.0.1/72x72/{}.png".format(format(ord(obj), 'x'))
-						b = BytesIO(await (await ctx.bot.session.get(url)).read())
+						codes = ["{c:x}".format(c=ord(c)) for c in obj]
+						if "200d" not in codes :
+							code = "-".join([c for c in codes if c != "fe0f"])
+						else :
+							code = "-".join(codes)
+						url = "https://twemoji.maxcdn.com/v/13.0.1/72x72/{}.png".format(code)
+						response = await ctx.bot.session.get(url)
+						if response.status != 200 :
+							raise Exception()
+						b = BytesIO(await response.read())
 						return ((b,url), 0)
 					except :
 						return (None, -1)

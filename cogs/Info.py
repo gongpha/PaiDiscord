@@ -298,7 +298,9 @@ class Info(Cog) :
 
 		b = emoji[0]
 		if passed == 0 :
-			f = "{}__emoticon_{}.png".format(ctx.bot.bot_name.lower(), format(ord(emoji_text), 'x'))
+			etext = ""
+
+			f = "{}__emoticon_{}.png".format(ctx.bot.bot_name.lower(), "-".join([format(ord(e), 'x') for e in emoji_text]))
 		else :
 			emoji = emoji[1]
 			if passed == 4 :
