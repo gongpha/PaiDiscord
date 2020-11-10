@@ -223,6 +223,16 @@ class Pramual(commands.Bot) :
 			return None
 		return self.dev_configs.get(key, default)
 
+	def get_resource(self, default, *keylist) :
+		lang = None
+		dct = self.resources.copy()
+		for key in keylist :
+			try:
+				dct = dct[key]
+			except KeyError :
+				return default
+		return dct
+
 	# async def fetch_language(self, id) :
 	# 	if id in self.cached_language :
 	# 		return self.cached_language[id]

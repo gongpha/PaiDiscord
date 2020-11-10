@@ -1,6 +1,14 @@
-StatusIcons :
-    online : '<:pai__online:592664936887615488>'
-    idle : '<:pai__idle:592664936681832449>'
-    dnd : '<:pai__offline:592664936409464843>'
-    offline : '<:pai__offline:592664936409464843>'
-    invisible : '<:pai__offline:592664936409464843>'
+Emojis :
+    StatusIcons :
+        online : '<:pai__online:592664936887615488>'
+        idle : '<:pai__idle:592664936681832449>'
+        dnd : '<:pai__offline:592664936409464843>'
+        offline : '<:pai__offline:592664936409464843>'
+        invisible : '<:pai__offline:592664936409464843>'
+
+    General :
+        blank : '<:pai__blank:775679312619634698>'
+        up_red : '<:pai__up_red:775694925941047316>'
+        up_green : '<:pai__up_green:775694925924794368>'
+        down_red : '<:pai__down_red:775694925748633651>'
+        down_green : '<:pai__down_green:775694925844840479>'

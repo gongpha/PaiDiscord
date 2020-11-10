@@ -225,7 +225,7 @@ class Experimental(Cog) :
 		# 	"invisible" : discord.Status.invisible,
 		# }
 
-		sti = ctx.bot.resources['StatusIcons'][st]
+		sti = ctx.bot.get_resource("", 'Emojis', 'StatusIcons', st)
 
 
 		# if isinstance(status, int) :

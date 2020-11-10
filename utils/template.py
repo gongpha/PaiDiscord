@@ -464,9 +464,9 @@ def model_info(ctx, model) :
 		mt = ctx.bot.get_mutual_guilds(model)
 		mt_len = len(mt)
 		del mt[5:]
-		e.add_field(name="{} : {}".format(ctx.bot.ss("MutualGuildWithMe"), mt_len), value=("`{}`".format(", ".join([m.name for m in mt]) + (", ... {}".format(ctx.bot.ss("AndMoreObject").format(mt_len - len(mt), ctx.bot.ss('Model', 'Guild'), s='s' if ctx.bot.ss('need_s') and mt_len - len(mt) > 1 else '')) if mt_len > 5 else ''))) or ctx.bot.ss("Empty"), inline=False)
+		e.add_field(name="{} : {}".format(ctx.bot.ss("MutualGuildWithBot"), mt_len), value=("`{}`".format(", ".join([m.name for m in mt]) + (", ... {}".format(ctx.bot.ss("AndMoreObject").format(mt_len - len(mt), ctx.bot.ss('Model', 'Guild'), s='s' if ctx.bot.ss('need_s') and mt_len - len(mt) > 1 else '')) if mt_len > 5 else ''))) or ctx.bot.ss("Empty"), inline=False)
 		def sss(SSS) :
-			return [ctx.bot.ss("Status", SSS.name), ctx.bot.resources['StatusIcons'][SSS.name]]
+			return [ctx.bot.ss("Status", SSS.name), ctx.bot.get_resource("", 'Emojis', 'StatusIcons', SSS.name)]
 		if not model.bot :
 			status_all = "\n\n{1} **{2}** : {0}\n{4} **{5}** : {3}\n{7} **{8}** : {6}".format(
 				"🖥️ " + ctx.bot.ss("Model", "Desktop"),
