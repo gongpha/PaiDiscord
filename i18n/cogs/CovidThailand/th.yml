@@ -6,7 +6,7 @@ cog :
     translated              : gongpha
 command :
     covid :
-        description         : รายงานสถานการณ์ COVID-19 ในประเทศไทยภายในวันนี้
+        description         : รายงานสถานการณ์ COVID-19 ในประเทศไทยจาก ศบค.
         usage               :
         aliases             :
             - โควิด
