@@ -214,7 +214,7 @@ class Pramual(commands.Bot) :
 		lang = None
 		dct = self.stringstack[lang or self.languages[0]].copy()
 		for key in keylist :
-			try:
+			try :
 				dct = dct[key]
 			except KeyError :
 				return "@@@[string_not_found/ไม่-พบ-ข้อความ]"
@@ -226,10 +226,9 @@ class Pramual(commands.Bot) :
 		return self.dev_configs.get(key, default)
 
 	def get_resource(self, default, *keylist) :
-		lang = None
 		dct = self.resources.copy()
 		for key in keylist :
-			try:
+			try :
 				dct = dct[key]
 			except KeyError :
 				return default
