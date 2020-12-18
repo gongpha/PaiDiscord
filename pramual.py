@@ -68,6 +68,8 @@ class Pramual(commands.Bot) :
 			raise NoToken("Invalid Token")
 
 		intents = discord.Intents.default()
+		# For bot had guilds over 100, GO VERIFY !
+		intents.presences = True
 		intents.members = True
 
 
@@ -273,6 +275,8 @@ class Pramual(commands.Bot) :
 		except botdb.NotAllowConnect :
 			print("(!) No Connecting for database")
 
+
+
 	def run_bot(self) :
 		try :
 			super().run(self.token)
@@ -382,24 +386,24 @@ class Pramual(commands.Bot) :
 			await member.guild.system_channel.send(embed=e)
 
 	async def on_guild_join(self, guild) :
-		t = await qinsert_guild(self, guild)
-		if t != None :
-			e = discord.Embed(title="New Guild : {}".format(guild.name))
-			#e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
-			e.color = 0x00AA80
-			e.set_thumbnail(url=str(guild.icon_url))
-			e.set_footer(text="{} : {}".format(guild.id, t))
-			await self.get_bot_channel("system", "guild_update").send(embed=e)
+		await ctx.bot.db.insert_guild(self, guild)
+		e = discord.Embed(title="New Guild : {}".format(guild.name))
+		#e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
+		e.color = 0x00AA80
+		e.set_thumbnail(url=str(guild.icon_url))
+		e.set_footer(text="{} : {}".format(guild.id, t))
+		await self.get_bot_channel("system", "guild_update").send(embed=e)
 
 	async def on_guild_remove(self, guild) :
-		t = await commit(self, "DELETE FROM `pai_discord_guild` WHERE `snowflake` = %s", guild.id)
-		if t != None :
-			e = discord.Embed(title="Removed Guild : {}".format(guild.name))
+		await ctx.bot.db.update_guild(guild, {'missing':True})
+		#t = await commit(self, "DELETE FROM `pai_discord_guild` WHERE `snowflake` = %s", guild.id)
+		#if t != None :
+		e = discord.Embed(title="Removed Guild : {}".format(guild.name))
 			#e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
-			e.color = 0xCE3232
-			e.set_thumbnail(url=str(guild.icon_url))
-			e.set_footer(text="{} : {}".format(guild.id, t))
-			await self.get_bot_channel("system", "guild_update").send(embed=e)
+		e.color = 0xCE3232
+		e.set_thumbnail(url=str(guild.icon_url))
+		e.set_footer(text="{} : {}".format(guild.id, t))
+		await self.get_bot_channel("system", "guild_update").send(embed=e)
 
 	async def on_message(self, message) :
 		#print(self.waitForMessage)
