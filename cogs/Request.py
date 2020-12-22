@@ -19,8 +19,8 @@ class Request(Cog) :
 		self.cached_search_nsfw = {}
 
 		self.stack = {
-			"randomcat" : r_RandomCat,
-			"imgur" : r_Imgur
+			#"randomcat" : r_RandomCat,
+			#"imgur" : r_Imgur
 		}
 
 
