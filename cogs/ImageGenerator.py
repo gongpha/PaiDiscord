@@ -13,12 +13,13 @@ proc_list = [
 	"proc.Fortune",
 	"proc.Broomaunt",
 	"proc.RTX",
-	"proc.Karaoke"
+	"proc.Karaoke",
+	"proc.GarenaAppCover"
 ]
 
 stack = []
 
-class ImageGenerate(Cog) :
+class ImageGenerator(Cog) :
 	def __init__(self, bot) :
 		for c in proc_list :
 			##try:
@@ -53,4 +54,4 @@ class ImageGenerate(Cog) :
 		e.add_field(name=f"{start} - {end}", value=stri)
 		await ctx.send(embed=e)
 def setup(bot) :
-	bot.add_cog(loadInformation(ImageGenerate(bot)))
+	bot.add_cog(loadInformation(ImageGenerator(bot)))

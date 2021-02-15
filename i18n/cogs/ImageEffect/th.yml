@@ -1,0 +1,41 @@
+cog :
+    name                    : เอฟเฟกต์รูปภาพ
+    description             : เอฟเฟกต์รูปภาพต่าง ๆ
+    icon_emoji              : ':frame_photo::sparkles:'
+    author                  : gongpha
+    translated              : gongpha
+command :
+    # anaglyph :
+    #     description         : ภาพสามมิติแบบซ้อนเหลื่อม
+    #     usage               :
+    #     aliases             :
+    #         - fx_a3d
+    wave :
+        description         : คลื่น
+        usage               : <แอมพลิจูด = 256, ความยาวคลื่น = 128>
+        aliases             :
+            - wv
+    wave_wh :
+        description         : |-
+            คลื่น (ตามขนาด)
+            เหมือนกับ `wave` แต ่ค่าแอมพลิจูดและความยาวคลื่น จะถูกหารกับขนาดของภาพเป้าหมาย
+            A = width / a
+            L = height / l
+        usage               : <แอมพลิจูด ที่หารกับความกว้างแล้ว = 32, ความยาวคลื่น ที่หารกับความสูงแล้ว = 4>
+        aliases             :
+            - wvwh
+    implode :
+        description         : ระเบิดตรงกลางภาพ
+        usage               : <ปริมาณ = 0.4>
+        aliases             :
+            - impld
+    swirl :
+        description         : หมุนตรงกลาง
+        usage               : <องศา = 90>
+        aliases             :
+            - swl
+    fx_exp :
+        description         : null
+        usage               : <สูตร>
+        aliases             :
+            - fxexp

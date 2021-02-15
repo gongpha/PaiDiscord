@@ -1,7 +1,7 @@
 cog :
-    name                    : รูปภาพ
-    description             : แก้ไข, กรองรูปภาพ
-    icon_emoji              : ':frame_photo:'
+    name                    : ฟิลเตอร์รูปภาพ
+    description             : ฟิลเตอร์รูปภาพต่าง ๆ
+    icon_emoji              : ':frame_photo::hole:'
     author                  : gongpha
     translated              : gongpha
 command :
@@ -33,6 +33,24 @@ command :
             - ขอบกลม
             - ขอบรี
             - ell
+    motion_blur :
+        description         : เบลอเคลื่อนไหว
+        usage               : <องศา = 45, รัศมี = 64>
+        aliases             :
+            - เบลอเคลื่อนไหว
+            - m_blur
+    motion_blur_ext :
+        description         : เบลอเคลื่อนไหว (ขั้นสูง)
+        usage               : <องศา = 45, รัศมี = 64, ซิกมา = 32>
+        aliases             :
+            - เบลอเคลื่อนไหวขั้นสูง
+            - m_blur_ext
+    circular_blur :
+        description         : เบลอวงกลม
+        usage               : <องศา = 16>
+        aliases             :
+            - เบลอวงกลม
+            - c_blur
 
 Resize__CannotResizeThisImage : "ขออภัย ! ไม่สามารถย่อขยายรูปภาพนี้ได้"
 Resize__TryReduceSize         : "ลองลดจำนวนที่จะย่อขยายลง"

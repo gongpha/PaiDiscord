@@ -39,8 +39,8 @@ owners :
     - 338475895285088257 # gongpha#0394       DEVELOPER'S SMURF
     - 357099320069062666 # Kengkat1#4558      TESTER
     - 524907194852966410 # Kengkat2#1787      TESTER'S SMURF
-    - 359621664641908736 # Monochrome#0378    TESTER
-    - 359616528041246723 # Unallocated#5609   TESTER
+    - 359621664641908736 # monochrome#0378    TESTER
+    - 359616528041246723 # utelitoc#5609   TESTER
 
 # Are you allow bot to use db ?
 db : True
@@ -60,18 +60,19 @@ game_static : ?PramualPaiGame
 cogs :
   - cogs.CovidThailand
   - cogs.Info
-  - cogs.Image
+  - cogs.ImageFilter
+  - cogs.ImageEffect
   - cogs.Nuke
   - cogs.MagickBomb
   - cogs.Request
 #  - cogs.Thai
-  - cogs.ImageGenerate
+  - cogs.ImageGenerator
 #  - cogs.Minecraft
   - cogs.Experimental
 
 # Your Bot Invite Code or URL
 # The bot should be in the guild that invite pointed to
-my_guild_invite_code : 5FDcUuB
+my_guild_invite_code : null
 
 # DO NOT TOUCH IT
 interface : True
