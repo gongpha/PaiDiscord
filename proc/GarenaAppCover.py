@@ -10,7 +10,7 @@ from utils.anymodel import AnyModel_FindUserOrMember
 from utils.discord_image import getLastImageOrAnimatedImage
 #from utils.procimg import ProcImg
 
-name = "Triggered"
+name = "GarenaAppCover"
 
 class GarenaAppCover(Proc) :
 	desc = {
@@ -70,4 +70,3 @@ class GarenaAppCover(Proc) :
 
 def setup(bot) :
 	bot.add_cog(loadInformation(GarenaAppCover(bot)))
-	#[0].save("a.gif", save_all=True, append_images=frames[1:], format='gif', loop=0, duration=20, disposal=2, optimize=True)
