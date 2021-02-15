@@ -1,7 +1,7 @@
 cog :
     name                    : Covid-19 Thailand Stats
     description             : รายงานสถานการณ์ COVID-19 ในประเทศไทย
-    icon_emoji              : ':pai__covid::warning:'
+    icon_emoji              : '<:pai__covid:810706381614743562>:warning:'
     author                  : gongpha
     translated              : gongpha
 command :
