@@ -43,15 +43,14 @@ class RTX(Proc) :
 
 
 	@commands.command()
-	async def rtx(self, ctx, u = None) :
-		async with ctx.channel.typing() :
-			img = await getLastImage(ctx, 2)
-			if len(img or []) < 2 :
-				e = embed_em(ctx, ctx.bot.ss('AnErrorOccurred'), ctx.bot.ss('ImageNotEnoughNeedNum').format(str(2)))
-				await ctx.send(embed=e)
-				return
-			file = await processing_image_to_file(ctx, "rtx", self.m_rtx, img[1], img[0])
-			await ctx.send(file=file)
+	async def rtx(self, ctx) :
+		img = await getLastImage(ctx, 2)
+		if len(img or []) < 2 :
+			e = embed_em(ctx, ctx.bot.ss('AnErrorOccurred'), ctx.bot.ss('ImageNotEnoughNeedNum').format(str(2)))
+			await ctx.send(embed=e)
+			return
+		file = await processing_image_to_file(ctx, "rtx", self.m_rtx, img[1], img[0])
+		await ctx.send(file=file)
 
 def setup(bot) :
 	bot.add_cog(loadInformation(RTX(bot)))

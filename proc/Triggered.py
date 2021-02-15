@@ -103,17 +103,15 @@ class Triggered(Proc) :
 
 	@commands.command()
 	async def triggered(self, ctx, u = None) :
-		async with ctx.channel.typing() :
-			img = await im_avatar(ctx, await AnyModel_FindUserOrMember(ctx, u or ctx.author))
-			file = await processing_image_to_file(ctx, "triggered", self.m_triggered, img)
-			await ctx.send(file=file)
+		img = await im_avatar(ctx, await AnyModel_FindUserOrMember(ctx, u or ctx.author))
+		file = await processing_image_to_file(ctx, "triggered", self.m_triggered, img)
+		await ctx.send(file=file)
 
 	@commands.command()
 	async def triggered_l(self, ctx) :
-		async with ctx.channel.typing() :
-			img = await getLastImageOrAnimatedImage(ctx)
-			file = await processing_image_to_file(ctx, "triggered", self.m_triggered, img)
-			await ctx.send(file=file)
+		img = await getLastImageOrAnimatedImage(ctx)
+		file = await processing_image_to_file(ctx, "triggered", self.m_triggered, img)
+		await ctx.send(file=file)
 
 def setup(bot) :
 	bot.add_cog(loadInformation(Triggered(bot)))

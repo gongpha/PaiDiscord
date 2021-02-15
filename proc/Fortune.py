@@ -52,21 +52,19 @@ class Fortune(Proc) :
 
 	@commands.command(aliases=['love'])
 	async def lovematch(self, ctx, user) :
-		async with ctx.channel.typing() :
-			datuser = await AnyModel_FindUserOrMember(ctx, user)
-			img = await im_avatar(ctx, datuser)
-			percent = (((datuser.id % 100) + (ctx.author.id % 100)) / 200) * 100
-			file = await processing_image_to_file(ctx, "match", self.m_match, await im_avatar(ctx, ctx.author), img, percent)
-			await ctx.send(file=file)
+		datuser = await AnyModel_FindUserOrMember(ctx, user)
+		img = await im_avatar(ctx, datuser)
+		percent = (((datuser.id % 100) + (ctx.author.id % 100)) / 200) * 100
+		file = await processing_image_to_file(ctx, "match", self.m_match, await im_avatar(ctx, ctx.author), img, percent)
+		await ctx.send(file=file)
 
 	@commands.command()
 	async def lovematch_random(self, ctx, user) :
-		async with ctx.channel.typing() :
-			datuser = await AnyModel_FindUserOrMember(ctx, user)
-			img = await im_avatar(ctx, datuser)
-			percent = randrange(0, 100)
-			file = await processing_image_to_file(ctx, "match", self.m_match, await im_avatar(ctx, ctx.author), img, percent)
-			await ctx.send(file=file)
+		datuser = await AnyModel_FindUserOrMember(ctx, user)
+		img = await im_avatar(ctx, datuser)
+		percent = randrange(0, 100)
+		file = await processing_image_to_file(ctx, "match", self.m_match, await im_avatar(ctx, ctx.author), img, percent)
+		await ctx.send(file=file)
 
 def setup(bot) :
 	bot.add_cog(loadInformation(Fortune(bot)))
