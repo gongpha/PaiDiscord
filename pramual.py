@@ -435,6 +435,11 @@ class Pramual(commands.Bot) :
 										f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
 									await c.send(content=message.content, tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f)
 									return
+
+		# NULL CHECK
+		if '\x00' in message.content :
+			message.content = strings.Replace(message.content, "\x00", "", -1)
+			await ctx.send(embed=embed_wm(ctx, ctx.bot.ss("NullCharDetected")))
 		await self.process_commands(message)
 
 	#async def on_message_delete(self, message) :
