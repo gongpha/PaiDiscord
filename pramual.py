@@ -259,11 +259,13 @@ class Pramual(commands.Bot) :
 			game = discord.Game(name=self.game[0].format(self), type=discord.ActivityType.listening)
 		await self.change_presence(status=discord.Status.online, activity=game)
 		self.static_invite = 'https://discord.com/api/oauth2/authorize?client_id={}&permissions=470019184&scope=bot'.format(self.user.id)
-		try :
-			self.guild_invite = await self.fetch_invite(url=self.guild_invite_code)
-		except discord.NotFound :
-			print('>> WARNING : GUILD INVITE NOT FOUND')
-			self.guild_invite = None
+
+		if self.guild_invite_code :
+			try :
+				self.guild_invite = await self.fetch_invite(url=self.guild_invite_code)
+			except discord.NotFound :
+				print('>> WARNING : GUILD INVITE NOT FOUND')
+				self.guild_invite = None
 
 		self.db = botdb.BotDB(self, self.db, self.db_host, self.db_username, self.db_password, self.db_database)
 		try :
