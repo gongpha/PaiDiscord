@@ -192,6 +192,7 @@ NoPermissionWith            : ไม่มีสิทธิ์ *{}*
 CannotSendTo                : ไม่สามารถส่งไปที่ `{}`
 CannotEdit                  : ไม่สามารถแก้ไข `{}`
 CannotDelete                : ไม่สามารถลบ `{}`
+CannotReply                 : ไม่สามารถตอบกลับ `{}`
 ObjectNotFoundFromObject    : ไม่พบ{} `{}`
 ObjectNotFoundInObject      : ไม่พบ{}ใน{}
 YouAreNotBotOwner           : คุณไม่ใช่เจ้าของบอทนี้
@@ -256,3 +257,5 @@ AnnouncementFromBot         : ประกาศจากบอท
 IfYouSeeDeleteThis          : หากผู้ดูแลได้เห็นประกาศนี้แล้ว ท่านสามารถลบประกาศนี้ได้
 
 JSONDecodingFailed          : ถอดรหัส JSON ล้มเหลว
+
+NullCharDetected            : ตรวจพบ NULL

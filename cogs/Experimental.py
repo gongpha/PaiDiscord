@@ -118,6 +118,25 @@ class Experimental(Cog) :
 
 	@commands.command()
 	@IsOwnerBot()
+	async def _reply(self, ctx, chid : str, id : typing.Optional[int] = 0, *, text : str) :
+		message = await check_m(ctx, chid, id)
+		if not message :
+			await ctx.send(embed=embed_em(ctx, ctx.bot.ss('CannotReply').format(id or chid), ctx.bot.ss('MessageNotFound')))
+			return
+
+		try :
+			sm = await message.reply(text)
+			await ctx.send("> " + sm.jump_url)
+			self.last_message = sm
+		except discord.Forbidden as e:
+			await ctx.send(embed=embed_em(ctx, self.bot.ss('CannotReply').format(id), self.bot.ss('Forbidden'), error=e))
+			return
+		except discord.HTTPException as e :
+			await ctx.send(content=e.text, embed=embed_em(ctx, self.bot.ss('CannotReply').format(id), error=e))
+			return
+
+	@commands.command()
+	@IsOwnerBot()
 	async def _edit(self, ctx, chid : str, id : typing.Optional[int] = 0, *, text : str) :
 		#u = await self.bot.fetch_user(self.bot.user.id)
 		message = await check_m(ctx, chid, id)
