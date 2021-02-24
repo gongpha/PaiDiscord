@@ -1,0 +1,8 @@
+<@include "python_wrapper.kel">
+
+met run_bot (i32) ::-
+	set pw (PythonWrapper)
+	pw.execute("bot.py")
+
+	done 0
+-::
