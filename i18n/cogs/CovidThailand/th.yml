@@ -1,14 +1,14 @@
 cog :
     name                    : Covid-19 Thailand Stats
-    description             : รายงานสถานการณ์ COVID-19 ในประเทศไทย
+    description             : เกี่ยวกับ COVID-19 ในประเทศไทย
     icon_emoji              : '<:pai__covid:810706223618850847>:warning:'
     author                  : gongpha
     translated              : gongpha
 command :
     covid :
         description         : |-
-            ยอดผู้ติดเชื้อสถานการณ์ COVID-19 ในประเทศไทยจาก ศบค.
-            **หมายเหตุ** : ข้อมูลจะอัปเดตทุกวันแต่ไม่แน่นอน
+            ยอดผู้ติดเชื้อและอื่น ๆ ในสถานการณ์ COVID-19 ในประเทศไทยจาก ศบค.
+            **หมายเหตุ** : ข้อมูลจะอัปเดตทุกวันแต่ไม่แน่นอน อาจจะอัปเดตหลัง 10:00 น.
         usage               :
         aliases             :
             - โควิด
@@ -17,7 +17,7 @@ command :
             - corona
             - coronavirus
 
-Title : รายงานสถานการณ์ COVID-19 ในประเทศไทย
+Title : ยอดผู้ติดเชื้อ รักษาหาย กำลังรักษาและเสียชีวิต ในสถานการณ์ COVID-19 ในประเทศไทย
 Confirmed : ติดเชื้อสะสม
 Recovered : รักษาหายแล้ว
 Hospitalized : รักษาอยู่

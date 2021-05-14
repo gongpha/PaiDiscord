@@ -214,20 +214,7 @@ class Info(Cog) :
 
 	@commands.command()
 	async def guild(self, ctx, guild_id = None) :
-		#print(self.bot.name)
-		#print(self.bot.description)
 		guild = ctx.message.guild if isinstance(ctx.message.channel, discord.TextChannel) else None
-		# if not guild :
-		# 	return
-		# s = embed_t(ctx, guild.name, "")
-		# s.set_thumbnail(url=guild.icon_url)
-		# s.add_field(name=self.bot.stringstack["Model"]["ID"],value=guild.id, inline=True)
-		# s.add_field(name=self.bot.stringstack["Model"]["Region"],value=self.bot.stringstack["VoiceRegion"][guild.region.name], inline=True)
-		# s.add_field(name=self.bot.stringstack["Model"]["Owner"],value=guild.owner.mention, inline=True)
-		# s.add_field(name=self.bot.stringstack["CreatedAt"],value=thai_strftime(guild.created_at, self.bot.stringstack["DateTimeText"].format(th_format_date_diff(ctx, guild.created_at.astimezone(timezone(self.bot.timezone))))), inline=True)
-		# s.add_field(name=self.bot.stringstack["Model"]["Member"],value=len(guild.members), inline=True)
-		# s.add_field(name=self.bot.stringstack["Model"]["Channel"],value=len(guild.channels), inline=True)
-		# s.add_field(name=self.bot.stringstack["Model"]["Role"],value=len(guild.roles), inline=True)
 		if not guild :
 			if not isinstance(ctx.message.channel, discord.TextChannel) :
 				if guild_id == None :
@@ -242,6 +229,13 @@ class Info(Cog) :
 	async def avatar(self, ctx, *, obj = None) :
 		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
 		if member :
+			url = member.avatar_url
+			await ctx.send("`{}`\n{}".format(member, url))
+
+	@commands.command()
+	async def avatar_permanent(self, ctx, *, obj = None) :
+		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
+		if member :
 			file = discord.File(fp=BytesIO(await (member.avatar_url_as(static_format="png")).read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.is_avatar_animated() else "png"))
 			# PAI FEATURE ONLY
 			if (member.id == 473457863822409728 or member.id == 457908707817422860) and ctx.bot.hd_avatar_url :
@@ -250,25 +244,18 @@ class Info(Cog) :
 				await ctx.send("`{}`".format(member), file=file)
 
 	@commands.command()
-	async def avatar_url(self, ctx, *, obj = None) :
-		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
-		if member :
-			url = member.avatar_url
-			await ctx.send("`{}`\n{}".format(member, url))
-
-	@commands.command()
 	async def icon(self, ctx) :
-		guild = ctx.guild
-		if guild :
-			file = discord.File(fp=BytesIO(await (guild.icon_url_as(static_format="png")).read()), filename="pai__icon_{}-168d{}.{}".format(guild.name, guild.id, "gif" if guild.is_icon_animated() else "png"))
-			await ctx.send("`{}`".format(guild), file=file)
-
-	@commands.command()
-	async def icon_url(self, ctx) :
 		guild = ctx.guild
 		if guild :
 			url = guild.icon_url
 			await ctx.send("`{}`\n{}".format(guild, url))
+
+	@commands.command()
+	async def icon_permanent(self, ctx) :
+		guild = ctx.guild
+		if guild :
+			file = discord.File(fp=BytesIO(await (guild.icon_url_as(static_format="png")).read()), filename="pai__icon_{}-168d{}.{}".format(guild.name, guild.id, "gif" if guild.is_icon_animated() else "png"))
+			await ctx.send("`{}`".format(guild), file=file)
 
 	@commands.command()
 	async def anyuser(self, ctx, *, obj = None) :
@@ -322,10 +309,5 @@ class Info(Cog) :
 	async def invite(self, ctx) :
 		await ctx.send(embed=embed_t(ctx, ctx.bot.ss('BotInviteLink'), "[{}]({})".format(ctx.bot.ss("ClickHere"), ctx.bot.static_invite)))
 
-	#@commands.command()
-	#async def support(self, ctx) :
-	#	#if not invite_url :
-	#	if ctx.bot.guild_invite :
-	#		await ctx.send(ctx.bot.ss('SupportGuild').format(ctx.bot.guild_invite))
 def setup(bot) :
 	bot.add_cog(loadInformation(Info(bot)))

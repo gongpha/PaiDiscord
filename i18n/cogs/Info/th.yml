@@ -39,7 +39,10 @@ command :
             - othercommands
             - othercmds
     avatar :
-        description         : ส่งภาพประจำตัวของผู้ใช้คนนั้น
+        description         : |- 
+            ส่งภาพประจำตัวของผู้ใช้คนนั้นผ่าน URL
+            **หมายเหตุ** : เมื่อเจ้าของภาพประจำตัวได้ทำการเปลี่ยนภาพหลังจากใช้คำสั่งนี้แล้ว อาจจะทำให้ภาพใน URL นี้จะไม่สามารถแสดงได้เมื่อเวลาผ่านไป
+            หากต้องการให้ภาพยังคงแสดงอยู่ได้ ให้ดาวน์โหลดภาพนั้นหรือใช้คำสั่ง `avatar_permanent`
         usage               : "<สมาชิก = ตัวเอง>"
         aliases             :
             - รูปโปร
@@ -50,19 +53,25 @@ command :
             - profileavatar
             - profilepicture
             - av
-    avatar_url :
-        description         : ส่งภาพประจำตัวของผู้ใช้คนนั้นโดย URL
+    avatar_permanent :
+        description         : |-
+            ส่งภาพประจำตัวของผู้ใช้คนนั้น โดยทำการดาวน์โหลดผ่าน URL และส่งรูปภาพ ทำให้ภาพยังคงแสดงได้ถาวร
+            **หากไม่จำเป็น ห้ามใช้คำสั่งนี้**
         usage               : "<สมาชิก = ตัวเอง>"
         aliases             :
-            - profile_picture_url
-            - profilepicurl
-            - profileavatarurl
-            - profilepictureurl
-            - avatarurl
-            - avurl
-            - av_url
+            - profile_picture_permanent
+            - profilepicpermanent
+            - profileavatarpermanent
+            - profilepicturepermanent
+            - avatarkeep
+            - permanentavatar
+            - permanentprofilepic
+            - avp
     icon :
-        description         : ส่งภาพไอคอนของเซิร์ฟเวอร์
+        description         : |-
+            ส่งภาพไอคอนของเซิร์ฟเวอร์โดย URL
+            **หมายเหตุ** : เมื่อเซิร์ฟเวอร์ได้ทำการเปลี่ยนภาพหลังจากใช้คำสั่งนี้แล้ว อาจจะทำให้ภาพใน URL นี้จะไม่สามารถแสดงได้เมื่อเวลาผ่านไป
+            หากต้องการให้ภาพยังคงแสดงอยู่ได้ ให้ดาวน์โหลดภาพนั้นหรือใช้คำสั่ง `icon_permanent`
         usage               :
         aliases             :
             - รูปกลุ่ม
@@ -76,18 +85,24 @@ command :
             - picture_gulid
             - server_picture
             - picture_server
-    icon_url :
-        description         : ส่งภาพไอคอนของเซิร์ฟเวอร์โดย URL
+    icon_permanent :
+        description         : |-
+            ส่งภาพไอคอนของเซิร์ฟเวอร์นั้น โดยทำการดาวน์โหลดผ่าน URL และส่งรูปภาพ ทำให้ภาพยังคงแสดงได้ถาวร
+            **หากไม่จำเป็น ห้ามใช้คำสั่งนี้**
         usage               :
         aliases             :
-            - guild_avatar_url
-            - avatar_gulid_url
-            - server_avatar_url
-            - avatar_server_url
-            - guild_picture_url
-            - picture_gulid_url
-            - server_picture_url
-            - picture_server_url
+            - รูปกลุ่มถาวร
+            - รูปเซิฟถาวร
+            - รูปเซิร์ฟเวอร์ถาวร
+            - guild_avatar_permanent
+            - avatar_gulid_permanent
+            - server_avatar_permanent
+            - avatar_server_permanent
+            - guild_picture_permanent
+            - picture_gulid_permanent
+            - server_picture_permanent
+            - picture_server_permanent
+            - iconp
     anyuser :
         description         : |-
             แสดงข้อมูลของผู้ใช้ที่ถูกแปลงจากชื่อผู้ใช้, ชื่อผู้ใช้ติดแท็ก, ID ของผู้ใช้, การกล่าวถึง และชื่อเล่นของผู้ใช้
@@ -105,7 +120,7 @@ command :
             - anymember
             - anyhuman
     profile :
-        description         : แสดงโปรไฟล์ของผู้ใช้
+        description         : แสดงโปรไฟล์ของผู้ใช้ (ทดลอง)
         usage               : "<สมาชิก = ตัวเอง>"
         aliases             :
             - โปรไฟล์
@@ -123,7 +138,7 @@ command :
             - สถิติ
             - สติถิ
     emoji :
-        description         : แสดงภาพแท้ของอิโมจินั้น
+        description         : แสดงภาพแท้ของอิโมจินั้น รวมถึงอีโมจิต้นฉบับของ Twitter
         usage               : "<ชื่อของอิโมจิ>"
         aliases             :
             - e
