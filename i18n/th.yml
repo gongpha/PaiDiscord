@@ -256,6 +256,6 @@ InvalidNumber               : ตัวเลขไม่ถูกต้อง
 AnnouncementFromBot         : ประกาศจากบอท
 IfYouSeeDeleteThis          : หากผู้ดูแลได้เห็นประกาศนี้แล้ว ท่านสามารถลบประกาศนี้ได้
 
-JSONDecodingFailed          : ถอดรหัส JSON ล้มเหลว
+CannotReceiveDocument       : ไม่สามารถรับเอกสารได้ แหล่งที่มาไม่สามารถรับคำร้องขอได้
 
 NullCharDetected            : ตรวจพบ NULL
