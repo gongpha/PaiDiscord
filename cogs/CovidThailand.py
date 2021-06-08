@@ -4,7 +4,7 @@ from utils.cog import Cog, loadInformation
 from utils.template import get_time_format, local_strftime, embed_t, embed_em
 from datetime import datetime
 
-stat_url = "https://covid19.th-stat.com/api/open/"
+stat_url = "https://covid19.th-stat.com/json/covid19v2/getTodayCases.json"
 
 class CovidThailand(Cog) :
 	def __init__(self, bot) :
