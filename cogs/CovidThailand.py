@@ -11,7 +11,7 @@ class CovidThailand(Cog) :
 		super().__init__(bot)
 
 	async def covid_stat(self, ctx, minimal=False) :
-		response = await ctx.bot.session.get(stat_url + "today")
+		response = await ctx.bot.session.get(stat_url)
 		try :
 			data = await response.json()
 		except :
