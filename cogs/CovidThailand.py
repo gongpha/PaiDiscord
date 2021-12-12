@@ -4,7 +4,7 @@ from utils.cog import Cog, loadInformation
 from utils.template import get_time_format, local_strftime, embed_t, embed_em
 from datetime import datetime
 
-stat_url = "https://covid19.th-stat.com/json/covid19v2/getTodayCases.json"
+stat_url = "https://covid19.ddc.moph.go.th/api/Cases/today-cases-all"
 
 class CovidThailand(Cog) :
 	def __init__(self, bot) :
@@ -13,20 +13,36 @@ class CovidThailand(Cog) :
 	async def covid_stat(self, ctx, minimal=False) :
 		response = await ctx.bot.session.get(stat_url)
 		try :
-			data = await response.json()
+			data = (await response.json())[0]
 		except :
 			err = embed_em(ctx, self.bot.ss("CannotReceiveDocument"))
 			await ctx.send(embed=err)
 			return
-		curr_datetime = datetime.strptime(data["UpdateDate"], '%d/%m/%Y %H:%M')
+		curr_datetime = datetime.strptime(data["update_date"], '%Y-%m-%d %H:%M:%S')
 		datestr = local_strftime(ctx, curr_datetime, get_time_format(ctx))
 
-		dataformat = {
-			"Confirmed" : ('mask', False),
-			"Deaths" : ('skull', False),
-			"Recovered" : ('sparkling_heart', True),
-			"Hospitalized" : ('hospital', False)
-		}
+		total_hosp = data["total_case"] - data["total_recovered"] - data["total_death"]
+		new_hosp = data["new_case"] - data["new_recovered"] - data["new_death"]
+
+		#	DATA1						DATA2					POSITIVE	EMOJI
+		dataformat = [
+			[data["total_case"],		data["new_case"],		False,		'mask'],
+			[data["total_death"],		data["new_death"],		False,		'skull'],
+			[data["total_recovered"],	data["new_recovered"],	True,		'sparkling_heart'],
+			[total_hosp,				new_hosp,				False,		'hospital'],
+		]
+
+
+
+		#	0							1						2			3
+
+		# OLD
+		#dataformat = {
+		#	"case" : ('mask', False),
+		#	"death" : ('skull', False),
+		#	"new_recovered" : ('sparkling_heart', True),
+		#	"Hospitalized" : ('hospital', False)
+		#}
 
 		blank_emoji = ctx.bot.get_resource(':black_small_square:', 'Emojis', 'General', 'blank')
 		def digits_gen(number, max_length, symbol=False, positive=True) :
@@ -43,8 +59,8 @@ class CovidThailand(Cog) :
 			return resstr
 
 		tempstr = ":{}:{}{}"
-		await ctx.send(embed=embed_t(ctx, self.ss("Title"), description = datestr, casesensitive = False))
-		final = [tempstr.format(dataformat[topic][0], blank_emoji + digits_gen(data[topic], max([len(str(abs(data[c]))) for c in list(dataformat.keys())])) + blank_emoji, digits_gen(data["New"+topic], max([len(str(abs(data["New"+c]))) for c in list(dataformat.keys())]), True, dataformat[topic][1])) for topic in list(dataformat.keys())]
+		await ctx.send(embed=embed_t(ctx, self.ss("title"), description = datestr + "\n\n" + self.ss("ddc_moph"), casesensitive = False))
+		final = [tempstr.format(topic[3], blank_emoji + digits_gen(topic[0], max([len(str(abs(c[0]))) for c in dataformat])) + blank_emoji, digits_gen(topic[1], max([len(str(abs(c[1]))) for c in dataformat]), True, topic[2])) for topic in dataformat]
 		if minimal :
 			await ctx.send("\n".join(final))
 		else :
