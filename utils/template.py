@@ -409,7 +409,7 @@ def model_info(ctx, model) :
 	elif isinstance(model, (discord.User, discord.ClientUser)) :
 		e.color = defcol
 	elif isinstance(model, discord.Guild) :
-		e.add_field(name=ctx.bot.ss("Model", "Region"),value=ctx.bot.ss("VoiceRegion", model.region.name), inline=True)
+		e.add_field(name=ctx.bot.ss("Model", "Region"),value=ctx.bot.ss("VoiceRegion", model.region), inline=True)
 		e.add_field(name=ctx.bot.ss("Model", "Owner"),value=model.owner.mention, inline=True)
 		c = "\n   -{} : {}"
 		e.add_field(name="{} : {}".format(ctx.bot.ss("Model", "Channel"), len(model.channels)),value='{}{}{}'.format(
