@@ -52,6 +52,6 @@ class RTX(Proc) :
 		file = await processing_image_to_file(ctx, "rtx", self.m_rtx, img[1], img[0])
 		await ctx.send(file=file)
 
-def setup(bot) :
-	bot.add_cog(loadInformation(RTX(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(RTX(bot)))
 	#[0].save("a.gif", save_all=True, append_images=frames[1:], format='gif', loop=0, duration=20, disposal=2, optimize=True)

@@ -26,9 +26,9 @@ def embed_t(ctx, title = "", description = "", casesensitive = False) :
 	e.description = description
 	e.title = title
 	if not isinstance(ctx.message.channel, discord.DMChannel) :
-		e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author.display_name) + (" • " + ctx.bot.ss('DontForgetCaseSensitive')) if casesensitive else "", icon_url=ctx.message.author.avatar_url)
+		e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author.display_name) + (" • " + ctx.bot.ss('DontForgetCaseSensitive')) if casesensitive else "", icon_url=ctx.message.author.display_avatar.url)
 	elif casesensitive :
-		e.set_footer(text=ctx.bot.ss('DontForgetCaseSensitive'), icon_url=ctx.message.author.avatar_url)
+		e.set_footer(text=ctx.bot.ss('DontForgetCaseSensitive'), icon_url=ctx.message.author.display_avatar.url)
 
 	return e
 
@@ -42,7 +42,7 @@ def embed_em(ctx, reason, description = "", *args, **kwargs) :
 		e.set_footer(text="{}".format(kwargs.get('error', None)))
 	else :
 		if not isinstance(ctx.message.channel, discord.DMChannel) :
-			e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author), icon_url=ctx.message.author.avatar_url)
+			e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author), icon_url=ctx.message.author.display_avatar.url)
 	return e
 
 def embed_wm(ctx, reason, description = "", *args, **kwargs) :
@@ -54,7 +54,7 @@ def embed_wm(ctx, reason, description = "", *args, **kwargs) :
 		e.set_footer(text="{}".format(kwargs.get('error', None)))
 	else :
 		if not isinstance(ctx.message.channel, discord.DMChannel) :
-			e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author), icon_url=ctx.message.author.avatar_url)
+			e.set_footer(text=ctx.bot.ss("RequestBy").format(ctx.author), icon_url=ctx.message.author.display_avatar.url)
 	return e
 
 _NEED_L10N = "AaBbCcDFGgvXxYy+"  # flags that need localization
@@ -376,8 +376,8 @@ def model_info(ctx, model) :
 	e.add_field(name=ctx.bot.ss("Model", "Name"), value=escape_mentions(model.name), inline=True)
 	if isinstance(model, (discord.Member, discord.User, discord.ClientUser)) :
 		nof.append(model.mention)
-		e.set_author(name=model.display_name, icon_url=model.avatar_url)
-		e.set_thumbnail(url=model.avatar_url)
+		e.set_author(name=model.display_name, icon_url=model.display_avatar.url)
+		e.set_thumbnail(url=model.display_avatar.url)
 		if model.id == ctx.bot.user.id :
 			nof.append(':regional_indicator_m: :regional_indicator_e:')
 		if model.id == ctx.author.id :

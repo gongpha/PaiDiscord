@@ -67,7 +67,7 @@ cogs :
   - cogs.Request
 #  - cogs.Thai
   - cogs.ImageGenerator
-#  - cogs.Minecraft
+  - cogs.Minecraft
   - cogs.Experimental
 
 # Your Bot Invite Code or URL

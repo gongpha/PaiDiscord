@@ -6,6 +6,9 @@ import aiohttp
 from utils.dict import safeget
 
 class Cog(commands.Cog) :
+	async def async_init(self) :
+		pass
+
 	def __init__(self, bot):
 		self.bot = bot
 		#self.session = aiohttp.ClientSession(loop=bot.loop)
@@ -48,8 +51,8 @@ class Cog(commands.Cog) :
     # 	for c in cg.get_commands():
     # 		c.description = cg.stringstack["command_{}_desc".format(c.name)]
     #
-    # 	bot.add_cog(cg)
-def loadInformation(cog) :
+    # 	await bot.add_cog(await cg)
+async def loadInformation(cog) :
 	for c in cog.get_commands() :
 		try :
 			c.description = safeget(cog.stringstack, "command", c.name, "description")
@@ -69,4 +72,7 @@ def loadInformation(cog) :
 			# 	c.sql = False
 		except KeyError :
 			print("Load Information for {} failed".format(c.name))
+
+	await cog.async_init()
+
 	return cog

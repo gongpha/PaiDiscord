@@ -68,7 +68,7 @@ class Experimental(Cog) :
 	@IsOwnerBot()
 	async def _announce(self, ctx, *, text : str) :
 		e = embed_t(ctx, "", text)
-		e.set_author(name=self.bot.ss("AnnouncementFromBot"), icon_url=self.bot.user.avatar_url)
+		e.set_author(name=self.bot.ss("AnnouncementFromBot"), icon_url=self.bot.user.display_avatar.url)
 		e.set_footer(text=self.bot.ss("IfYouSeeDeleteThis"))
 		for g in ctx.bot.guilds :
 			if g.system_channel :
@@ -207,7 +207,7 @@ class Experimental(Cog) :
 				f = []
 				for a in message.attachments :
 					f.append(discord.File(fp=BytesIO(await a.read()), filename=a.filename, spoiler=a.is_spoiler()))
-				await wh.send(content=message.content or "*empty message*", tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f, username=message.author.name, avatar_url=message.author.avatar_url)
+				await wh.send(content=message.content or "*empty message*", tts=message.tts, embed=message.embeds[0] if message.embeds else None, files=f, username=message.author.name, avatar_url=message.author.display_avatar.url)
 			await wh.delete()
 
 		else :
@@ -501,5 +501,5 @@ class Experimental(Cog) :
 		if (ctx.bot.user.id == 473457863822409728 or ctx.bot.user.id == 457908707817422860) and ctx.bot.hd_avatar_url :
 			await ctx.send(ctx.bot.hd_avatar_url)
 
-def setup(bot) :
-	bot.add_cog(loadInformation(Experimental(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Experimental(bot)))

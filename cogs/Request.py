@@ -134,5 +134,5 @@ class Request(Cog) :
 						typ = '-jpe.jpeg'
 					file = discord.File(fp=buffer, filename="pai__image-search_{}-168d{}_request{}".format(ctx.author.display_name,ctx.author.id,typ))
 					await ctx.send(self.ss('NSFWWarning') if ctx.message.channel.is_nsfw() else "", file=file)
-def setup(bot) :
-	bot.add_cog(loadInformation(Request(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Request(bot)))

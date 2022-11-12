@@ -122,5 +122,5 @@ class Karaoke(Proc) :
 			return
 		file = await processing_image_to_file(ctx, "grammy-karaoke", self.k_grammy, t[0], t[1], await getLastImage(ctx), randint(0, 100), 1)
 		await ctx.send(file=file)
-def setup(bot) :
-	bot.add_cog(loadInformation(Karaoke(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Karaoke(bot)))

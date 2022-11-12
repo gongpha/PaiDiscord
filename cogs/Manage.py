@@ -13,5 +13,5 @@ class Manage(Cog) :
 	@commands.command()
 	async def language(self, ctx) :
 
-def setup(bot) :
-	bot.add_cog(loadInformation(Info(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Info(bot)))

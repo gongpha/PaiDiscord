@@ -47,7 +47,7 @@ class Info(Cog) :
 			elif (not c.hidden) or (ctx.author.id not in ctx.bot.owners) :
 				a()
 			#h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.ss("Empty"],inline=True)
-		if h.fields == discord.Embed.Empty :
+		if h.fields == None :
 			h.add_field(name="﻿",value="*{}*".format(self.bot.ss("NoCommand")))
 		return h
 
@@ -82,7 +82,7 @@ class Info(Cog) :
 			e.color = object.color if object.color.value != 0 else discord.Color.default()
 			e.add_field(name=":credit_card: " + ctx.bot.ss("Model", "Credit"), value=r["result"]["credits"], inline=True)
 			e.add_field(name=":arrow_upper_left: " + ctx.bot.ss("CommandUsedCount"), value=r["result"]["commands"], inline=True)
-			e.set_author(name=object.display_name or object.name, icon_url=object.avatar_url)
+			e.set_author(name=object.display_name or object.name, icon_url=object.display_avatar.url)
 			e.set_footer(text=str(object.id))
 
 		return e
@@ -99,7 +99,7 @@ class Info(Cog) :
 			h = self.help_overview_embed(ctx)
 			e = embed_t(ctx, description=self.bot.bot_description)
 			#e.color = self.bot.theme[0] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
-			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.avatar_url)
+			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.display_avatar.url)
 			e.set_footer(text="Build " + str(self.bot.build_number) + " • " + (local_strftime(ctx, self.bot.build_date, get_time_format(ctx)) if self.bot.build_date else ""))
 		else :
 			for n, c in self.bot.cogs.items() :
@@ -115,7 +115,6 @@ class Info(Cog) :
 							h = self.help_command_embed(ctx, c, cg)
 							break
 
-		#msgh.set_thumbnail(url=ctx.author.avatar_url)
 		www = discord.Embed()
 		www.color = 0xFF0000
 		www.description = self.bot.ss('PrivateWarning').format("gongpha#0238")
@@ -132,7 +131,7 @@ class Info(Cog) :
 	@commands.command()
 	async def stats(self, ctx) :
 		e = embed_t(ctx, self.bot.ss("StatsOf").format(ctx.bot.bot_name))
-		e.set_author(name=ctx.bot.bot_name, icon_url=self.bot.user.avatar_url)
+		e.set_author(name=ctx.bot.bot_name, icon_url=self.bot.user.display_avatar.url)
 		#e.set_thumbnail(url=(await ctx.bot.application_info()).icon_url)
 		s = "**{}** : {}\n"
 		e.description += s.format(self.bot.ss("Model", "Name"), ctx.bot.user)
@@ -208,7 +207,6 @@ class Info(Cog) :
 				h.add_field(name=self.bot.ss("Model", "Command"), value=f"`{c.name}`")
 				h.add_field(name=self.bot.ss("Model", "Alias"), value="\n".join([f"`{i}`" for i in c.aliases]))
 				break
-		#msgh.set_thumbnail(url=ctx.author.avatar_url)
 		if h != None :
 			await ctx.send(embed=h)
 
@@ -229,14 +227,14 @@ class Info(Cog) :
 	async def avatar(self, ctx, *, obj = None) :
 		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
 		if member :
-			url = member.avatar_url
+			url = member.display_avatar.url
 			await ctx.send("`{}`\n{}".format(member, url))
 
 	@commands.command()
 	async def avatar_permanent(self, ctx, *, obj = None) :
 		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
 		if member :
-			file = discord.File(fp=BytesIO(await (member.avatar_url_as(static_format="png")).read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.is_avatar_animated() else "png"))
+			file = discord.File(fp=BytesIO((await ctx.bot.session.get(member.display_avatar.replace(static_format="png"))).read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.is_avatar_animated() else "png"))
 			# PAI FEATURE ONLY
 			if (member.id == 473457863822409728 or member.id == 457908707817422860) and ctx.bot.hd_avatar_url :
 				await ctx.send("{}\n{}".format(ctx.bot.ss('WantToSeeHDBotAvatar').format(ctx.bot.bot_name), ctx.bot.ss('TryTypingCmd').format(f"{ctx.bot.cmdprefix}pai_avatar")), file=file)
@@ -309,5 +307,5 @@ class Info(Cog) :
 	async def invite(self, ctx) :
 		await ctx.send(embed=embed_t(ctx, ctx.bot.ss('BotInviteLink'), "[{}]({})".format(ctx.bot.ss("ClickHere"), ctx.bot.static_invite)))
 
-def setup(bot) :
-	bot.add_cog(loadInformation(Info(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Info(bot)))

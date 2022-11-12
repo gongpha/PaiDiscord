@@ -41,5 +41,5 @@ class Nuke(Cog) :
 				await ctx.channel.delete(reason="CLEANING MESSAGES")
 				await ch.edit(reason="CLEANING MESSAGES", position=pos)
 
-def setup(bot) :
-	bot.add_cog(loadInformation(Nuke(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Nuke(bot)))

@@ -13,5 +13,5 @@ class Music(Cog) :
 
 		await channel.connect()
 
-def setup(bot) :
-	bot.add_cog(loadInformation(Music(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Music(bot)))

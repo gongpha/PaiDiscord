@@ -61,7 +61,7 @@ class Pramual(commands.Bot) :
 			}
 		})
 		self.loaded_dev = kwargs.pop('dev', False)
-		self.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.resources_fname, self.loaded_dev, kwargs.pop('loop', asyncio.get_event_loop()), kwargs.pop('build_number', 0), kwargs.pop('build_date', None))
+		self.load_configs(self.info_fname, self.channels_fname, self.auths_fname, self.configs_fname, self.resources_fname, self.loaded_dev, kwargs.pop('build_number', 0), kwargs.pop('build_date', None))
 		self.load_strings()
 		self.load_assets()
 		if self.token == None :
@@ -106,7 +106,7 @@ class Pramual(commands.Bot) :
 	# 		if r :
 
 
-	def load_configs(self, info, channels, auths, configs, resources, dev, loop, build_number, build_date) :
+	def load_configs(self, info, channels, auths, configs, resources, dev, build_number, build_date) :
 		inf = info
 		self.bot_channels = channels
 		self.auth = auths
@@ -162,10 +162,8 @@ class Pramual(commands.Bot) :
 		self.interface = infget('interface', False)
 		self.guild_invite_code = infget('my_guild_invite_code', 'KK6R9BJ')
 
-		self.loop = loop
 		self.waitForMessage = {}
 		self.start_time = datetime.datetime.now()
-		self.session = aiohttp.ClientSession(loop=self.loop)
 
 	def getAuth(self, *keylist) :
 		dct = self.auth.copy()
@@ -243,13 +241,15 @@ class Pramual(commands.Bot) :
 
 
 	async def on_ready(self) :
+		self.session = aiohttp.ClientSession()
+		
 		print(f'>> Login As "{self.user.name}" ({self.user.id})')
 		print('>> Current Discord.py Version: {} | Current Python Version: {}'.format(discord.__version__, platform.python_version()))
 		if self.dev :
 			print('>> Developer Mode Enabled')
 		for c in self.cog_list :
 			try :
-				self.load_extension(c)
+				await self.load_extension(c)
 			except commands.errors.ExtensionFailed as error :
 				print("""Load Extension "{}" Failed.""".format(c))
 				error = getattr(error, 'original', error)
@@ -290,7 +290,6 @@ class Pramual(commands.Bot) :
 			await vc.disconnect()
 		await self.session.close()
 		await self.close()
-		self.bot.loop.stop()
 		if self.db :
 			self.db.close()
 
@@ -310,7 +309,7 @@ class Pramual(commands.Bot) :
 		# 	await self.fetch_language(ctx.author.id)
 		e = discord.Embed(title=f"Command : `{self.cmdprefix}{ctx.command.name}`")
 		e.description = f"Called to `{self.bot_name}`"
-		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)
+		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.display_avatar.url)
 		e.add_field(name='Guild', value='`{0.name}` ({0.id})'.format(ctx.message.guild) if ctx.message.guild else 'Direct Message')
 		e.add_field(name='Channel', value='`{0.name}` ({0.id})'.format(ctx.message.channel) if ctx.message.guild else 'DM with `{0.recipient}` ({0.id})'.format(ctx.message.channel))
 		e.add_field(name='Message', value="("+str(ctx.message.id) + ")\n" + ctx.message.jump_url + "\n```" + ctx.message.clean_content + "```", inline=False)
@@ -344,7 +343,7 @@ class Pramual(commands.Bot) :
 
 		e = discord.Embed(title="Command Error : `{}{}`".format(self.cmdprefix if ctx.command.name != None else "",ctx.command.name if ctx.command.name != None else "UNKNOWN"))
 		e.description = f"Called to `{self.bot_name}`"
-		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.avatar_url)
+		e.set_author(name='From {0} ({0.id})'.format(ctx.message.author), icon_url=ctx.message.author.display_avatar.url)
 		e.add_field(name='Guild', value='`{0.name}` ({0.id})'.format(ctx.message.guild) if ctx.message.guild else 'Direct Message')
 		e.add_field(name='Channel', value='`{0.name}` ({0.id})'.format(ctx.message.channel) if ctx.message.guild else 'DM with `{0.recipient}` ({0.id})'.format(ctx.message.channel))
 		e.add_field(name='Message', value="("+str(ctx.message.id) + ")\n" + ctx.message.jump_url + "\n```" + ctx.message.content + "```", inline=False)
@@ -371,7 +370,7 @@ class Pramual(commands.Bot) :
 			ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n/10%10!=1)*(n%10<4)*n%10::4])
 			e.description = "*{}*".format(self.ss("UserWasJoinedGuildNo").format(mention=member.mention, count=len(member.guild.members), ordinal=ordinal(len(member.guild.members))))
 			e.color = 0x00AA80
-			e.set_thumbnail(url=member.avatar_url)
+			e.set_thumbnail(url=member.display_avatar.url)
 			e.set_footer(text=member.id)
 			await member.guild.system_channel.send(embed=e)
 
@@ -382,7 +381,7 @@ class Pramual(commands.Bot) :
 			e = discord.Embed(title=self.ss("UserWasLeftTheGuild").format(member=member, guild=member.guild))
 			e.description = "*{}*".format(self.ss("NowGuildHadNoMembersLeft").format(count=len(member.guild.members)))
 			e.color = 0xCE3232
-			e.set_thumbnail(url=member.avatar_url)
+			e.set_thumbnail(url=member.display_avatar.url)
 			e.set_footer(text=member.id)
 			await member.guild.system_channel.send(embed=e)
 

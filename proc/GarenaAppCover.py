@@ -68,5 +68,5 @@ class GarenaAppCover(Proc) :
 		file = await processing_image_to_file(ctx, "garena", self.m_garena_app, img)
 		await ctx.send(file=file)
 
-def setup(bot) :
-	bot.add_cog(loadInformation(GarenaAppCover(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(GarenaAppCover(bot)))

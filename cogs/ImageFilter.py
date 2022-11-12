@@ -237,5 +237,5 @@ class ImageFilter(Cog) :
 		im = await getLastImageOrAnimatedImage(ctx)
 		file = await processing_image_to_file(ctx, "circular", self._circular_blur, im, angle)
 		await ctx.send(file=file)
-def setup(bot) :
-	bot.add_cog(loadInformation(ImageFilter(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(ImageFilter(bot)))

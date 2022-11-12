@@ -76,5 +76,5 @@ class CovidThailand(Cog) :
 		else :
 			await self.covid_stat(ctx)
 
-def setup(bot) :
-	bot.add_cog(loadInformation(CovidThailand(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(CovidThailand(bot)))

@@ -18,5 +18,5 @@ class Service(Cog) :
 				else :
 					c = r['commands']
 				await ctx.send(self.ss("YouUsedCount").format(c))
-def setup(bot) :
-	bot.add_cog(loadInformation(Service(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Service(bot)))

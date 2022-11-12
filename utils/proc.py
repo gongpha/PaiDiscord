@@ -23,8 +23,8 @@ class Proc(commands.Cog) :
     # 	for c in cg.get_commands():
     # 		c.description = cg.stringstack["command_{}_desc".format(c.name)]
     #
-    # 	bot.add_cog(cg)
-def loadInformation(cog) :
+    # 	await bot.add_cog(await cg)
+async def loadInformation(cog) :
 	for c in cog.get_commands() :
 		c.description = cog.desc.get(cog.bot.languages[0], {}).get(c.name, cog.bot.ss("Empty"))
 		c.usage = cog.usag.get(cog.bot.languages[0], {}).get(c.name, cog.bot.ss("Empty"))

@@ -191,5 +191,5 @@ class ImageEffect(Cog) :
 		im = await getLastImageOrAnimatedImage(ctx)
 		file = await processing_image_to_file(ctx, "sketch", self._fx, im, exp)
 		await ctx.send(file=file)
-def setup(bot) :
-	bot.add_cog(loadInformation(ImageEffect(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(ImageEffect(bot)))

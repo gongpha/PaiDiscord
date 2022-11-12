@@ -20,7 +20,7 @@ def format_type(format) :
 
 async def im_avatar(ctx, u) :
 	uu = u or ctx.author
-	url = uu.avatar_url_as(format="png")
+	url = uu.display_avatar.replace(static_format="png").url
 	r = await ctx.bot.session.get(str(url))
 	if r.status != 200:
 		return None
@@ -94,11 +94,11 @@ async def _getlastimg_c(ctx, format, count = 1, urlmode = 0) :
 		elif msg.embeds :
 			for e in reversed(msg.embeds) :
 				#print(e.url)
-				if e.url != discord.Embed.Empty :
+				if e.url != None :
 					r = await add(e.url)
 					if r :
 						return r
-				if e.image.url != discord.Embed.Empty :
+				if e.image.url != None :
 					r = await add(e.image.url)
 					if r :
 						return r
@@ -116,7 +116,7 @@ async def _getlastimg_c(ctx, format, count = 1, urlmode = 0) :
 				break
 
 		if not rm :
-			r = await add(ctx.author.avatar_url)
+			r = await add(ctx.author.display_avatar.url)
 			if r :
 				return r
 			else :
@@ -146,11 +146,11 @@ async def _getlastimg(ctx, format) :
 	else :
 		if ctx.message.embeds :
 			for e in reversed(ctx.message.embeds) :
-				if e.url != discord.Embed.Empty :
+				if e.url != None :
 					ii = await loadImageFromURL(ctx, e.url)
 					if ii :
 						return ii
-				if e.image != discord.Embed.Empty :
+				if e.image != None :
 					ii = await loadImageFromURL(ctx, e.image.url)
 					if ii :
 						return ii
@@ -168,16 +168,16 @@ async def _getlastimg(ctx, format) :
 				else :
 					if msg.embeds :
 						for e in reversed(msg.embeds) :
-							if e.url != discord.Embed.Empty :
+							if e.url != None :
 								ii = await loadImageFromURL(ctx, e.url)
 								if ii :
 									return ii
-							if e.image != discord.Embed.Empty :
-								if e.image.url != discord.Embed.Empty :
+							if e.image != None :
+								if e.image.url != None :
 									ii = await loadImageFromURL(ctx, e.image.url)
 									if ii :
 										return ii
-	return await loadImageFromURL(ctx, ctx.author.avatar_url)
+	return await loadImageFromURL(ctx, ctx.author.display_avatar.url)
 
 async def getLastAnimatedImage(ctx, count = 1, urlmode = 0) :
 	return (await _getlastimg_c(ctx, animated_image_ext, count, urlmode))

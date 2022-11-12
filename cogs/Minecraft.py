@@ -99,5 +99,5 @@ class Minecraft(Cog) :
 		if not hat :
 			e.add_field(name=ctx.bot.ss('Configs'), value='- ' + self.ss('NoHat'))
 		await ctx.send(embed=e)
-def setup(bot) :
-	bot.add_cog(loadInformation(Minecraft(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Minecraft(bot)))

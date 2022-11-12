@@ -60,6 +60,6 @@ class Broomaunt(Proc) :
 		file = await processing_image_to_file(ctx, "broomaunt", self.m_broomaunt, img, av)
 		await ctx.send(file=file)
 
-def setup(bot) :
-	bot.add_cog(loadInformation(Broomaunt(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Broomaunt(bot)))
 	#[0].save("a.gif", save_all=True, append_images=frames[1:], format='gif', loop=0, duration=20, disposal=2, optimize=True)

@@ -42,5 +42,5 @@ class Thai(Cog) :
 	async def spell_correct(self, ctx, *, text : str) :
 		await ctx.send("```\n" + correct(text) + "```")
 
-def setup(bot) :
-	bot.add_cog(loadInformation(Thai(bot)))
+async def setup(bot) :
+	await bot.add_cog(await loadInformation(Thai(bot)))
