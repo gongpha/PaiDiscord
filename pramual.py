@@ -71,6 +71,12 @@ class Pramual(commands.Bot) :
 		# For bot had guilds over 100, GO VERIFY !
 		intents.presences = True
 		intents.members = True
+		intents.message_content = True
+		intents.guilds = True
+		intents.messages = True
+		intents.reactions = True
+		intents.emojis = True
+		intents.guild_messages = True
 
 
 		super().__init__(command_prefix=self.cmd_prefix, intents=intents, *args, **kwargs)
