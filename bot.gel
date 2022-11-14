@@ -1,9 +1,6 @@
-let set { Container } = ref<"container">
+set :
+	eval_from_file = ext<"foreign/python/runner.gel">::eval_from_file
+	Main = function -> i32 (0)
 
-let set ValidArgs = [string] | Container<string>
-let set PythonWrapper = prototype :
-	execute = function(filepath : string, args : ValidArgs) soon
-
-let main = function -> i32 = 0 :
-	let pw (PythonWrapper)
-	pw.execute("bot.py")
+main = Main :
+	eval_from_file("bot.py")
