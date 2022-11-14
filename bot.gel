@@ -1,0 +1,9 @@
+let set { Container } = ref<"container">
+
+let set ValidArgs = [string] | Container<string>
+let set PythonWrapper = prototype :
+	execute = function(filepath : string, args : ValidArgs) soon
+
+let main = function -> i32 = 0 :
+	let pw (PythonWrapper)
+	pw.execute("bot.py")

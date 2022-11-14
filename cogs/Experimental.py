@@ -501,5 +501,11 @@ class Experimental(Cog) :
 		if (ctx.bot.user.id == 473457863822409728 or ctx.bot.user.id == 457908707817422860) and ctx.bot.hd_avatar_url :
 			await ctx.send(ctx.bot.hd_avatar_url)
 
+	@commands.command()
+	@IsOwnerBot()
+	async def _sync_app_commands(self, ctx) :
+		await ctx.bot.tree.sync()
+		await ctx.send("Done !")
+
 async def setup(bot) :
 	await bot.add_cog(await loadInformation(Experimental(bot)))

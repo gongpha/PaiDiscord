@@ -307,5 +307,9 @@ class Info(Cog) :
 	async def invite(self, ctx) :
 		await ctx.send(embed=embed_t(ctx, ctx.bot.ss('BotInviteLink'), "[{}]({})".format(ctx.bot.ss("ClickHere"), ctx.bot.static_invite)))
 
+	@discord.app_commands.command(name="global", description="Global command test")
+	async def global_command(self, interaction: discord.Interaction) :
+		await interaction.response.send_message(f'Hello !', ephemeral=False)
+
 async def setup(bot) :
 	await bot.add_cog(await loadInformation(Info(bot)))
