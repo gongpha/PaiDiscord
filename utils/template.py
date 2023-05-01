@@ -388,8 +388,9 @@ def model_info(ctx, model) :
 			nof.append(':crown:')
 
 	elif isinstance(model, discord.Guild) :
-		e.set_author(name=model.name, icon_url=model.icon_url)
-		e.set_thumbnail(url=model.icon_url)
+		icon_url = model.icon.url if model.icon else None
+		e.set_author(name=model.name, icon_url=icon_url)
+		e.set_thumbnail(url=icon_url)
 		if model.unavailable :
 			nof.append('❌')
 		if model.premium_tier > 0 :
@@ -410,7 +411,7 @@ def model_info(ctx, model) :
 	elif isinstance(model, (discord.User, discord.ClientUser)) :
 		e.color = defcol
 	elif isinstance(model, discord.Guild) :
-		e.add_field(name=ctx.bot.ss("Model", "Region"),value=ctx.bot.ss("VoiceRegion", model.region), inline=True)
+		#e.add_field(name=ctx.bot.ss("Model", "Region"),value=ctx.bot.ss("VoiceRegion", model.region), inline=True)
 		e.add_field(name=ctx.bot.ss("Model", "Owner"),value=model.owner.mention, inline=True)
 		c = "\n   -{} : {}"
 		e.add_field(name="{} : {}".format(ctx.bot.ss("Model", "Channel"), len(model.channels)),value='{}{}{}'.format(
@@ -442,10 +443,17 @@ def model_info(ctx, model) :
 		), inline=True)
 		e.add_field(name=ctx.bot.ss("Model", "SystemChannel"), value=model.system_channel.mention if model.system_channel else ctx.bot.ss('Empty'), inline=True)
 		e.add_field(name="{} : {}".format(ctx.bot.ss("Model", "Boost"), model.premium_subscription_count),value=("```\n{}\n```".format("\n".join([m.name for m in model.premium_subscribers]))) if model.premium_subscribers else ctx.bot.ss("Empty"), inline=True)
-		e.add_field(name=ctx.bot.ss("Model", "URL"), value='{}{}{}'.format(
-			c.format(ctx.bot.ss("Model", "Icon"), "[{}]({})".format(ctx.bot.ss('ClickHere' if model.icon_url_as(format='png') else 'NoObject'), model.icon_url_as(format='png'))),
-			c.format(ctx.bot.ss("Model", "Banner"), "[{}]({})".format(ctx.bot.ss('ClickHere' if model.banner_url_as(format='png') else 'NoObject'), model.banner_url_as(format='png'))),
-			c.format(ctx.bot.ss("Model", "Splash"), "[{}]({})".format(ctx.bot.ss('ClickHere' if model.splash_url_as(format='png') else 'NoObject'), model.splash_url_as(format='png')))
+		
+		icon_url = model.icon.url if model.icon else ""
+		banner = model.banner.url if model.banner else ""
+		splash = model.splash.url if model.splash else ""
+		discovery_splash = model.discovery_splash.url if model.discovery_splash else ""
+		
+		e.add_field(name=ctx.bot.ss("Model", "URL"), value='{}{}{}{}'.format(
+			c.format(ctx.bot.ss("Model", "Icon"), "[{}]({})".format(ctx.bot.ss('ClickHere'), icon_url) if icon_url else ctx.bot.ss('NoObject')),
+			c.format(ctx.bot.ss("Model", "Banner"), "[{}]({})".format(ctx.bot.ss('ClickHere'), banner) if banner else ctx.bot.ss('NoObject')),
+			c.format(ctx.bot.ss("Model", "Splash"), "[{}]({})".format(ctx.bot.ss('ClickHere'), splash) if splash else ctx.bot.ss('NoObject')),
+			c.format(ctx.bot.ss("Model", "DiscoverySplash"), "[{}]({})".format(ctx.bot.ss('ClickHere'), discovery_splash) if discovery_splash else ctx.bot.ss('NoObject'))
 		), inline=True)
 		e.add_field(name=ctx.bot.ss("Model", "Limits"), value='{}{}{}'.format(
 			c.format(ctx.bot.ss("Model", "Emoji"), model.emoji_limit),
