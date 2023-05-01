@@ -1,7 +1,6 @@
 # EXPERIMENTAL
 # การทดลอง
 import asyncio
-import sys
 import os
 from datetime import datetime
 
@@ -19,7 +18,7 @@ with open(r'BUILD', 'r+') as f:
         f.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         buildnumber += 1
 
-print("Pramual 2.2.1 : Build", buildnumber)
+print("Pramual 2.2.2 : Build", buildnumber)
 print("Starting a Task...")
 
 

@@ -145,8 +145,8 @@ def _local_strftime(datetime: datetime.datetime, fmt_char: str, be, ctx) -> str:
 	elif fmt_char == "X":
 		str_ = datetime.strftime("%H:%M:%S")
 	elif fmt_char == "x":
-		str_ = "{}/{}/{}".format(
-			_padding(datetime.day), _padding(datetime.month), datetime.year + (543 if be else 0)
+		str_ = "{:02d}/{:02d}/{}".format(
+			datetime.day, datetime.month, datetime.year + (543 if be else 0)
 		)
 	elif fmt_char == "Y":
 		str_ = str(datetime.year + (543 if be else 0))
@@ -220,25 +220,26 @@ def local_strftime(ctx, datetime: datetime.datetime, fmt: str) :
 
 	return _text
 
-async def reaction_message_bool(ctx, bot, msg) :
-	await msg.add_reaction(emoji="\N{HEAVY CHECK MARK}")
-	await msg.add_reaction(emoji="\N{NEGATIVE SQUARED CROSS MARK}")
+# ZERO REFERENCE
+# async def reaction_message_bool(ctx, bot, msg) :
+# 	await msg.add_reaction(emoji="\N{HEAVY CHECK MARK}")
+# 	await msg.add_reaction(emoji="\N{NEGATIVE SQUARED CROSS MARK}")
 
-	def check(reaction, user) :
-		if user.id == msg.author_id :
-			return str(reaction.emoji) in give
+# 	def check(reaction, user) :
+# 		if user.id == msg.author_id :
+# 			return str(reaction.emoji) in give
 
-	while True :
-		try:
-			reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
-		except asyncio.TimeoutError :
-			await msg.clear_reactions()
-			return False
-		else :
-			if str(reaction.emoji) == "\N{HEAVY CHECK MARK}" :
-				return True
-			if str(reaction.emoji) == "\N{NEGATIVE SQUARED CROSS MARK}" :
-				return False
+# 	while True :
+# 		try:
+# 			reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
+# 		except asyncio.TimeoutError :
+# 			await msg.clear_reactions()
+# 			return False
+# 		else :
+# 			if str(reaction.emoji) == "\N{HEAVY CHECK MARK}" :
+# 				return True
+# 			if str(reaction.emoji) == "\N{NEGATIVE SQUARED CROSS MARK}" :
+# 				return False
 
 async def waitReactionRequired(ctx, bot, give, ruser, embed) :
 	e = embed.copy()

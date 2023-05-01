@@ -1,6 +1,7 @@
 import discord
 from discord.ext.commands import *
 import codecs
+from utils.template import embed_em
 from io import BytesIO
 
 async def anyemoji_convert(ctx, obj) :
@@ -36,7 +37,7 @@ async def anyemoji_convert(ctx, obj) :
 						return ((b,url), 0)
 					except :
 						return (None, -1)
-	b = BytesIO(await (result.url).read())
+	b = BytesIO(await result.read())
 	return ((b, result), passed)
 
 async def anyemoji_check(ctx, object) :

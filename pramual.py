@@ -326,7 +326,7 @@ class Pramual(commands.Bot) :
 		e.timestamp = ctx.message.created_at
 		await self.get_bot_channel("system", "log").send(embed=e)
 
-	async def on_command_error(self, ctx, error) :
+	async def on_command_error(self, ctx, error : Exception) :
 		cmdn = ctx.message.content.split(' ')[0]
 		if isinstance(error, commands.CommandNotFound) :
 			return
@@ -368,6 +368,7 @@ class Pramual(commands.Bot) :
 		e.add_field(name='Expection', value="("+str(ctx.message.id) + ")\n```" + str(getattr(error, 'original', error)) + "```", inline=False)
 		e.add_field(name='Filename', value=filename, inline=True)
 		e.add_field(name='Line No.', value=lineno, inline=True)
+		e.add_field(name='Traceback', value='\n'.join(traceback.format_exception(error)), inline=False)
 		await self.get_bot_channel("system", "error").send(embed=e)
 
 	async def on_member_join(self, member) :
@@ -392,7 +393,7 @@ class Pramual(commands.Bot) :
 			await member.guild.system_channel.send(embed=e)
 
 	async def on_guild_join(self, guild) :
-		await ctx.bot.db.insert_guild(self, guild)
+		#await ctx.bot.db.insert_guild(self, guild)
 		e = discord.Embed(title="New Guild : {}".format(guild.name))
 		#e.description = "*{}*".format(self.stringstack["UserWasJoinedGuildNo"].format(member.mention,len(member.guild.members)))
 		e.color = 0x00AA80
@@ -444,9 +445,9 @@ class Pramual(commands.Bot) :
 									return
 
 		# NULL CHECK
-		if '\x00' in message.content :
-			message.content = strings.Replace(message.content, "\x00", "", -1)
-			await ctx.send(embed=embed_wm(ctx, ctx.bot.ss("NullCharDetected")))
+		#if '\x00' in message.content :
+		#	message.content = strings.Replace(message.content, "\x00", "", -1)
+		#	await ctx.send(embed=embed_wm(ctx, ctx.bot.ss("NullCharDetected")))
 		await self.process_commands(message)
 
 	#async def on_message_delete(self, message) :

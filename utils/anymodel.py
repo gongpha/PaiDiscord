@@ -1,5 +1,6 @@
 # from anyuser import anyuser_convert
 import discord
+import re
 from discord.utils import *
 from utils.template import embed_em
 # # tob = {
@@ -38,7 +39,7 @@ class AnyConverter :
 
 class AnyID(AnyConverter) :
 	def __init__(self) :
-		self._id_regex = re.compile(r'([0-9]{15,21})$')
+		self._id_regex = re.compile(r'([0-9]+)$')
 		super().__init__()
 
 	def _get_id_match(self, object) :
