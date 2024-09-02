@@ -37,19 +37,27 @@ class Info(Cog) :
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
-		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or cog.cog_class), cog.cog_desc, casesensitive=True)
-		def a() :
-			h.add_field(name="`{}{}`".format(ctx.bot.cmdprefix, c.name),value=(c.description or "").format(ctx.bot) or ctx.bot.ss("NoDescription"),inline=True)
+		arr = []
+		i = 999
+		
 		for c in cog.get_commands() :
+			add = False
+
 			if (c.name.startswith('_')) :
 				if (ctx.author.id in ctx.bot.owners) :
-					a()
+					add = True
 			elif (not c.hidden) or (ctx.author.id not in ctx.bot.owners) :
-				a()
+				add = True
+
+			if add :
+				if i > 24 :
+					h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or cog.cog_class), cog.cog_desc, casesensitive=True)
+					arr.append(h)
+					i = 0
+				i += 1
+				h.add_field(name="`{}{}`".format(ctx.bot.cmdprefix, c.name),value=(c.description or "").format(ctx.bot) or ctx.bot.ss("NoDescription"),inline=True)
 			#h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.ss("Empty"],inline=True)
-		if h.fields == None :
-			h.add_field(name="﻿",value="*{}*".format(self.bot.ss("NoCommand")))
-		return h
+		return arr
 
 	def help_command_embed(self, ctx, command, cog) :
 		h = embed_t(ctx, "{}**{}**    ({} {})".format(ctx.bot.cmdprefix, command.name, " ".join(cog.cog_emoji or [":x:"]), cog.cog_name or cog.cog_class), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.cmdprefix, command.name, command.usage or "")))
@@ -96,7 +104,7 @@ class Info(Cog) :
 		ov = False
 		if not sect :
 			ov = True
-			h = self.help_overview_embed(ctx)
+			h.append(self.help_overview_embed(ctx))
 			e = embed_t(ctx, description=self.bot.bot_description)
 			#e.color = self.bot.theme[0] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
 			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.display_avatar.url)
@@ -106,13 +114,13 @@ class Info(Cog) :
 				#print(n)
 				if n == sect[0] :
 					h = self.help_specific_embed(ctx, c)
-			if h == None :
+			if len(h) == 0 :
 				for n, cg in self.bot.cogs.items() :
 					for c in cg.get_commands() :
 						c_a = c.aliases.copy()
 						c_a.insert(0, c.name)
 						if sect[0] in c_a :
-							h = self.help_command_embed(ctx, c, cg)
+							h.append(self.help_command_embed(ctx, c, cg))
 							break
 
 		www = discord.Embed()
@@ -122,8 +130,8 @@ class Info(Cog) :
 		if e != None :
 			await ctx.send(embed=e)
 
-		if h != None :
-			await ctx.send(embed=h)
+		for hh in h :
+			await ctx.send(embed=hh)
 		if ov :
 			await ctx.send(embed=www)
 
