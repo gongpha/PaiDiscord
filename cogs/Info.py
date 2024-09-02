@@ -219,7 +219,15 @@ class Info(Cog) :
 			await ctx.send(embed=h)
 
 	@commands.command()
-	async def guild(self, ctx, guild_id : int = 0) :
+	async def guild(self, ctx, guild_id) :
+		try :
+			guild_id = int(guild_id)
+		except :
+			await ctx.send(embed=
+				embed_em(ctx, ctx.bot.ss("InCorrectArgument"))
+			)
+			return
+		
 		if guild_id != 0 :
 			guild = ctx.bot.get_guild(guild_id)
 		else :
