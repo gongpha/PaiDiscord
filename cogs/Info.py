@@ -92,7 +92,7 @@ class Info(Cog) :
 		#print(self.bot.name)
 		#print(self.bot.description)
 		e = None
-		h = None
+		h = []
 		ov = False
 		if not sect :
 			ov = True
