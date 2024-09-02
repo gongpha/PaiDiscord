@@ -29,7 +29,7 @@ async def anyemoji_convert(ctx, obj) :
 							code = "-".join([c for c in codes if c != "fe0f"])
 						else :
 							code = "-".join(codes)
-						url = "https://twemoji.maxcdn.com/v/13.0.1/72x72/{}.png".format(code)
+						url = "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/{}.png".format(code)
 						response = await ctx.bot.session.get(url)
 						if response.status != 200 :
 							raise Exception()
