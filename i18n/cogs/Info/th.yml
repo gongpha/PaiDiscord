@@ -67,6 +67,7 @@ command :
             - permanentavatar
             - permanentprofilepic
             - avp
+            - av_permanent
     icon :
         description         : |-
             ส่งภาพไอคอนของเซิร์ฟเวอร์โดย URL

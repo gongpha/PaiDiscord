@@ -64,7 +64,7 @@ cogs :
   - cogs.ImageEffect
 #  - cogs.Nuke
 #  - cogs.MagickBomb
-  - cogs.Request
+#  - cogs.Request
 #  - cogs.Thai
   - cogs.ImageGenerator
 #  - cogs.Minecraft
