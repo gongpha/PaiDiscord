@@ -37,19 +37,27 @@ class Info(Cog) :
 		return h
 
 	def help_specific_embed(self, ctx, cog) :
-		h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or cog.cog_class), cog.cog_desc, casesensitive=True)
-		def a() :
-			h.add_field(name="`{}{}`".format(ctx.bot.cmdprefix, c.name),value=(c.description or "").format(ctx.bot) or ctx.bot.ss("NoDescription"),inline=True)
+		arr = []
+		i = 999
+		
 		for c in cog.get_commands() :
+			add = False
+
 			if (c.name.startswith('_')) :
 				if (ctx.author.id in ctx.bot.owners) :
-					a()
+					add = True
 			elif (not c.hidden) or (ctx.author.id not in ctx.bot.owners) :
-				a()
+				add = True
+
+			if add :
+				if i > 24 :
+					h = embed_t(ctx, "{} {}".format(" ".join(cog.cog_emoji or [":x:"]), cog.cog_name or cog.cog_class), cog.cog_desc, casesensitive=True)
+					arr.append(h)
+					i = 0
+				i += 1
+				h.add_field(name="`{}{}`".format(ctx.bot.cmdprefix, c.name),value=(c.description or "").format(ctx.bot) or ctx.bot.ss("NoDescription"),inline=True)
 			#h.add_field(name="`{}{}` {}".format(self.bot.command_prefix, c.name, "📡" if c.sql else ""),value=c.description.format(ctx.bot) or ctx.bot.ss("Empty"],inline=True)
-		if h.fields == None :
-			h.add_field(name="﻿",value="*{}*".format(self.bot.ss("NoCommand")))
-		return h
+		return arr
 
 	def help_command_embed(self, ctx, command, cog) :
 		h = embed_t(ctx, "{}**{}**    ({} {})".format(ctx.bot.cmdprefix, command.name, " ".join(cog.cog_emoji or [":x:"]), cog.cog_name or cog.cog_class), ((command.description) or "") + ("\n\n`{}{} {}`".format(self.bot.cmdprefix, command.name, command.usage or "")))
@@ -96,7 +104,7 @@ class Info(Cog) :
 		ov = False
 		if not sect :
 			ov = True
-			h = self.help_overview_embed(ctx)
+			h.append(self.help_overview_embed(ctx))
 			e = embed_t(ctx, description=self.bot.bot_description)
 			#e.color = self.bot.theme[0] if isinstance(self.bot.theme,(list,tuple)) else self.bot.theme
 			e.set_author(name=self.bot.bot_name, icon_url=self.bot.user.display_avatar.url)
@@ -106,13 +114,13 @@ class Info(Cog) :
 				#print(n)
 				if n == sect[0] :
 					h = self.help_specific_embed(ctx, c)
-			if h == None :
+			if len(h) == 0 :
 				for n, cg in self.bot.cogs.items() :
 					for c in cg.get_commands() :
 						c_a = c.aliases.copy()
 						c_a.insert(0, c.name)
 						if sect[0] in c_a :
-							h = self.help_command_embed(ctx, c, cg)
+							h.append(self.help_command_embed(ctx, c, cg))
 							break
 
 		www = discord.Embed()
@@ -122,8 +130,8 @@ class Info(Cog) :
 		if e != None :
 			await ctx.send(embed=e)
 
-		if h != None :
-			await ctx.send(embed=h)
+		for hh in h :
+			await ctx.send(embed=hh)
 		if ov :
 			await ctx.send(embed=www)
 
@@ -211,17 +219,46 @@ class Info(Cog) :
 			await ctx.send(embed=h)
 
 	@commands.command()
-	async def guild(self, ctx, guild_id = None) :
-		guild = ctx.message.guild if isinstance(ctx.message.channel, discord.TextChannel) else None
-		if not guild :
-			if not isinstance(ctx.message.channel, discord.TextChannel) :
-				if guild_id == None :
-					err = embed_em(ctx, ctx.bot.ss("ObjectNotFoundInObject").format(ctx.bot.ss('Model', 'Guild'), ctx.bot.ss('Model', 'DMChannel')))
-			else :
-				err = embed_em(ctx, ctx.bot.ss("ObjectNotFoundFromObject").format(ctx.bot.ss("Model", "Guild"), str(guild_id)))
-			await ctx.send(embed=err)
+	async def guild(self, ctx, guild_id) :
+		try :
+			guild_id = int(guild_id)
+		except :
+			await ctx.send(embed=
+				embed_em(ctx, ctx.bot.ss("InCorrectArgument"))
+			)
+			return
+		
+		if guild_id != 0 :
+			guild = ctx.bot.get_guild(guild_id)
 		else :
-			await ctx.send(embed=model_info(ctx, guild))
+			guild = ctx.message.guild
+
+		if not guild :
+			await ctx.send(embed=
+				embed_em(ctx, ctx.bot.ss("BotNotInGuild"))
+			)
+			return
+		
+		# check if the sender is joined that guild
+		member = guild.get_member(ctx.author.id)
+		if not member :
+			await ctx.send(embed=
+				embed_em(ctx, ctx.bot.ss("ObjectNotFoundFromObject").format(ctx.bot.ss("Model", "Guild"), str(guild.id)))
+			)
+			return
+		
+		# check if it's in the same guildd
+		if ctx.guild :
+			if ctx.guild != guild :
+				await ctx.send(ctx.bot.ss("CheckDMDueToPrivacy"))
+				try :
+					await ctx.author.send(embed=model_info(ctx, guild))
+					await ctx.author.send(ctx.bot.ss("BackToCommandMessage").format(ctx.message.jump_url))
+				except discord.errors.Forbidden :
+					await ctx.send(ctx.bot.ss("DMForbidden"))
+				return
+
+		await ctx.send(embed=model_info(ctx, guild))
 
 	@commands.command()
 	async def avatar(self, ctx, *, obj = None) :
@@ -234,7 +271,7 @@ class Info(Cog) :
 	async def avatar_permanent(self, ctx, *, obj = None) :
 		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
 		if member :
-			file = discord.File(fp=BytesIO((await ctx.bot.session.get(member.display_avatar.replace(static_format="png"))).read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.is_avatar_animated() else "png"))
+			file = discord.File(fp=BytesIO(await member.display_avatar.read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.display_avatar.is_animated() else "png"))
 			# PAI FEATURE ONLY
 			if (member.id == 473457863822409728 or member.id == 457908707817422860) and ctx.bot.hd_avatar_url :
 				await ctx.send("{}\n{}".format(ctx.bot.ss('WantToSeeHDBotAvatar').format(ctx.bot.bot_name), ctx.bot.ss('TryTypingCmd').format(f"{ctx.bot.cmdprefix}pai_avatar")), file=file)
@@ -245,14 +282,14 @@ class Info(Cog) :
 	async def icon(self, ctx) :
 		guild = ctx.guild
 		if guild :
-			url = guild.icon_url
+			url = guild.icon
 			await ctx.send("`{}`\n{}".format(guild, url))
 
 	@commands.command()
 	async def icon_permanent(self, ctx) :
 		guild = ctx.guild
 		if guild :
-			file = discord.File(fp=BytesIO(await (guild.icon_url_as(static_format="png")).read()), filename="pai__icon_{}-168d{}.{}".format(guild.name, guild.id, "gif" if guild.is_icon_animated() else "png"))
+			file = discord.File(fp=BytesIO(await guild.icon.read()), filename="pai__icon_{}-168d{}.{}".format(guild.name, guild.id, "gif" if guild.icon.is_animated() else "png"))
 			await ctx.send("`{}`".format(guild), file=file)
 
 	@commands.command()
