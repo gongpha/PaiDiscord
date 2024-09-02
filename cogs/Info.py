@@ -243,8 +243,11 @@ class Info(Cog) :
 		if ctx.guild :
 			if ctx.guild != guild :
 				await ctx.send(ctx.bot.ss("CheckDMDueToPrivacy"))
-				await ctx.author.send(embed=model_info(ctx, guild))
-				await ctx.author.send(ctx.bot.ss("BackToCommandMessage").format(ctx.message.jump_url))
+				try :
+					await ctx.author.send(embed=model_info(ctx, guild))
+					await ctx.author.send(ctx.bot.ss("BackToCommandMessage").format(ctx.message.jump_url))
+				except discord.errors.Forbidden :
+					await ctx.send(ctx.bot.ss("DMForbidden"))
 				return
 
 		await ctx.send(embed=model_info(ctx, guild))
