@@ -211,17 +211,35 @@ class Info(Cog) :
 			await ctx.send(embed=h)
 
 	@commands.command()
-	async def guild(self, ctx, guild_id = None) :
-		guild = ctx.message.guild if isinstance(ctx.message.channel, discord.TextChannel) else None
-		if not guild :
-			if not isinstance(ctx.message.channel, discord.TextChannel) :
-				if guild_id == None :
-					err = embed_em(ctx, ctx.bot.ss("ObjectNotFoundInObject").format(ctx.bot.ss('Model', 'Guild'), ctx.bot.ss('Model', 'DMChannel')))
-			else :
-				err = embed_em(ctx, ctx.bot.ss("ObjectNotFoundFromObject").format(ctx.bot.ss("Model", "Guild"), str(guild_id)))
-			await ctx.send(embed=err)
+	async def guild(self, ctx, guild_id : int = 0) :
+		if guild_id != 0 :
+			guild = ctx.bot.get_guild(guild_id)
 		else :
-			await ctx.send(embed=model_info(ctx, guild))
+			guild = ctx.message.guild
+
+		if not guild :
+			await ctx.send(embed=
+				embed_em(ctx, ctx.bot.ss("BotNotInGuild"))
+			)
+			return
+		
+		# check if the sender is joined that guild
+		member = guild.get_member(ctx.author.id)
+		if not member :
+			await ctx.send(embed=
+				embed_em(ctx, ctx.bot.ss("ObjectNotFoundFromObject").format(ctx.bot.ss("Model", "Guild"), str(guild.id)))
+			)
+			return
+		
+		# check if it's in the same guildd
+		if ctx.guild :
+			if ctx.guild != guild :
+				await ctx.send(ctx.bot.ss("CheckDMDueToPrivacy"))
+				await ctx.author.send(embed=model_info(ctx, guild))
+				await ctx.author.send(ctx.bot.ss("BackToCommandMessage").format(ctx.message.jump_url))
+				return
+
+		await ctx.send(embed=model_info(ctx, guild))
 
 	@commands.command()
 	async def avatar(self, ctx, *, obj = None) :
