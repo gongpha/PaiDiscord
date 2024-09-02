@@ -263,3 +263,5 @@ NullCharDetected            : ตรวจพบ NULL
 BotNotInGuild               : ไม่พบเซิร์ฟเวอร์นี้ หรือ บอทไม่ได้อยู่ในเซิร์ฟเวอร์ดังกล่าว
 CheckDMDueToPrivacy         : ไม่สามารถแสดงที่นี่ได้ โปรดเช็คที่ DM
 BackToCommandMessage        : กลับไปที่ข้อความที่ส่ง {}
+
+DeprecatedCommand           : ขออภัย คำสั่งนี้ล้าสมัยไปแล้ว ไม่สามารถใช้งานได้อีก
