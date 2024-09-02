@@ -252,7 +252,7 @@ class Info(Cog) :
 	async def avatar_permanent(self, ctx, *, obj = None) :
 		member = await AnyModel_FindUserOrMember(ctx, obj or ctx.author)
 		if member :
-			file = discord.File(fp=BytesIO((await ctx.bot.session.get(member.display_avatar.replace(static_format="png"))).read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.is_avatar_animated() else "png"))
+			file = discord.File(fp=BytesIO(await member.display_avatar.read()), filename="pai__avatar_{}-168d{}.{}".format(member.display_name, member.id, "gif" if member.display_avatar.is_animated() else "png"))
 			# PAI FEATURE ONLY
 			if (member.id == 473457863822409728 or member.id == 457908707817422860) and ctx.bot.hd_avatar_url :
 				await ctx.send("{}\n{}".format(ctx.bot.ss('WantToSeeHDBotAvatar').format(ctx.bot.bot_name), ctx.bot.ss('TryTypingCmd').format(f"{ctx.bot.cmdprefix}pai_avatar")), file=file)
@@ -263,14 +263,14 @@ class Info(Cog) :
 	async def icon(self, ctx) :
 		guild = ctx.guild
 		if guild :
-			url = guild.icon_url
+			url = guild.icon
 			await ctx.send("`{}`\n{}".format(guild, url))
 
 	@commands.command()
 	async def icon_permanent(self, ctx) :
 		guild = ctx.guild
 		if guild :
-			file = discord.File(fp=BytesIO(await (guild.icon_url_as(static_format="png")).read()), filename="pai__icon_{}-168d{}.{}".format(guild.name, guild.id, "gif" if guild.is_icon_animated() else "png"))
+			file = discord.File(fp=BytesIO(await guild.icon.read()), filename="pai__icon_{}-168d{}.{}".format(guild.name, guild.id, "gif" if guild.icon.is_animated() else "png"))
 			await ctx.send("`{}`".format(guild), file=file)
 
 	@commands.command()
